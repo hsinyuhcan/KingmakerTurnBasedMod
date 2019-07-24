@@ -1,0 +1,79 @@
+﻿using Kingmaker.UI.SettingsUI;
+using ModMaker.Utility;
+using UnityModManagerNet;
+
+namespace TurnBased
+{
+    public class Settings : UnityModManager.ModSettings
+    {
+        // gameplay
+        public bool toggleSetChargeAsFullRoundAction = true;
+        public bool toggleSetVitalStrikeAsStandardAction = true;
+        public bool toggleFixTheCostToStartBardicPerformance = true;
+        public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
+        public float distanceOfFiveFootStep = 1.5f;
+
+        public bool toggleMovingThroughFriends;
+        public bool toggleMovingThroughNonEnemies;
+        public bool toggleMovingThroughOnlyAffectPlayer = true;
+        public bool toggleMovingThroughOnlyAffectNonEnemies;
+        public float radiusOfCollision = 0.7f;
+
+        public bool toggleAutoTurnOffPlayerAI = true;
+        public bool toggleAutoTurnOnPlayerAI = true;
+        public bool toggleAutoSelectEntireParty = true;
+        public bool toggleAutoSelectCurrentUnit = true;
+        public bool toggleAutoEnableFiveFootStep;
+        public bool toggleAutoCancelActionsOnPlayerTurnStart = true;
+        public bool toggleAutoCancelActionsOnPlayerFinishFiveFoot = true;
+        public bool toggleAutoCancelActionsOnPlayerFinishFirstMove = true;
+
+        public bool toggleAutoEndTurn;
+        public bool toggleDoNotAutoEndTurnWhenHasSwiftAction = true;
+
+        public bool toggleAllowCommandNonPlayerToPerformSpecialActions;
+
+        // interface
+        public bool toggleHighlightCurrentUnit = true;
+        public bool toggleCameraScrollToCurrentUnit = true;
+        public bool toggleCameraLockOnCurrentPlayerUnit;
+        public bool toggleCameraLockOnCurrentNonPlayerUnit = true;
+
+        public bool toggleShowAttackIndicatorOfCurrentUnit = true;
+        public bool toggleShowAttackIndicatorOfPlayer = true;
+        public bool toggleShowAttackIndicatorOfNonPlayer;
+        public bool toggleShowMovementIndicatorOfCurrentUnit = true;
+        public bool toggleShowMovementIndicatorOfPlayer = true;
+        public bool toggleShowMovementIndicatorOfNonPlayer;
+
+        public bool toggleShowAttackIndicatorOnHoverUI = true;
+        public bool toggleShowMovementIndicatorOnHoverUI = true;
+        public bool toggleShowIsFlatFootedIconOnHoverUI;
+        public bool toggleShowIsFlatFootedIconOnUI = true;
+        public bool toggleSelectUnitOnClickUI;
+        public bool toggleCameraScrollToUnitOnClickUI = true;
+        public bool toggleShowUnitDescriptionOnRightClickUI = true;
+
+        public int hudMaxUnitsDisplayed = 15;
+        public float hudWidth = 375f;
+
+        // hotkeys
+        public SerializableDictionary<string, BindingKeysData> hotkeys = new SerializableDictionary<string, BindingKeysData>();
+
+        // time scale
+        public float timeScaleBetweenTurns = 5f;
+        public float timeScaleInPlayerTurn = 1f;
+        public float timeScaleInNonPlayerTurn = 2f;
+        public float castingTimeOfFullRoundSpell = 0.5f;
+        public float timeToWaitForIdleAI = 0.5f;
+        public float timeToWaitForEndingTurn = 0.1f;
+
+        // pause
+        public bool togglePauseOnPlayerTurnStart;
+        public bool togglePauseOnPlayerTurnEnd;
+        public bool togglePauseOnNonPlayerTurnStart;
+        public bool togglePauseOnNonPlayerTurnEnd;
+        public bool togglePauseOnPlayerFinishFiveFoot;
+        public bool togglePauseOnPlayerFinishFirstMove;
+    }
+}
