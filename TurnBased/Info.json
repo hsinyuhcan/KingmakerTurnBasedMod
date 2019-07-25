@@ -6,5 +6,5 @@
   "ManagerVersion": "0.14.1",
   "EntryMethod": "TurnBased.Main.Load",
   "HomePage": "https://www.nexusmods.com/pathfinderkingmaker/mods/109",
-  "Repository": ""
+  "Repository": "https://raw.githubusercontent.com/hsinyuhcan/KingmakerTurnBasedMod/master/TurnBased/Repository.json"
 }

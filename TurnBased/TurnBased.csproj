@@ -129,6 +129,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.json" />
+    <None Include="Repository.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ChangeLog.txt" />
   </ItemGroup>
   <Import Project="..\..\KingmakerModMaker\ModMaker\ModMaker.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
