@@ -1,0 +1,10 @@
+{
+  "Id": "TurnBased",
+  "DisplayName": "Turn Based Combat",
+  "Author": "Hsinyu",
+  "Version": "0.9.31",
+  "ManagerVersion": "0.14.1",
+  "EntryMethod": "TurnBased.Main.Load",
+  "HomePage": "https://www.nexusmods.com/pathfinderkingmaker/mods/109",
+  "Repository": "https://raw.githubusercontent.com/hsinyuhcan/KingmakerTurnBasedMod/master/TurnBased/Repository.json"
+}

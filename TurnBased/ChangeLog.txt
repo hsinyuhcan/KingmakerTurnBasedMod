@@ -1,0 +1,193 @@
+﻿Version 0.9.31
+	Added the Unity Mod Manager support for checking the availability of updates
+	Fixed th "Auto Turn On AI ..." option "is accidentally binding to the "Auto Turn Off AI ..." option
+	
+Version 0.9.30
+    Added a temporary bugfix, which fix a vanilla bug that the ability circle won't show up if you first select it via hotkey
+    Added the "Show Unit Description When Right Click The UI Element" option
+    Added the "Auto Turn On Unit's AI When Ending The Turn-Based Combat" option
+    Added an optional icon to indicate if a unit loses its dexterity bonus to AC to current unit
+    Changed the icon to indicate a "surprising" unit instead of indicating a "surprised" unit, and also changed the image usage
+    Restored a change, because I misread the rule: now units are flat-footed before their first turn again.
+    Fixed summoned units from a trap is unable to be targeted in the first round
+    Fixed the "Auto ... After Combat End" option doesn't work in the case you exit the turn-based combat by turning off the mode
+
+Version 0.9.29
+    Changed the attack indicator will be auto-disabled when the mouse is hovering over an ability on the action bar
+    Changed if every unit has a command before the combat start (no unit is surprised), then there will not be a surprise round
+    Fixed if a unit delay during the surprise round, it will get full actions in the round
+    Fixed if a unit try to delay to a surprised unit in surprise round, it will be delayed to the prior of that unit
+    Fixed Ranged Legerdemain is broken by a previous change
+    Fixed if disabling the mod (not the mode) during a turn-based combat, some ability changes won't be reversed
+
+Version 0.9.28
+    Implemented surprise round
+    Added an icon to indicate if a unit is "surprised"
+    Changed units won't be flat-footed before their first turn anymore, instead they will only be flat-footed in the surprise round
+    Changed units (or summoned units) that join the combat in the middle of the combat have to wait for exact one round (6s) to act
+    Changed summoned units will appear in the combat instantly, but they are unable to be targeted until they can act (right after the caster)
+    Fixed activating / deactivating Kinetic Blade in combat costs a standard action
+    Fixed quick-loading from a combat will cause the turn-based mode doesn't be auto disabled properly
+    Removed the toggle of the "Stop Action Cooling When A Unit Is Unable To Act" option, now it's the default (only) option
+
+Version 0.9.27
+    Fixed sometimes the game won't consider a unit is moved even if it's moved, caused AOO inconsistent
+    Fixed sometimes a unit can't make the AOO for the opponent which leaving the threaten range when the unit is threatening multiple targets
+
+Version 0.9.26
+    Fixed a critical bug that causes 0.9.25 cannot be loaded
+    Fixed sometimes (e.g. during specific cutsense) the game won't trigger the combat-ended event and causes the TB mode bug out
+
+Version 0.9.25
+    Added options to show the attack indicator
+    Fixed when the main character is not in the party, the game will never consider the player is in combat (causes TB mode cannot be triggered)
+
+Version 0.9.24
+    Fixed Bardic Performance alway cost a standard action with the "fix" option
+
+Version 0.9.23
+    Added an option to fix the cost of action to start Bardic Performance
+    Fixed sometimes a Charge ability would be interrupted due to an unexpected obstacle
+    Fixed if a unit used Charge ability on its turn, other units can move through or stack with the charged unit in the next one second (game time)
+
+Version 0.9.22
+    Added the "Auto Select The Entire Party After Combat End" option
+    Fixed the icon of the standard action won't disappear if you take the second move action in place of a standard action
+    Fixed when using the "Select Unit When Click The UI Element" option, clicking an uncontrollable unit through UI will prevent giving command
+
+Version 0.9.21
+    Added an option to set Vital Strike ability as a standard action
+    Fixed sometimes the movement indicator appears outside the combat after the group being teleported (thanks to Soldier9)
+    Fixed the list of in-combat units won't be updated properly during certain cutscene
+    Fixed the initiative order sometimes get wrong in the next round after using Delay
+    Fixed the move action will be returned even if the unit attack more than once during full attack
+    Fixed nauseated unit can not take any action (now they can start a turn with single move action)
+    Fixed if you turn off "Defensive Stance" on turn start, you can't move unless performing any other action first
+
+Version 0.9.20
+    Changed the move action will be returned if current unit attacked only once during a full attack
+    Added an option to prevent auto end turn when current unit still has swift action left
+    Added an option to adjust the distance of 5-foot step
+    Added an option to auto enable 5-foot step on player's turn start
+    Fixed 5-foot step can provoke Attack Of Opportunity on the last step
+    Fixed a unit with a speed of 5 feet or less can take a 5-foot step (now it can't)
+    Fixed a unit can take a 5-foot step after Charge (now it can't, but it can still take a 5-foot step before Charge)
+    Fixed sometimes there is a minor distance error between the indicator and the actual movement
+    Fixed units keep consume their movement when trying to move even if they are unable to move (e.g. Defensive Stance)
+    Fixed sometimes AI units can not end their turn (e.g. Duergar Geokineticist)
+    Fixed Pounce doesn't take effect when using Charge as a full round action
+
+Version 0.9.19
+    Fixed sometimes the movement indicator isn't cleared after combat
+
+Version 0.9.18
+    Remade 5-foot step, it's now a real 5-foot step
+    Added options to show the movement indicator
+    Added an option to set Charge ability as a full round action
+    Changed the combat tracker now will always stay behind the combat log
+
+Version 0.9.17
+    Removed "DO NOT Auto Cancel ..." options because they're useless (you can re-demand a touch action through the action bar)
+    Fixed "toggle off TB mode" does not work properly if you toggle it BEFORE the combat
+    Fixed hotkeys will be broken after you exit to the main menu
+    Fixed sometimes buffs can last one more round than the duration they should have
+    Fixed units keep consume their movement when trying to move even if they are stuck
+    Fixed Spell Combat cost only one standard action instead of a full round action (now it eats the move action after attack with its weapon)
+    Fixed if Magus is not close enough to target when ordering Spell Combat, it will perform a single attack instead of a full attack
+    Fixed if Magus has moved in current turn, it will not perform Spell Combat (it should perform Spell Combat unless it has no move action)
+
+Version 0.9.16
+    Added options make "Moving Through ..." not affect the enemies
+    Added the "Radius Modifier Of Collision" option
+    Added an option to select a unit via turn based UI
+
+Version 0.9.15
+    Improved combat UI, better skin and offering more info
+    Improved time accuracy
+    Implemented "Moving Through Friend﻿" as an option
+    Changed some code logic, supposed to make it work more properly, but might cause new bugs
+    Fixed the turn will be more than 6s if the time goes too fast
+    Fixed the confusion effects sometimes does not work properly
+    Fixed a confused unit can move after self harming
+
+Version 0.9.14
+    Added "Time Scale" options
+    Added an option to toggle the flanking mechanic change
+    Fixed units can touch their targets unlimited times until hitting
+
+Version 0.9.13
+    Adjusted settings UI
+    Added a custom hotkey to toggle turn-based mode
+    Added an option to speed up the animation of full round spell
+    Added the "Camera Lock On Current Non-Player Unit" option
+    Changed flanking do not consider opponents' command anymore
+    Changed camera lock will not work when the game is paused
+    Fixed some cutscene animations are skipped during TB combat (e.g. Amiri rushes into the combat in the boss fight of the prologue)
+    Fixed when there are no enemies in sight, but there are still enemies outside of the sight, the combat will end instantly
+    Fixed when two units can start their turn at the same time, the order list will confuse
+
+Version 0.9.12
+    ﻿Made the "Scroll To ..." and "Auto Select ..." options ﻿separate
+    Fixed certain AI units can not end their turn
+
+Version 0.9.11
+    Fixed the turn order list becomes invisible but still blocks the screen area when outside of combat
+    Fixed the units can't switch stealth in combat
+    Fixed if an aoo interrupts an enemy's spell and they fail the concentration check they can just immediately try again with no loss of action
+    Fixed the confusion effect "do nothing" just makes the unit idle for 6s without causing any action lost
+    Fixed "Pause On ..." and "Auto Cancel ..." options will be triggered even when you can't perform any action anymore in current turn
+
+Version 0.9.10
+    Added two "DO NOT Auto Cancel ..." options to prevent some spells be lost after casted
+    Fixed if the mod is disabled by version incompatibility, it will not be properly disabled and will cause some creepy issues
+    Fixed staggered unit can not delay or turn off abilities without costing charges
+    Fixed you can select a unit which is unable to act as a delay target when ""Stop Action Cooling When The Unit Is Unable To Act"" is on
+
+Version 0.9.9
+    Added new options to auto cancel actions after moving
+    Changed the function of "Pause On Player's Unit Finished The First Move Action" to "... Move Action Through Move"
+    Fixed if a cutscene is triggered during TB combat, some event animations could not be run properly (because it's not their turn :p)
+
+Version 0.9.8
+    Changed the mod shouldn't cause a crash again, instead it will pause the game and write the message to logs when a critical bug happened
+    Fixed a critical bug that crash the game to main menu after a summoned unit disappeared (thanks to Pinrri)
+    Fixed if you turn off toggleable abilities outside of combat, the effect will not be removed
+
+Version 0.9.7
+    Fixed the compatibility with 2.0.0m
+
+Version 0.9.6
+    Refactored the code to make it more readable, maintainable and extensible
+    Removed the turn-based mode button (because there is already an in-game button that can turn off the mod in UMM)
+    Replaced the word "round" with "turn" ﻿to be consistent with the information on d20pfsrd﻿
+    Implemented Delay (with a custom hotkey)
+    Changed if a unit is unable to act when it's turn began, it will be delay by 6s (pass 1t)
+    Improved toggleable ability mechanic, you can turn off abilities before doing anything in current turn, and without losing charges or actions
+    Fixed actions of the toggleable abilities can be triggered outside of the unit's turn (when the ability buff is timeout)
+    Fixed the combat order list does not show up after a zone transition
+    Fixed units can still take second move action after used the standard action
+    Fixed units can still cast a full-round spell after used one move action
+    Fixed the count of Attack Of Opportunity isn't reset at turn start, instead it's reset by it's own timer
+    Fixed ray spell effect glitch (the animation is frozen by time, e.g. Lightning Bolt)
+    Fixed another ray effect glitch (﻿multi-ray ﻿only comes after turn end, e.g. Scorching Ray)
+    Fixed some area effect moves in real time (e.g. Cloudkill)
+
+Version 0.9.5
+    Fixed the unit's turn order will be delayed if you demand to end turn during its action processing
+    Fixed if two units can start their turn at the same time, the order may be different with the list on the order list
+
+Version 0.9.4
+    Fixed a blank row on the order list after someone leave or die in combat
+    Fixed "cancel actions" not properly work
+
+Version 0.9.3
+    Improved UI behaviors
+    Added an option to auto turn off AI
+    Added options to auto cancel actions on turn end
+    Added a custom hotkey for end turn (thanks to Spacehamster)
+
+Version 0.9.2
+    Fixed a bug that caused the game crash to main menu when the mod is checking for units' command
+
+Version 0.9.1
+    Fixed can not load saves when the mod is disabled

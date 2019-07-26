@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{30EF7FE3-E17B-463D-921F-E610BA654F9B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TurnBased</RootNamespace>
+    <AssemblyName>TurnBased</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>false</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony12">
+      <HintPath>..\..\KingmakerLib\UnityModManager\0Harmony12.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\KingmakerLib\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\KingmakerLib\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DOTween">
+      <HintPath>..\..\KingmakerLib\DOTween.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DOTween46">
+      <HintPath>..\..\KingmakerLib\DOTween46.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\KingmakerLib\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>..\..\KingmakerLib\UnityEngine.AudioModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\KingmakerLib\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\KingmakerLib\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\KingmakerLib\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\KingmakerLib\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\..\KingmakerLib\UnityEngine.UIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityModManager">
+      <HintPath>..\..\KingmakerLib\UnityModManager\UnityModManager.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\BlueprintController.cs" />
+    <Compile Include="HarmonyPatches\AttackOfOpportunity.cs" />
+    <Compile Include="HarmonyPatches\ChargeAbility.cs" />
+    <Compile Include="HarmonyPatches\CollisionDetection.cs" />
+    <Compile Include="HarmonyPatches\ConfusionCondition.cs" />
+    <Compile Include="HarmonyPatches\ActionCooldowns.cs" />
+    <Compile Include="HarmonyPatches\UI.cs" />
+    <Compile Include="HarmonyPatches\MagusAbilities.cs" />
+    <Compile Include="HarmonyPatches\SurpriseRound.cs" />
+    <Compile Include="Utility\MiscExtensions.cs" />
+    <Compile Include="Utility\UnitCommandExtensions.cs" />
+    <Compile Include="HarmonyPatches\TimeFlow.cs" />
+    <Compile Include="HarmonyPatches\Misc.cs" />
+    <Compile Include="UI\AttackIndicatorManager.cs" />
+    <Compile Include="Controllers\UIController.cs" />
+    <Compile Include="UI\MovementIndicatorManager.cs" />
+    <Compile Include="UI\RangeIndicatorManager.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Menus\DebugInformation.cs" />
+    <Compile Include="Menus\InterfaceOptions.cs" />
+    <Compile Include="Menus\GameplayOptions.cs" />
+    <Compile Include="Menus\PauseOptions.cs" />
+    <Compile Include="Menus\HotkeyAndTimeScaleOptions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Core.cs" />
+    <Compile Include="Utility\UnitEntityDataExtensions.cs" />
+    <Compile Include="Controllers\HotkeyController.cs" />
+    <Compile Include="Utility\SettingsWrapper.cs" />
+    <Compile Include="Utility\StatusWrapper.cs" />
+    <Compile Include="UI\CombatTrackerManager.cs" />
+    <Compile Include="UI\UnitButtonManager.cs" />
+    <Compile Include="Controllers\CombatController.cs" />
+    <Compile Include="Controllers\TurnController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.json" />
+    <None Include="Repository.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ChangeLog.txt" />
+  </ItemGroup>
+  <Import Project="..\..\KingmakerModMaker\ModMaker\ModMaker.projitems" Label="Shared" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions />
+  <PropertyGroup>
+    <PostBuildEvent>rd "$(TargetDir)TurnBased"  /s /q
+mkdir "$(TargetDir)TurnBased"
+copy "$(TargetPath)" "$(TargetDir)TurnBased" /y
+copy "$(ProjectDir)\Info.json" "$(TargetDir)TurnBased\Info.json" /y</PostBuildEvent>
+  </PropertyGroup>
+</Project>
