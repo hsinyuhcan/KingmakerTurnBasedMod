@@ -137,4 +137,10 @@
   <Import Project="..\..\KingmakerModMaker\ModMaker\ModMaker.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions />
+  <PropertyGroup>
+    <PostBuildEvent>rd "$(TargetDir)TurnBased"  /s /q
+mkdir "$(TargetDir)TurnBased"
+copy "$(TargetPath)" "$(TargetDir)TurnBased" /y
+copy "$(ProjectDir)\Info.json" "$(TargetDir)TurnBased\Info.json" /y</PostBuildEvent>
+  </PropertyGroup>
 </Project>
