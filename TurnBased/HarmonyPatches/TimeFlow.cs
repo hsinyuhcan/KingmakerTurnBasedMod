@@ -45,12 +45,11 @@ namespace TurnBased.HarmonyPatches
                     {
                         try
                         {
-                            Core.Mod.RoundController.Tick();
+                            Mod.Core.RoundController.Tick();
                         }
                         catch (Exception e)
                         {
-                            Core.Error($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
-                            Core.Error($"{e.Message}\n{e.StackTrace}");
+                            Mod.Error(e);
                             Game.Instance.IsPaused = true;
                         }
                     }
@@ -71,12 +70,11 @@ namespace TurnBased.HarmonyPatches
                     {
                         try
                         {
-                            Core.Mod.RoundController.TickTime();
+                            Mod.Core.RoundController.TickTime();
                         }
                         catch (Exception e)
                         {
-                            Core.Error($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
-                            Core.Error($"{e.Message}\n{e.StackTrace}");
+                            Mod.Error(e);
                             Game.Instance.IsPaused = true;
                         }
                     }
@@ -152,7 +150,7 @@ namespace TurnBased.HarmonyPatches
                     bool isInForceMode = __instance.GetFieldValue<UnitMovementAgent, bool>("m_IsInForceMode");
 
                     if ((__instance.Unit?.EntityData).IsCurrentUnit() && !IsDelaying() && !IsEnding() && 
-                        (isInForceMode || Core.Mod.RoundController.CurrentTurn.HasMovement()))
+                        (isInForceMode || Mod.Core.RoundController.CurrentTurn.HasMovement()))
                     {
                         if (!isInForceMode)
                         {
@@ -163,7 +161,7 @@ namespace TurnBased.HarmonyPatches
                             __instance.SetFieldValue("m_SlowDownTime", 0f);
                         }
 
-                        Core.Mod.RoundController.CurrentTurn?.TickMovement(ref deltaTime, isInForceMode);
+                        Mod.Core.RoundController.CurrentTurn?.TickMovement(ref deltaTime, isInForceMode);
                     }
                     else if (!IsPassing() || (__instance.Unit != null && __instance.Unit.EntityData.IsInCombat))
                     {
@@ -196,7 +194,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && !IsPassing())
                 {
-                    if (Core.Mod.RoundController.TickedRayView.Add(__instance))
+                    if (Mod.Core.RoundController.TickedRayView.Add(__instance))
                     {
                         __instance.SetFieldValue("m_PrevTickTime", TimeSpan.Zero);
                     }
@@ -212,9 +210,9 @@ namespace TurnBased.HarmonyPatches
             static void Prefix(AbilityExecutionProcess __instance, ref TimeSpan? __state)
             {
                 if ((IsInCombat() && __instance.Context.AbilityBlueprint.GetComponent<AbilityDeliverEffect>() != null) ||
-                    (Core.Enabled && Core.Mod.LastTickTimeOfAbilityExecutionProcess.ContainsKey(__instance)))
+                    (Mod.Enabled && Mod.Core.LastTickTimeOfAbilityExecutionProcess.ContainsKey(__instance)))
                 {
-                    if (Core.Mod.LastTickTimeOfAbilityExecutionProcess.TryGetValue(__instance, out TimeSpan gameTime))
+                    if (Mod.Core.LastTickTimeOfAbilityExecutionProcess.TryGetValue(__instance, out TimeSpan gameTime))
                     {
                         gameTime += TimeSpan.FromSeconds(Game.Instance.TimeController.GameDeltaTime);
                     }
@@ -223,7 +221,7 @@ namespace TurnBased.HarmonyPatches
                         gameTime = Game.Instance.Player.GameTime;
                     }
 
-                    Core.Mod.LastTickTimeOfAbilityExecutionProcess[__instance] = gameTime;
+                    Mod.Core.LastTickTimeOfAbilityExecutionProcess[__instance] = gameTime;
 
                     __state = Game.Instance.Player.GameTime;
                     Game.Instance.Player.GameTime = gameTime;
@@ -236,7 +234,7 @@ namespace TurnBased.HarmonyPatches
                 if (__state.HasValue)
                 {
                     if (__instance.IsEnded)
-                        Core.Mod.LastTickTimeOfAbilityExecutionProcess.Remove(__instance);
+                        Mod.Core.LastTickTimeOfAbilityExecutionProcess.Remove(__instance);
 
                     Game.Instance.Player.GameTime = __state.Value;
                 }

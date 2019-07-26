@@ -19,7 +19,7 @@ namespace TurnBased.HUD
 
         void Awake()
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
+            Mod.Debug(MethodBase.GetCurrentMethod());
         }
 
         void OnDestroy()
@@ -35,7 +35,7 @@ namespace TurnBased.HUD
         {
             if (IsInCombat())
             {
-                UnitEntityData unit = ShowMovementIndicatorOnHoverUI ? Core.Mod.CombatTrackerManager.HoveringUnit : null;
+                UnitEntityData unit = ShowMovementIndicatorOnHoverUI ? Mod.Core.CombatTrackerManager.HoveringUnit : null;
                 float radiusInner = 0f;
                 float radiusOuter = 0f;
 
@@ -46,7 +46,7 @@ namespace TurnBased.HUD
                 }
                 else
                 {
-                    TurnController currentTurn = Core.Mod.RoundController.CurrentTurn;
+                    TurnController currentTurn = Mod.Core.RoundController.CurrentTurn;
                     if (currentTurn != null)
                     {
                         unit = currentTurn.Unit;

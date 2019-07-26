@@ -10,13 +10,14 @@ namespace TurnBased
 #endif
     static class Main
     {
-        public static Core<Mod, Settings> Core;
-        public static Menu Menu;
+        public static ModManager<Core, Settings> Mod;
+        public static MenuManager Menu;
 
         static bool Load(UnityModManager.ModEntry modEntry)
         {
-            Core = new Core<Mod, Settings>(modEntry, Assembly.GetExecutingAssembly());
-            Menu = new Menu(modEntry, Assembly.GetExecutingAssembly());
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Mod = new ModManager<Core, Settings>(modEntry, assembly);
+            Menu = new MenuManager(modEntry, assembly);
             modEntry.OnToggle = OnToggle;
 #if (DEBUG)
             modEntry.OnUnload = Unload;
@@ -26,8 +27,8 @@ namespace TurnBased
         static bool Unload(UnityModManager.ModEntry modEntry)
         {
             Menu = null;
-            Core.Disable(modEntry, true);
-            Core = null;
+            Mod.Disable(modEntry, true);
+            Mod = null;
             return true;
         }
 #else
@@ -39,13 +40,13 @@ namespace TurnBased
         {
             if (value)
             {
-                Core.Enable(modEntry);
+                Mod.Enable(modEntry);
                 Menu.Enable(modEntry);
             }
             else
             {
                 Menu.Disable(modEntry);
-                Core.Disable(modEntry, false);
+                Mod.Disable(modEntry, false);
                 ReflectionCache.Clear();
             }
             return true;

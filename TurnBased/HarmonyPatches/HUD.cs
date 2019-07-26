@@ -31,16 +31,16 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && abilityData == null)
                 {
-                    UnitEntityData unit = Core.Mod.AttackIndicatorManager.Unit;
-                    TurnController currentTurn = Core.Mod.RoundController.CurrentTurn;
+                    UnitEntityData unit = Mod.Core.AttackIndicatorManager.Unit;
+                    TurnController currentTurn = Mod.Core.RoundController.CurrentTurn;
                     if (currentTurn != null && currentTurn.Unit == unit && currentTurn.EnabledFiveFootStep)
                     {
-                        GetMethodDel<UIDecal, Action<UIDecal, bool>>("SetHoverVisibility")
+                        GetMethod<UIDecal, Action<UIDecal, bool>>("SetHoverVisibility")
                             (__instance, unit.CanAttackWithWeapon(__instance.Unit, currentTurn.GetRemainingMovementRange()));
                     }
                     else
                     {
-                        GetMethodDel<UIDecal, Action<UIDecal, bool>>("SetHoverVisibility")
+                        GetMethod<UIDecal, Action<UIDecal, bool>>("SetHoverVisibility")
                             (__instance, unit.CanAttackWithWeapon(__instance.Unit, 0f));
                     }
 
@@ -59,7 +59,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat())
                 {
-                    Core.Mod.AttackIndicatorManager.Disabled = state;
+                    Mod.Core.AttackIndicatorManager.Disabled = state;
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat())
                 {
-                    Core.Mod.AttackIndicatorManager.Disabled = state;
+                    Mod.Core.AttackIndicatorManager.Disabled = state;
                 }
             }
         }

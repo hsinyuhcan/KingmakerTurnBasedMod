@@ -68,7 +68,7 @@ namespace TurnBased.HarmonyPatches
                     __state = __instance.LastTarget;
                     __instance.LastTarget = target;
 
-                    if (target.IsCurrentUnit() && Core.Mod.RoundController.CurrentTurn.ImmuneAttackOfOpportunityOnDisengage)
+                    if (target.IsCurrentUnit() && Mod.Core.RoundController.CurrentTurn.ImmuneAttackOfOpportunityOnDisengage)
                     {
                         __result = false;
                         return false;

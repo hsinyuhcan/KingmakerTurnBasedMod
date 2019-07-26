@@ -90,10 +90,10 @@ namespace TurnBased.HarmonyPatches
                 if (IsInCombat() && __instance.Owner.Unit.IsInCombat)
                 {
                     __result = ((!__instance.EldritchArcher &&
-                        GetMethodDel<UnitPartMagus, Func<UnitPartMagus, UnitDescriptor, bool>>
+                        GetMethod<UnitPartMagus, Func<UnitPartMagus, UnitDescriptor, bool>>
                         ("HasOneHandedMeleeWeaponAndFreehand")(__instance, __instance.Owner)) ||
                         (__instance.EldritchArcher &&
-                        GetMethodDel<UnitPartMagus, Func<UnitPartMagus, ItemEntityWeapon, bool>>
+                        GetMethod<UnitPartMagus, Func<UnitPartMagus, ItemEntityWeapon, bool>>
                         ("IsRangedWeapon")(__instance, __instance.Owner.Unit.GetFirstWeapon()))) &&
                         Game.Instance.TimeController.GameTime - __instance.LastSpellCombatOpportunityTime < 1.Rounds().Seconds &&
                         (!checkMovement || __instance.Owner.Unit.HasMoveAction());

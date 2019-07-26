@@ -20,7 +20,7 @@ namespace TurnBased.HarmonyPatches
                 if (IsInCombat() && __instance.Executor.IsCurrentUnit())
                 {
                     __instance.SetPropertyValue(nameof(UnitDoNothing.TimeSinceStart), 6f);
-                    Core.Mod.RoundController.CurrentTurn.ForceToEnd();
+                    Mod.Core.RoundController.CurrentTurn.ForceToEnd();
                 }
             }
         }
@@ -34,7 +34,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && __instance.Executor.IsCurrentUnit())
                 {
-                    Core.Mod.RoundController.CurrentTurn.ForceToEnd();
+                    Mod.Core.RoundController.CurrentTurn.ForceToEnd();
                 }
             }
         }

@@ -218,7 +218,7 @@ namespace TurnBased.Controllers
             Unit.Logic.CallFactComponents<ITickEachRound>(logic => logic.OnNewRound());
 
             // UnitConfusionController.TickOnUnit() - set the effect of confution
-            GetMethodDel<UnitConfusionController, Action<UnitConfusionController, UnitEntityData>>
+            GetMethod<UnitConfusionController, Action<UnitConfusionController, UnitEntityData>>
                 ("TickOnUnit")(new UnitConfusionController(), Unit);
 
             // reset the counter of AOO

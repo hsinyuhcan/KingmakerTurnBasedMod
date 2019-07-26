@@ -41,7 +41,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(Vector3 end, ref Vector3 __result)
             {
-                if (IsInCombat() && (Core.Mod.RoundController.CurrentTurn?.Unit.View.AgentASP.IsCharging?? false))
+                if (IsInCombat() && (Mod.Core.RoundController.CurrentTurn?.Unit.View.AgentASP.IsCharging?? false))
                 {
                     __result = end;
                     return false;

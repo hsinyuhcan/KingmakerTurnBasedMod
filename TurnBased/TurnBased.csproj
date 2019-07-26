@@ -117,7 +117,7 @@
     <Compile Include="Menus\HotkeyAndTimeScaleOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Mod.cs" />
+    <Compile Include="Core.cs" />
     <Compile Include="Utility\UnitEntityDataExtensions.cs" />
     <Compile Include="Controllers\HotkeyController.cs" />
     <Compile Include="Utility\SettingsWrapper.cs" />

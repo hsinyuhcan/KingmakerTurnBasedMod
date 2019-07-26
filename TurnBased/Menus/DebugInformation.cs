@@ -15,7 +15,7 @@ using static TurnBased.Main;
 
 namespace TurnBased.Menus
 {
-    public class DebugInformation : Menu.IToggleablePage
+    public class DebugInformation : IMenuSelectablePage
     {
         public string Name => "Debug";
 
@@ -23,7 +23,7 @@ namespace TurnBased.Menus
 
         public void OnGUI(UnityModManager.ModEntry modEntry)
         {
-            if (Core == null || !Core.Enabled)
+            if (Mod == null || !Mod.Enabled)
                 return;
 
             if (GUILayout.Button("Clear HUD", GUILayout.ExpandWidth(false)))
@@ -37,7 +37,7 @@ namespace TurnBased.Menus
 
             GUILayout.Space(10f);
 
-            GUILayout.Label($"Ability Execution Process: {Core.Mod?.LastTickTimeOfAbilityExecutionProcess.Count}");
+            GUILayout.Label($"Ability Execution Process: {Mod.Core?.LastTickTimeOfAbilityExecutionProcess.Count}");
         }
 
         private void OnGUIDebug()
@@ -45,7 +45,7 @@ namespace TurnBased.Menus
             GUILayout.Label($"Time Scale: {Time.timeScale:f2}x");
             GUILayout.Label($"Game Time: {Game.Instance.Player.GameTime}");
 
-            RoundController roundController = Core.Mod.RoundController;
+            RoundController roundController = Mod.Core.RoundController;
             if (roundController != null)
             {
                 TurnController currentTurn = roundController.CurrentTurn;

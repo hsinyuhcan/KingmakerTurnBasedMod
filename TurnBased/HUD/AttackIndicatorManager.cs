@@ -23,7 +23,7 @@ namespace TurnBased.HUD
 
         void Awake()
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
+            Mod.Debug(MethodBase.GetCurrentMethod());
         }
 
         void OnDestroy()
@@ -37,7 +37,7 @@ namespace TurnBased.HUD
             bool isInCombat = IsInCombat();
             if (isInCombat && !Disabled && Game.Instance.SelectedAbilityHandler?.Ability == null)
             {
-                UnitEntityData unit = ShowAttackIndicatorOnHoverUI ? Core.Mod.CombatTrackerManager.HoveringUnit : null;
+                UnitEntityData unit = ShowAttackIndicatorOnHoverUI ? Mod.Core.CombatTrackerManager.HoveringUnit : null;
                 float radius = 0f;
 
                 if (unit != null && !unit.IsCurrentUnit())
@@ -46,7 +46,7 @@ namespace TurnBased.HUD
                 }
                 else
                 {
-                    TurnController currentTurn = Core.Mod.RoundController.CurrentTurn;
+                    TurnController currentTurn = Mod.Core.RoundController.CurrentTurn;
                     if (currentTurn != null)
                     {
                         unit = currentTurn.Unit;

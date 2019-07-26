@@ -66,7 +66,7 @@ namespace TurnBased.Utility
         internal static void UpdateCooldowns(this UnitCommand command)
         {
             if (command.Executor.IsCurrentUnit())
-                Core.Mod.RoundController.CurrentTurn.NeedStealthCheck = true;
+                Mod.Core.RoundController.CurrentTurn.NeedStealthCheck = true;
 
             if (!command.IsIgnoreCooldown)
             {

@@ -44,7 +44,7 @@ namespace TurnBased.HUD
 
         void Awake()
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
+            Mod.Debug(MethodBase.GetCurrentMethod());
 
             _canvasGroup = gameObject.GetComponent<CanvasGroup>();
             _canvasGroup.alpha = 0f;
@@ -94,7 +94,7 @@ namespace TurnBased.HUD
         {
             if (IsInCombat())
             {
-                RoundController roundController = Core.Mod.RoundController;
+                RoundController roundController = Mod.Core.RoundController;
 
                 UpdateUnits(roundController.GetSortedUnitsInCombat());
                 UpdateButtons(roundController.CurrentTurn);
@@ -252,7 +252,7 @@ namespace TurnBased.HUD
 
         private void HandleClickFiveFootStep()
         {
-            Core.Mod.RoundController?.CurrentTurn?.CommandToggleFiveFootStep();
+            Mod.Core.RoundController?.CurrentTurn?.CommandToggleFiveFootStep();
         }
 
         private void HandleClickDelay()
@@ -262,14 +262,14 @@ namespace TurnBased.HUD
 
         private void HandleClickEndTurn()
         {
-            Core.Mod.RoundController?.CurrentTurn?.CommandEndTurn();
+            Mod.Core.RoundController?.CurrentTurn?.CommandEndTurn();
         }
 
         private bool HandleClickUnitButton(UnitEntityData unit)
         {
             if (_toggledDelay && unit != null)
             {
-                Core.Mod.RoundController?.CurrentTurn?.CommandDelay(unit);
+                Mod.Core.RoundController?.CurrentTurn?.CommandDelay(unit);
                 ToggleDelay(false);
                 return false;
             }
@@ -445,7 +445,7 @@ namespace TurnBased.HUD
         {
             if (!_unitButtonDic.TryGetValue(unit, out UnitButtonManager button))
             {
-                Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}({unit}, {index})");
+                Mod.Debug(MethodBase.GetCurrentMethod(), unit, index);
 
                 if (_unitButtonTemplate.IsNullOrDestroyed())
                 {

@@ -12,7 +12,7 @@ using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased
 {
-    public class Mod
+    public class Core
     {
         internal HotkeyController HotkeyController;
         internal RoundController RoundController;

@@ -244,8 +244,8 @@ namespace TurnBased.Controllers
             }
 
             // ability modifications
-            Core.Mod.UpdateChargeAbility();
-            Core.Mod.UpdateVitalStrikeAbility();
+            Mod.Core.UpdateChargeAbility();
+            Mod.Core.UpdateVitalStrikeAbility();
         }
 
         #region Event Handlers
@@ -285,9 +285,9 @@ namespace TurnBased.Controllers
 
         public void HandleModEnable()
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
+            Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Core.Mod.RoundController = this;
+            Mod.Core.RoundController = this;
             EventBus.Subscribe(this);
 
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
@@ -299,7 +299,7 @@ namespace TurnBased.Controllers
 
         public void HandleModDisable()
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
+            Mod.Debug(MethodBase.GetCurrentMethod());
 
             Reset(false);
 
@@ -308,19 +308,19 @@ namespace TurnBased.Controllers
             HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
 
             EventBus.Unsubscribe(this);
-            Core.Mod.RoundController = null;
+            Mod.Core.RoundController = null;
         }
 
         public void HandlePartyCombatStateChanged(bool inCombat)
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}({inCombat})");
+            Mod.Debug(MethodBase.GetCurrentMethod(), inCombat);
 
             Reset(inCombat, true);
         }
 
         public void HandleUnitJoinCombat(UnitEntityData unit)
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}({unit})");
+            Mod.Debug(MethodBase.GetCurrentMethod(), unit);
 
             if (CombatInitialized)
             {
@@ -330,7 +330,7 @@ namespace TurnBased.Controllers
 
         public void HandleUnitSpawned(UnitEntityData entityData)
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}({entityData})");
+            Mod.Debug(MethodBase.GetCurrentMethod(), entityData);
 
             if (CombatInitialized)
             {
@@ -371,7 +371,7 @@ namespace TurnBased.Controllers
 
         public void HandleUnitLeaveCombat(UnitEntityData unit)
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}({unit})");
+            Mod.Debug(MethodBase.GetCurrentMethod(), unit);
 
             if (CombatInitialized)
             {
@@ -381,7 +381,7 @@ namespace TurnBased.Controllers
 
         public void HandleUnitDeath(UnitEntityData entityData)
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}({entityData})");
+            Mod.Debug(MethodBase.GetCurrentMethod(), entityData);
 
             if (CombatInitialized)
             {
@@ -391,7 +391,7 @@ namespace TurnBased.Controllers
 
         public void HandleUnitDestroyed(UnitEntityData entityData)
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}({entityData})");
+            Mod.Debug(MethodBase.GetCurrentMethod(), entityData);
 
             if (CombatInitialized)
             {
@@ -403,7 +403,7 @@ namespace TurnBased.Controllers
 
         public void OnAreaDidLoad()
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
+            Mod.Debug(MethodBase.GetCurrentMethod());
 
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, HandleToggleMovementIndicator);
@@ -411,8 +411,8 @@ namespace TurnBased.Controllers
 
             Reset(false);
 
-            Core.Mod.LastTickTimeOfAbilityExecutionProcess.Clear();
-            Core.Mod.PathfindingUnit = null;
+            Mod.Core.LastTickTimeOfAbilityExecutionProcess.Clear();
+            Mod.Core.PathfindingUnit = null;
         }
 
         // ** fix touch spell (disallow touch more than once in the same round)

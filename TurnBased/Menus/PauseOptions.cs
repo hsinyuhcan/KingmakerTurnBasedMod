@@ -7,7 +7,7 @@ using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased.Menus
 {
-    public class PauseOptions : Menu.IToggleablePage
+    public class PauseOptions : IMenuSelectablePage
     {
         GUIStyle _buttonStyle;
 
@@ -17,7 +17,7 @@ namespace TurnBased.Menus
 
         public void OnGUI(UnityModManager.ModEntry modEntry)
         {
-            if (Core == null || !Core.Enabled)
+            if (Mod == null || !Mod.Enabled)
                 return;
 
             if (_buttonStyle == null)

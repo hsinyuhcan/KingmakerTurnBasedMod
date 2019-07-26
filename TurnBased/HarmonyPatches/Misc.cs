@@ -113,7 +113,7 @@ namespace TurnBased.HarmonyPatches
                     __state = Game.Instance.TimeController.GameDeltaTime;
                     Game.Instance.TimeController.SetPropertyValue(nameof(TimeController.GameDeltaTime), 0f);
 
-                    TurnController currentTurn = Core.Mod.RoundController.CurrentTurn;
+                    TurnController currentTurn = Mod.Core.RoundController.CurrentTurn;
                     if (unit.IsCurrentUnit() &&
                         (currentTurn.WantEnterStealth != unit.Stealth.WantEnterStealth || currentTurn.NeedStealthCheck))
                     {

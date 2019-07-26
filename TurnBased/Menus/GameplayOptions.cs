@@ -8,7 +8,7 @@ using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased.Menus
 {
-    public class RestrictionsOptions : Menu.IToggleablePage
+    public class RestrictionsOptions : IMenuSelectablePage
     {
         GUIStyle _buttonStyle;
 
@@ -18,7 +18,7 @@ namespace TurnBased.Menus
 
         public void OnGUI(UnityModManager.ModEntry modEntry)
         {
-            if (Core == null || !Core.Enabled)
+            if (Mod == null || !Mod.Enabled)
                 return;
 
             if (_buttonStyle == null)
@@ -26,8 +26,8 @@ namespace TurnBased.Menus
                 _buttonStyle = new GUIStyle(GUI.skin.button) { alignment = TextAnchor.MiddleLeft };
             }
 
-            Core.Mod.RoundController.Enabled =
-                GUIHelper.ToggleButton(Core.Mod.RoundController.Enabled,
+            Mod.Core.RoundController.Enabled =
+                GUIHelper.ToggleButton(Mod.Core.RoundController.Enabled,
                 "Turn-Based Mode", _buttonStyle, GUILayout.ExpandWidth(false));
 
             GUILayout.Space(10f);

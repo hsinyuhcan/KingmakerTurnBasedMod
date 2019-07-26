@@ -10,7 +10,7 @@ using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased.Menus
 {
-    public class HotkeyAndTimeScaleOptions : Menu.IToggleablePage
+    public class HotkeyAndTimeScaleOptions : IMenuSelectablePage
     {
         private string _waitingHotkeyName;
 
@@ -23,7 +23,7 @@ namespace TurnBased.Menus
 
         public void OnGUI(UnityModManager.ModEntry modEntry)
         {
-            if (Core == null || !Core.Enabled)
+            if (Mod == null || !Mod.Enabled)
                 return;
 
             if (_buttonStyle == null)
@@ -51,11 +51,11 @@ namespace TurnBased.Menus
 
             if (!string.IsNullOrEmpty(_waitingHotkeyName) && HotkeyHelper.ReadKey(out BindingKeysData newKey))
             {
-                Core.Mod.HotkeyController.SetHotkey(_waitingHotkeyName, newKey);
+                Mod.Core.HotkeyController.SetHotkey(_waitingHotkeyName, newKey);
                 _waitingHotkeyName = null;
             }
 
-            IReadOnlyDictionary<string, BindingKeysData> hotkeys = Core.Mod.HotkeyController.GetHotkeysCopy();
+            IReadOnlyDictionary<string, BindingKeysData> hotkeys = Mod.Core.HotkeyController.GetHotkeysCopy();
 
             using (new GUILayout.HorizontalScope())
             {
@@ -100,7 +100,7 @@ namespace TurnBased.Menus
                     {
                         if (GUILayout.Button($"Clear", _buttonStyle))
                         {
-                            Core.Mod.HotkeyController.SetHotkey(name, null);
+                            Mod.Core.HotkeyController.SetHotkey(name, null);
 
                             if (_waitingHotkeyName == name)
                                 _waitingHotkeyName = null;

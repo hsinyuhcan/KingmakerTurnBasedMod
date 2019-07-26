@@ -17,12 +17,12 @@ namespace TurnBased.Controllers
         IModEventHandler,
         ISceneHandler
     {
-        private IDictionary<string, BindingKeysData> Hotkeys => Core.Settings.hotkeys;
+        private IDictionary<string, BindingKeysData> Hotkeys => Mod.Settings.hotkeys;
 
         public IReadOnlyDictionary<string, BindingKeysData> GetHotkeysCopy()
         {
             return new ReadOnlyDictionary<string, BindingKeysData>
-                (new Dictionary<string, BindingKeysData>(Core.Settings.hotkeys));
+                (new Dictionary<string, BindingKeysData>(Mod.Settings.hotkeys));
         }
 
         private void Initialize(Dictionary<string, BindingKeysData> hotkeys)
@@ -44,7 +44,7 @@ namespace TurnBased.Controllers
 
         private void TryRegisterHotkey(string name, BindingKeysData value)
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}({name}, {HotkeyHelper.GetKeyText(value)})");
+            Mod.Debug(MethodBase.GetCurrentMethod(), name, HotkeyHelper.GetKeyText(value));
 
             if (value != null)
             {
@@ -58,7 +58,7 @@ namespace TurnBased.Controllers
 
         public void HandleModEnable()
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
+            Mod.Debug(MethodBase.GetCurrentMethod());
 
             Initialize(new Dictionary<string, BindingKeysData>()
             {
@@ -70,7 +70,7 @@ namespace TurnBased.Controllers
                 {HOTKEY_FOR_END_TURN, new BindingKeysData() { IsAltDown = true, Key = KeyCode.E } },
             });
 
-            Core.Mod.HotkeyController = this;
+            Mod.Core.HotkeyController = this;
             EventBus.Subscribe(this);
 
             foreach (KeyValuePair<string, BindingKeysData> item in Hotkeys)
@@ -79,9 +79,9 @@ namespace TurnBased.Controllers
 
         public void HandleModDisable()
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
+            Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Core.Mod.HotkeyController = null;
+            Mod.Core.HotkeyController = null;
             EventBus.Unsubscribe(this);
 
             foreach (string name in Hotkeys.Keys)
@@ -92,7 +92,7 @@ namespace TurnBased.Controllers
 
         public void OnAreaDidLoad()
         {
-            Core.Debug($"{MethodBase.GetCurrentMethod().DeclaringType.Name}.{MethodBase.GetCurrentMethod().Name}()");
+            Mod.Debug(MethodBase.GetCurrentMethod());
 
             foreach (KeyValuePair<string, BindingKeysData> item in Hotkeys)
                 TryRegisterHotkey(item.Key, item.Value);

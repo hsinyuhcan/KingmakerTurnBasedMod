@@ -295,7 +295,7 @@ namespace TurnBased.HUD
         private void UpdateTimeBar()
         {
             _activeColorMask.rectTransform.anchorMax = 
-                new Vector2(_isCurrent ? Core.Mod.RoundController.CurrentTurn.GetRemainingTime() / 6f : 1f, 1f);
+                new Vector2(_isCurrent ? Mod.Core.RoundController.CurrentTurn.GetRemainingTime() / 6f : 1f, 1f);
         }
 
         private void UpdateActionIcons()
@@ -317,7 +317,7 @@ namespace TurnBased.HUD
 
         private void UpdateIsFlatFooted()
         {
-            UnitEntityData currentUnit = Core.Mod.RoundController.CurrentTurn?.Unit;
+            UnitEntityData currentUnit = Mod.Core.RoundController.CurrentTurn?.Unit;
             _isFlatFooted.SetActive((ShowIsFlatFootedIconOnUI || (_isMouseOver && ShowIsFlatFootedIconOnHoverUI)) &&
                 !_isCurrent && Unit != null && currentUnit != null &&
                 Rulebook.Trigger(new RuleCheckTargetFlatFooted(currentUnit, Unit)).IsFlatFooted);

@@ -32,7 +32,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat())
                 {
-                    Core.Mod.PathfindingUnit = __instance.Unit?.EntityData;
+                    Mod.Core.PathfindingUnit = __instance.Unit?.EntityData;
                 }
             }
 
@@ -41,7 +41,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat())
                 {
-                    Core.Mod.PathfindingUnit = null;
+                    Mod.Core.PathfindingUnit = null;
                 }
             }
         }
@@ -53,7 +53,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(UnitMovementAgent unit)
             {
-                return !IsInCombat() || !Core.Mod.PathfindingUnit.CanMoveThrough(unit.Unit?.EntityData);
+                return !IsInCombat() || !Mod.Core.PathfindingUnit.CanMoveThrough(unit.Unit?.EntityData);
             }
         }
 

@@ -29,48 +29,48 @@ namespace TurnBased.Utility
         #region Gameplay
 
         public static bool SetChargeAsFullRoundAction {
-            get => Core.Settings.toggleSetChargeAsFullRoundAction;
+            get => Mod.Settings.toggleSetChargeAsFullRoundAction;
             set {
-                if (Core.Settings.toggleSetChargeAsFullRoundAction != value)
+                if (Mod.Settings.toggleSetChargeAsFullRoundAction != value)
                 {
-                    Core.Settings.toggleSetChargeAsFullRoundAction = value;
-                    Core.Mod.UpdateChargeAbility();
+                    Mod.Settings.toggleSetChargeAsFullRoundAction = value;
+                    Mod.Core.UpdateChargeAbility();
                 }
             } 
         }
 
         public static bool SetVitalStrikeAsStandardAction {
-            get => Core.Settings.toggleSetVitalStrikeAsStandardAction;
+            get => Mod.Settings.toggleSetVitalStrikeAsStandardAction;
             set {
-                if (Core.Settings.toggleSetVitalStrikeAsStandardAction != value)
+                if (Mod.Settings.toggleSetVitalStrikeAsStandardAction != value)
                 {
-                    Core.Settings.toggleSetVitalStrikeAsStandardAction = value;
-                    Core.Mod.UpdateVitalStrikeAbility();
+                    Mod.Settings.toggleSetVitalStrikeAsStandardAction = value;
+                    Mod.Core.UpdateVitalStrikeAbility();
                 }
             }
         }
 
         public static bool FixTheCostToStartBardicPerformance {
-            get => Core.Settings.toggleFixTheCostToStartBardicPerformance;
-            set => Core.Settings.toggleFixTheCostToStartBardicPerformance = value;
+            get => Mod.Settings.toggleFixTheCostToStartBardicPerformance;
+            set => Mod.Settings.toggleFixTheCostToStartBardicPerformance = value;
         }
 
         public static bool FlankingCountAllOpponents {
-            get => Core.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange;
-            set => Core.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange = value;
+            get => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange;
+            set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange = value;
         }
 
         public static float DistanceOfFiveFootStep {
-            get => Core.Settings.distanceOfFiveFootStep;
-            set => Core.Settings.distanceOfFiveFootStep = value;
+            get => Mod.Settings.distanceOfFiveFootStep;
+            set => Mod.Settings.distanceOfFiveFootStep = value;
         }
 
         public static bool MovingThroughFriends {
-            get => Core.Settings.toggleMovingThroughFriends;
+            get => Mod.Settings.toggleMovingThroughFriends;
             set {
-                if (Core.Settings.toggleMovingThroughFriends != value)
+                if (Mod.Settings.toggleMovingThroughFriends != value)
                 {
-                    Core.Settings.toggleMovingThroughFriends = value;
+                    Mod.Settings.toggleMovingThroughFriends = value;
                     if (value)
                     {
                         MovingThroughNonEnemies = false;
@@ -80,11 +80,11 @@ namespace TurnBased.Utility
         }
 
         public static bool MovingThroughNonEnemies {
-            get => Core.Settings.toggleMovingThroughNonEnemies;
+            get => Mod.Settings.toggleMovingThroughNonEnemies;
             set {
-                if (Core.Settings.toggleMovingThroughNonEnemies != value)
+                if (Mod.Settings.toggleMovingThroughNonEnemies != value)
                 {
-                    Core.Settings.toggleMovingThroughNonEnemies = value;
+                    Mod.Settings.toggleMovingThroughNonEnemies = value;
                     if (value)
                     {
                         MovingThroughFriends = false;
@@ -94,11 +94,11 @@ namespace TurnBased.Utility
         }
 
         public static bool MovingThroughOnlyAffectPlayer {
-            get => Core.Settings.toggleMovingThroughOnlyAffectPlayer;
+            get => Mod.Settings.toggleMovingThroughOnlyAffectPlayer;
             set {
-                if (Core.Settings.toggleMovingThroughOnlyAffectPlayer != value)
+                if (Mod.Settings.toggleMovingThroughOnlyAffectPlayer != value)
                 {
-                    Core.Settings.toggleMovingThroughOnlyAffectPlayer = value;
+                    Mod.Settings.toggleMovingThroughOnlyAffectPlayer = value;
                     if (value)
                     {
                         MovingThroughOnlyAffectNonEnemies = false;
@@ -108,11 +108,11 @@ namespace TurnBased.Utility
         }
 
         public static bool MovingThroughOnlyAffectNonEnemies {
-            get => Core.Settings.toggleMovingThroughOnlyAffectNonEnemies;
+            get => Mod.Settings.toggleMovingThroughOnlyAffectNonEnemies;
             set {
-                if (Core.Settings.toggleMovingThroughOnlyAffectNonEnemies != value)
+                if (Mod.Settings.toggleMovingThroughOnlyAffectNonEnemies != value)
                 {
-                    Core.Settings.toggleMovingThroughOnlyAffectNonEnemies = value;
+                    Mod.Settings.toggleMovingThroughOnlyAffectNonEnemies = value;
                     if (value)
                     {
                         MovingThroughOnlyAffectPlayer = false;
@@ -122,63 +122,63 @@ namespace TurnBased.Utility
         }
 
         public static float RadiusOfCollision {
-            get => Core.Settings.radiusOfCollision;
-            set => Core.Settings.radiusOfCollision = value;
+            get => Mod.Settings.radiusOfCollision;
+            set => Mod.Settings.radiusOfCollision = value;
         }
 
         public static bool AutoTurnOffAI {
-            get => Core.Settings.toggleAutoTurnOffPlayerAI;
-            set => Core.Settings.toggleAutoTurnOffPlayerAI = value;
+            get => Mod.Settings.toggleAutoTurnOffPlayerAI;
+            set => Mod.Settings.toggleAutoTurnOffPlayerAI = value;
         }
 
         public static bool AutoTurnOnAI {
-            get => Core.Settings.toggleAutoTurnOnPlayerAI;
-            set => Core.Settings.toggleAutoTurnOnPlayerAI = value;
+            get => Mod.Settings.toggleAutoTurnOnPlayerAI;
+            set => Mod.Settings.toggleAutoTurnOnPlayerAI = value;
         }
 
         public static bool AutoSelectEntireParty {
-            get => Core.Settings.toggleAutoSelectEntireParty;
-            set => Core.Settings.toggleAutoSelectEntireParty = value;
+            get => Mod.Settings.toggleAutoSelectEntireParty;
+            set => Mod.Settings.toggleAutoSelectEntireParty = value;
         }
 
         public static bool AutoSelectCurrentUnit {
-            get => Core.Settings.toggleAutoSelectCurrentUnit;
-            set => Core.Settings.toggleAutoSelectCurrentUnit = value;
+            get => Mod.Settings.toggleAutoSelectCurrentUnit;
+            set => Mod.Settings.toggleAutoSelectCurrentUnit = value;
         }
 
         public static bool AutoEnableFiveFootStep {
-            get => Core.Settings.toggleAutoEnableFiveFootStep;
-            set => Core.Settings.toggleAutoEnableFiveFootStep = value;
+            get => Mod.Settings.toggleAutoEnableFiveFootStep;
+            set => Mod.Settings.toggleAutoEnableFiveFootStep = value;
         }
         
         public static bool AutoCancelActionsOnPlayerTurnStart {
-            get => Core.Settings.toggleAutoCancelActionsOnPlayerTurnStart;
-            set => Core.Settings.toggleAutoCancelActionsOnPlayerTurnStart = value;
+            get => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart;
+            set => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart = value;
         }
 
         public static bool AutoCancelActionsOnPlayerFinishFiveFoot {
-            get => Core.Settings.toggleAutoCancelActionsOnPlayerFinishFiveFoot;
-            set => Core.Settings.toggleAutoCancelActionsOnPlayerFinishFiveFoot = value;
+            get => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFiveFoot;
+            set => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFiveFoot = value;
         }
 
         public static bool AutoCancelActionsOnPlayerFinishFirstMove {
-            get => Core.Settings.toggleAutoCancelActionsOnPlayerFinishFirstMove;
-            set => Core.Settings.toggleAutoCancelActionsOnPlayerFinishFirstMove = value;
+            get => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFirstMove;
+            set => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFirstMove = value;
         }
 
         public static bool AutoEndTurn {
-            get => Core.Settings.toggleAutoEndTurn;
-            set => Core.Settings.toggleAutoEndTurn = value;
+            get => Mod.Settings.toggleAutoEndTurn;
+            set => Mod.Settings.toggleAutoEndTurn = value;
         }
 
         public static bool DoNotAutoEndTurnWhenHasSwiftAction {
-            get => Core.Settings.toggleDoNotAutoEndTurnWhenHasSwiftAction;
-            set => Core.Settings.toggleDoNotAutoEndTurnWhenHasSwiftAction = value;
+            get => Mod.Settings.toggleDoNotAutoEndTurnWhenHasSwiftAction;
+            set => Mod.Settings.toggleDoNotAutoEndTurnWhenHasSwiftAction = value;
         }
 
         public static bool AllowCommandNonPlayerToPerformSpecialActions {
-            get => Core.Settings.toggleAllowCommandNonPlayerToPerformSpecialActions;
-            set => Core.Settings.toggleAllowCommandNonPlayerToPerformSpecialActions = value;
+            get => Mod.Settings.toggleAllowCommandNonPlayerToPerformSpecialActions;
+            set => Mod.Settings.toggleAllowCommandNonPlayerToPerformSpecialActions = value;
         }
 
         #endregion
@@ -186,71 +186,71 @@ namespace TurnBased.Utility
         #region Interface
 
         public static bool HighlightCurrentUnit {
-            get => Core.Settings.toggleHighlightCurrentUnit;
-            set => Core.Settings.toggleHighlightCurrentUnit = value;
+            get => Mod.Settings.toggleHighlightCurrentUnit;
+            set => Mod.Settings.toggleHighlightCurrentUnit = value;
         }
 
         public static bool CameraScrollToCurrentUnit {
-            get => Core.Settings.toggleCameraScrollToCurrentUnit;
-            set => Core.Settings.toggleCameraScrollToCurrentUnit = value;
+            get => Mod.Settings.toggleCameraScrollToCurrentUnit;
+            set => Mod.Settings.toggleCameraScrollToCurrentUnit = value;
         }
 
         public static bool CameraLockOnCurrentPlayerUnit {
-            get => Core.Settings.toggleCameraLockOnCurrentPlayerUnit;
-            set => Core.Settings.toggleCameraLockOnCurrentPlayerUnit = value;
+            get => Mod.Settings.toggleCameraLockOnCurrentPlayerUnit;
+            set => Mod.Settings.toggleCameraLockOnCurrentPlayerUnit = value;
         }
 
         public static bool CameraLockOnCurrentNonPlayerUnit {
-            get => Core.Settings.toggleCameraLockOnCurrentNonPlayerUnit;
-            set => Core.Settings.toggleCameraLockOnCurrentNonPlayerUnit = value;
+            get => Mod.Settings.toggleCameraLockOnCurrentNonPlayerUnit;
+            set => Mod.Settings.toggleCameraLockOnCurrentNonPlayerUnit = value;
         }
 
         public static bool ShowAttackIndicatorOfCurrentUnit {
-            get => Core.Settings.toggleShowAttackIndicatorOfCurrentUnit;
-            set => Core.Settings.toggleShowAttackIndicatorOfCurrentUnit = value;
+            get => Mod.Settings.toggleShowAttackIndicatorOfCurrentUnit;
+            set => Mod.Settings.toggleShowAttackIndicatorOfCurrentUnit = value;
         }
 
         public static bool ShowAttackIndicatorOfPlayer {
-            get => Core.Settings.toggleShowAttackIndicatorOfPlayer;
-            set => Core.Settings.toggleShowAttackIndicatorOfPlayer = value;
+            get => Mod.Settings.toggleShowAttackIndicatorOfPlayer;
+            set => Mod.Settings.toggleShowAttackIndicatorOfPlayer = value;
         }
 
         public static bool ShowAttackIndicatorOfNonPlayer {
-            get => Core.Settings.toggleShowAttackIndicatorOfNonPlayer;
-            set => Core.Settings.toggleShowAttackIndicatorOfNonPlayer = value;
+            get => Mod.Settings.toggleShowAttackIndicatorOfNonPlayer;
+            set => Mod.Settings.toggleShowAttackIndicatorOfNonPlayer = value;
         }
 
         public static bool ShowMovementIndicatorOfCurrentUnit {
-            get => Core.Settings.toggleShowMovementIndicatorOfCurrentUnit;
-            set => Core.Settings.toggleShowMovementIndicatorOfCurrentUnit = value;
+            get => Mod.Settings.toggleShowMovementIndicatorOfCurrentUnit;
+            set => Mod.Settings.toggleShowMovementIndicatorOfCurrentUnit = value;
         }
 
         public static bool ShowMovementIndicatorOfPlayer {
-            get => Core.Settings.toggleShowMovementIndicatorOfPlayer;
-            set => Core.Settings.toggleShowMovementIndicatorOfPlayer = value;
+            get => Mod.Settings.toggleShowMovementIndicatorOfPlayer;
+            set => Mod.Settings.toggleShowMovementIndicatorOfPlayer = value;
         }
 
         public static bool ShowMovementIndicatorOfNonPlayer {
-            get => Core.Settings.toggleShowMovementIndicatorOfNonPlayer;
-            set => Core.Settings.toggleShowMovementIndicatorOfNonPlayer = value;
+            get => Mod.Settings.toggleShowMovementIndicatorOfNonPlayer;
+            set => Mod.Settings.toggleShowMovementIndicatorOfNonPlayer = value;
         }
 
         public static bool ShowAttackIndicatorOnHoverUI {
-            get => Core.Settings.toggleShowAttackIndicatorOnHoverUI;
-            set => Core.Settings.toggleShowAttackIndicatorOnHoverUI = value;
+            get => Mod.Settings.toggleShowAttackIndicatorOnHoverUI;
+            set => Mod.Settings.toggleShowAttackIndicatorOnHoverUI = value;
         }
 
         public static bool ShowMovementIndicatorOnHoverUI {
-            get => Core.Settings.toggleShowMovementIndicatorOnHoverUI;
-            set => Core.Settings.toggleShowMovementIndicatorOnHoverUI = value;
+            get => Mod.Settings.toggleShowMovementIndicatorOnHoverUI;
+            set => Mod.Settings.toggleShowMovementIndicatorOnHoverUI = value;
         }
 
         public static bool ShowIsFlatFootedIconOnHoverUI {
-            get => Core.Settings.toggleShowIsFlatFootedIconOnHoverUI;
+            get => Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI;
             set {
-                if (Core.Settings.toggleShowIsFlatFootedIconOnHoverUI != value)
+                if (Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI != value)
                 {
-                    Core.Settings.toggleShowIsFlatFootedIconOnHoverUI = value;
+                    Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI = value;
                     if (value)
                     {
                         ShowIsFlatFootedIconOnUI = false;
@@ -260,11 +260,11 @@ namespace TurnBased.Utility
         }
 
         public static bool ShowIsFlatFootedIconOnUI {
-            get => Core.Settings.toggleShowIsFlatFootedIconOnUI;
+            get => Mod.Settings.toggleShowIsFlatFootedIconOnUI;
             set {
-                if (Core.Settings.toggleShowIsFlatFootedIconOnUI != value)
+                if (Mod.Settings.toggleShowIsFlatFootedIconOnUI != value)
                 {
-                    Core.Settings.toggleShowIsFlatFootedIconOnUI = value;
+                    Mod.Settings.toggleShowIsFlatFootedIconOnUI = value;
                     if (value)
                     {
                         ShowIsFlatFootedIconOnHoverUI = false;
@@ -274,28 +274,28 @@ namespace TurnBased.Utility
         }
 
         public static bool SelectUnitOnClickUI {
-            get => Core.Settings.toggleSelectUnitOnClickUI;
-            set => Core.Settings.toggleSelectUnitOnClickUI = value;
+            get => Mod.Settings.toggleSelectUnitOnClickUI;
+            set => Mod.Settings.toggleSelectUnitOnClickUI = value;
         }
 
         public static bool CameraScrollToUnitOnClickUI {
-            get => Core.Settings.toggleCameraScrollToUnitOnClickUI;
-            set => Core.Settings.toggleCameraScrollToUnitOnClickUI = value;
+            get => Mod.Settings.toggleCameraScrollToUnitOnClickUI;
+            set => Mod.Settings.toggleCameraScrollToUnitOnClickUI = value;
         }
 
         public static bool ShowUnitDescriptionOnRightClickUI {
-            get => Core.Settings.toggleShowUnitDescriptionOnRightClickUI;
-            set => Core.Settings.toggleShowUnitDescriptionOnRightClickUI = value;
+            get => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI;
+            set => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI = value;
         }
         
         public static float HUDWidth {
-            get => Core.Settings.hudWidth;
-            set => Core.Settings.hudWidth = value;
+            get => Mod.Settings.hudWidth;
+            set => Mod.Settings.hudWidth = value;
         }
 
         public static int HUDMaxUnitsDisplayed {
-            get => Core.Settings.hudMaxUnitsDisplayed;
-            set => Core.Settings.hudMaxUnitsDisplayed = value;
+            get => Mod.Settings.hudMaxUnitsDisplayed;
+            set => Mod.Settings.hudMaxUnitsDisplayed = value;
         }
 
         #endregion
@@ -303,33 +303,33 @@ namespace TurnBased.Utility
         #region Time Scale
 
         public static float TimeScaleBetweenTurns {
-            get => Core.Settings.timeScaleBetweenTurns;
-            set => Core.Settings.timeScaleBetweenTurns = value;
+            get => Mod.Settings.timeScaleBetweenTurns;
+            set => Mod.Settings.timeScaleBetweenTurns = value;
         }
 
         public static float TimeScaleInPlayerTurn {
-            get => Core.Settings.timeScaleInPlayerTurn;
-            set => Core.Settings.timeScaleInPlayerTurn = value;
+            get => Mod.Settings.timeScaleInPlayerTurn;
+            set => Mod.Settings.timeScaleInPlayerTurn = value;
         }
 
         public static float TimeScaleInNonPlayerTurn {
-            get => Core.Settings.timeScaleInNonPlayerTurn;
-            set => Core.Settings.timeScaleInNonPlayerTurn = value;
+            get => Mod.Settings.timeScaleInNonPlayerTurn;
+            set => Mod.Settings.timeScaleInNonPlayerTurn = value;
         }
 
         public static float CastingTimeOfFullRoundSpell {
-            get => Core.Settings.castingTimeOfFullRoundSpell;
-            set => Core.Settings.castingTimeOfFullRoundSpell = value;
+            get => Mod.Settings.castingTimeOfFullRoundSpell;
+            set => Mod.Settings.castingTimeOfFullRoundSpell = value;
         }
 
         public static float TimeToWaitForIdleAI {
-            get => Core.Settings.timeToWaitForIdleAI;
-            set => Core.Settings.timeToWaitForIdleAI = value;
+            get => Mod.Settings.timeToWaitForIdleAI;
+            set => Mod.Settings.timeToWaitForIdleAI = value;
         }
 
         public static float TimeToWaitForEndingTurn {
-            get => Core.Settings.timeToWaitForEndingTurn;
-            set => Core.Settings.timeToWaitForEndingTurn = value;
+            get => Mod.Settings.timeToWaitForEndingTurn;
+            set => Mod.Settings.timeToWaitForEndingTurn = value;
         }
 
         #endregion
@@ -337,33 +337,33 @@ namespace TurnBased.Utility
         #region Pause
 
         public static bool PauseOnPlayerTurnStart {
-            get => Core.Settings.togglePauseOnPlayerTurnStart;
-            set => Core.Settings.togglePauseOnPlayerTurnStart = value;
+            get => Mod.Settings.togglePauseOnPlayerTurnStart;
+            set => Mod.Settings.togglePauseOnPlayerTurnStart = value;
         }
 
         public static bool PauseOnPlayerTurnEnd {
-            get => Core.Settings.togglePauseOnPlayerTurnEnd;
-            set => Core.Settings.togglePauseOnPlayerTurnEnd = value;
+            get => Mod.Settings.togglePauseOnPlayerTurnEnd;
+            set => Mod.Settings.togglePauseOnPlayerTurnEnd = value;
         }
 
         public static bool PauseOnNonPlayerTurnStart {
-            get => Core.Settings.togglePauseOnNonPlayerTurnStart;
-            set => Core.Settings.togglePauseOnNonPlayerTurnStart = value;
+            get => Mod.Settings.togglePauseOnNonPlayerTurnStart;
+            set => Mod.Settings.togglePauseOnNonPlayerTurnStart = value;
         }
 
         public static bool PauseOnNonPlayerTurnEnd {
-            get => Core.Settings.togglePauseOnNonPlayerTurnEnd;
-            set => Core.Settings.togglePauseOnNonPlayerTurnEnd = value;
+            get => Mod.Settings.togglePauseOnNonPlayerTurnEnd;
+            set => Mod.Settings.togglePauseOnNonPlayerTurnEnd = value;
         }
 
         public static bool PauseOnPlayerFinishFiveFoot {
-            get => Core.Settings.togglePauseOnPlayerFinishFiveFoot;
-            set => Core.Settings.togglePauseOnPlayerFinishFiveFoot = value;
+            get => Mod.Settings.togglePauseOnPlayerFinishFiveFoot;
+            set => Mod.Settings.togglePauseOnPlayerFinishFiveFoot = value;
         }
 
         public static bool PauseOnPlayerFinishFirstMove {
-            get => Core.Settings.togglePauseOnPlayerFinishFirstMove;
-            set => Core.Settings.togglePauseOnPlayerFinishFirstMove = value;
+            get => Mod.Settings.togglePauseOnPlayerFinishFirstMove;
+            set => Mod.Settings.togglePauseOnPlayerFinishFirstMove = value;
         }
 
         #endregion

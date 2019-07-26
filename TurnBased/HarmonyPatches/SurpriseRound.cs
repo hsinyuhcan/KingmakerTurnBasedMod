@@ -40,7 +40,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(UnitCombatState __instance, ref bool __result)
             {
-                if (IsEnabled() && !Core.Mod.RoundController.CombatInitialized)
+                if (IsEnabled() && !Mod.Core.RoundController.CombatInitialized)
                 {
                     __result = true;
                     return false;
