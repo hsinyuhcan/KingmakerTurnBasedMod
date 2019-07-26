@@ -1,7 +1,6 @@
 ﻿using Kingmaker;
 using Kingmaker.AreaLogic.QuestSystem;
 using Kingmaker.Blueprints.Root;
-using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
@@ -20,7 +19,7 @@ using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
-namespace TurnBased.HUD
+namespace TurnBased.UI
 {
     public class UnitButtonManager : MonoBehaviour
     {
@@ -295,7 +294,7 @@ namespace TurnBased.HUD
         private void UpdateTimeBar()
         {
             _activeColorMask.rectTransform.anchorMax = 
-                new Vector2(_isCurrent ? Mod.Core.RoundController.CurrentTurn.GetRemainingTime() / 6f : 1f, 1f);
+                new Vector2(_isCurrent ? Mod.Core.Combat.CurrentTurn.GetRemainingTime() / 6f : 1f, 1f);
         }
 
         private void UpdateActionIcons()
@@ -307,7 +306,7 @@ namespace TurnBased.HUD
 
         private void UpdateCanNotPerformActionIcon()
         {
-            _canNotPerformActionIcon.SetActive(Unit == null || !Unit.CanPerformAction());
+            _canNotPerformActionIcon.SetActive(!_isCurrent && Unit != null && !Unit.CanPerformAction());
         }
 
         private void UpdateIsSurprisingIcon()
@@ -317,7 +316,7 @@ namespace TurnBased.HUD
 
         private void UpdateIsFlatFooted()
         {
-            UnitEntityData currentUnit = Mod.Core.RoundController.CurrentTurn?.Unit;
+            UnitEntityData currentUnit = Mod.Core.Combat.CurrentTurn?.Unit;
             _isFlatFooted.SetActive((ShowIsFlatFootedIconOnUI || (_isMouseOver && ShowIsFlatFootedIconOnHoverUI)) &&
                 !_isCurrent && Unit != null && currentUnit != null &&
                 Rulebook.Trigger(new RuleCheckTargetFlatFooted(currentUnit, Unit)).IsFlatFooted);

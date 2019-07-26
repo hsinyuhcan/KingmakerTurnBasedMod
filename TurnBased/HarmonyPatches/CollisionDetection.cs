@@ -9,7 +9,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    internal static class CollisionDetection
+    static class CollisionDetection
     {
 
         // moving through friend feature

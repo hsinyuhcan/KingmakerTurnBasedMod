@@ -8,7 +8,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    internal static class ConfusionCondition
+    static class ConfusionCondition
     {
         // ** fix do-nothing action that produced by confusion
         [HarmonyPatch(typeof(UnitDoNothing), "OnTick")]
@@ -20,7 +20,7 @@ namespace TurnBased.HarmonyPatches
                 if (IsInCombat() && __instance.Executor.IsCurrentUnit())
                 {
                     __instance.SetPropertyValue(nameof(UnitDoNothing.TimeSinceStart), 6f);
-                    Mod.Core.RoundController.CurrentTurn.ForceToEnd();
+                    Mod.Core.Combat.CurrentTurn.ForceToEnd();
                 }
             }
         }
@@ -34,7 +34,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && __instance.Executor.IsCurrentUnit())
                 {
-                    Mod.Core.RoundController.CurrentTurn.ForceToEnd();
+                    Mod.Core.Combat.CurrentTurn.ForceToEnd();
                 }
             }
         }

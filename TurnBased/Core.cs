@@ -1,67 +1,63 @@
-﻿using Kingmaker.Blueprints;
-using Kingmaker.Controllers;
+﻿using Kingmaker.Controllers;
 using Kingmaker.EntitySystem.Entities;
-using Kingmaker.UnitLogic.Abilities.Blueprints;
+using Kingmaker.PubSubSystem;
+using ModMaker;
 using ModMaker.Utility;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using TurnBased.HUD;
+using System.Reflection;
 using TurnBased.Controllers;
+using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased
 {
-    public class Core
+    public class Core :
+        IModEventHandler,
+        ISceneHandler
     {
-        internal HotkeyController HotkeyController;
-        internal RoundController RoundController;
-        internal CombatTrackerManager CombatTrackerManager;
-        internal MovementIndicatorManager MovementIndicatorManager;
-        internal AttackIndicatorManager AttackIndicatorManager;
-
         internal Dictionary<AbilityExecutionProcess, TimeSpan> LastTickTimeOfAbilityExecutionProcess = new Dictionary<AbilityExecutionProcess, TimeSpan>();
         internal UnitEntityData PathfindingUnit;
 
-        private bool? _backupChargeIsFullRoundAction;
-        private bool[] _backupVitalStrikeIsFullRoundAction;
+        public BlueprintController Blueprint { get; internal set; } = new BlueprintController();
 
-        private readonly string[] _vitalStrikeAssetGuid = new string[] {
-            "efc60c91b8e64f244b95c66b270dbd7c",
-            "c714cd636700ac24a91ca3df43326b00",
-            "11f971b6453f74d4594c538e3c88d499"
-        };
+        public CombatController Combat { get; internal set; }
 
-        public void UpdateChargeAbility()
+        public HotkeyController Hotkeys { get; internal set; }
+
+        public UIController UI { get; internal set; }
+
+        private void HandleToggleTurnBasedMode()
         {
-            LibraryScriptableObject libraryObject = typeof(ResourcesLibrary).GetFieldValue<LibraryScriptableObject>("s_LibraryObject");
-            if (libraryObject != null)
-            {
-                if (!_backupChargeIsFullRoundAction.HasValue)
-                    _backupChargeIsFullRoundAction = 
-                        (libraryObject.BlueprintsByAssetId["c78506dd0e14f7c45a599990e4e65038"] as BlueprintAbility).IsFullRoundAction;
-
-                bool modify = RoundController.CombatInitialized && SetChargeAsFullRoundAction;
-                (libraryObject.BlueprintsByAssetId["c78506dd0e14f7c45a599990e4e65038"] as BlueprintAbility)
-                    .SetFieldValue("m_IsFullRoundAction", modify ? true : _backupChargeIsFullRoundAction.Value);
-            }
+            Combat.Enabled = !Combat.Enabled;
         }
 
-        public void UpdateVitalStrikeAbility()
+        public void HandleModEnable()
         {
-            LibraryScriptableObject libraryObject = typeof(ResourcesLibrary).GetFieldValue<LibraryScriptableObject>("s_LibraryObject");
-            if (libraryObject != null)
-            {
-                if (_backupVitalStrikeIsFullRoundAction == null)
-                    _backupVitalStrikeIsFullRoundAction = _vitalStrikeAssetGuid
-                        .Select(guid => (libraryObject.BlueprintsByAssetId[guid] as BlueprintAbility).IsFullRoundAction)
-                        .ToArray();
+            Mod.Debug(MethodBase.GetCurrentMethod());
 
-                bool modify = RoundController.CombatInitialized && SetVitalStrikeAsStandardAction;
-                for (int i = 0; i < _vitalStrikeAssetGuid.Length; i++)
-                    (libraryObject.BlueprintsByAssetId[_vitalStrikeAssetGuid[i]] as BlueprintAbility)
-                        .SetFieldValue("m_IsFullRoundAction", modify ? false : _backupVitalStrikeIsFullRoundAction[i]);
-            }
+            EventBus.Subscribe(this);
+
+            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
+        }
+
+        public void HandleModDisable()
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod());
+            
+            EventBus.Unsubscribe(this);
+
+            HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
+        }
+
+        public void OnAreaBeginUnloading() { }
+
+        public void OnAreaDidLoad()
+        {
+            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
+
+            Mod.Core.LastTickTimeOfAbilityExecutionProcess.Clear();
+            Mod.Core.PathfindingUnit = null;
         }
     }
 }

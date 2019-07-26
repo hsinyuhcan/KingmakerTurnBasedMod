@@ -16,7 +16,7 @@ using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
-namespace TurnBased.HUD
+namespace TurnBased.UI
 {
     public class CombatTrackerManager : MonoBehaviour
     {
@@ -94,9 +94,9 @@ namespace TurnBased.HUD
         {
             if (IsInCombat())
             {
-                RoundController roundController = Mod.Core.RoundController;
+                CombatController roundController = Mod.Core.Combat;
 
-                UpdateUnits(roundController.GetSortedUnitsInCombat());
+                UpdateUnits(roundController.GetSortedUnits());
                 UpdateButtons(roundController.CurrentTurn);
 
                 if (_width != HUDWidth)
@@ -252,7 +252,7 @@ namespace TurnBased.HUD
 
         private void HandleClickFiveFootStep()
         {
-            Mod.Core.RoundController?.CurrentTurn?.CommandToggleFiveFootStep();
+            Mod.Core.Combat?.CurrentTurn?.CommandToggleFiveFootStep();
         }
 
         private void HandleClickDelay()
@@ -262,14 +262,14 @@ namespace TurnBased.HUD
 
         private void HandleClickEndTurn()
         {
-            Mod.Core.RoundController?.CurrentTurn?.CommandEndTurn();
+            Mod.Core.Combat?.CurrentTurn?.CommandEndTurn();
         }
 
         private bool HandleClickUnitButton(UnitEntityData unit)
         {
             if (_toggledDelay && unit != null)
             {
-                Mod.Core.RoundController?.CurrentTurn?.CommandDelay(unit);
+                Mod.Core.Combat?.CurrentTurn?.CommandDelay(unit);
                 ToggleDelay(false);
                 return false;
             }

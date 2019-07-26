@@ -20,7 +20,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    class HUD
+    static class UI
     {
         // show a small circle under a unit if the unit is within attack range
         [HarmonyPatch(typeof(UIDecal), nameof(UIDecal.HandleAoEMove), typeof(Vector3), typeof(AbilityData))]
@@ -31,8 +31,8 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && abilityData == null)
                 {
-                    UnitEntityData unit = Mod.Core.AttackIndicatorManager.Unit;
-                    TurnController currentTurn = Mod.Core.RoundController.CurrentTurn;
+                    UnitEntityData unit = Mod.Core.UI.AttackIndicator.Unit;
+                    TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
                     if (currentTurn != null && currentTurn.Unit == unit && currentTurn.EnabledFiveFootStep)
                     {
                         GetMethod<UIDecal, Action<UIDecal, bool>>("SetHoverVisibility")
@@ -59,7 +59,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat())
                 {
-                    Mod.Core.AttackIndicatorManager.Disabled = state;
+                    Mod.Core.UI.AttackIndicator.Disabled = state;
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat())
                 {
-                    Mod.Core.AttackIndicatorManager.Disabled = state;
+                    Mod.Core.UI.AttackIndicator.Disabled = state;
                 }
             }
         }

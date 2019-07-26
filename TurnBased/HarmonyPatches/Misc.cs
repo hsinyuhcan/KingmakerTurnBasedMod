@@ -22,7 +22,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    internal static class Misc
+    static class Misc
     {
         // fix when main character is not in the party, the game will never consider the player is in combat
         [HarmonyPatch(typeof(Player), nameof(Player.IsInCombat), MethodType.Getter)]
@@ -113,7 +113,7 @@ namespace TurnBased.HarmonyPatches
                     __state = Game.Instance.TimeController.GameDeltaTime;
                     Game.Instance.TimeController.SetPropertyValue(nameof(TimeController.GameDeltaTime), 0f);
 
-                    TurnController currentTurn = Mod.Core.RoundController.CurrentTurn;
+                    TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
                     if (unit.IsCurrentUnit() &&
                         (currentTurn.WantEnterStealth != unit.Stealth.WantEnterStealth || currentTurn.NeedStealthCheck))
                     {

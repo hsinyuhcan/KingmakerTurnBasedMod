@@ -9,38 +9,38 @@ namespace TurnBased.Utility
     {
         public static bool IsEnabled()
         {
-            return Mod.Enabled && Mod.Core.RoundController.Enabled;
+            return Mod.Enabled && Mod.Core.Combat.Enabled;
         }
 
         public static bool IsInCombat()
         {
-            return Mod.Enabled && Mod.Core.RoundController.CombatInitialized &&
+            return Mod.Enabled && Mod.Core.Combat.CombatInitialized &&
                 Game.Instance.CurrentMode != GameModeType.Cutscene;
         }
 
         public static bool IsPreparing()
         {
-            return Mod.Core.RoundController.CurrentTurn?.Status == TurnController.TurnStatus.Preparing;
+            return Mod.Core.Combat.CurrentTurn?.Status == TurnController.TurnStatus.Preparing;
         }
 
         public static bool IsActing()
         {
-            return Mod.Core.RoundController.CurrentTurn?.Status == TurnController.TurnStatus.Acting;
+            return Mod.Core.Combat.CurrentTurn?.Status == TurnController.TurnStatus.Acting;
         }
 
         public static bool IsDelaying()
         {
-            return Mod.Core.RoundController.CurrentTurn?.Status == TurnController.TurnStatus.Delayed;
+            return Mod.Core.Combat.CurrentTurn?.Status == TurnController.TurnStatus.Delayed;
         }
 
         public static bool IsEnding()
         {
-            return Mod.Core.RoundController.CurrentTurn?.Status == TurnController.TurnStatus.Ending;
+            return Mod.Core.Combat.CurrentTurn?.Status == TurnController.TurnStatus.Ending;
         }
 
         public static bool IsPassing()
         {
-            return Mod.Core.RoundController.CurrentTurn == null;
+            return Mod.Core.Combat.CurrentTurn == null;
         }
     }
 }

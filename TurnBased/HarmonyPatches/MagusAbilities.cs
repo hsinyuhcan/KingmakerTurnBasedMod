@@ -17,7 +17,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    internal static class MagusAbilities
+    static class MagusAbilities
     {
         // fix Magus Spell Combat and Spellstrike
         [HarmonyPatch(typeof(MagusController), nameof(MagusController.HandleUnitCommandDidAct), typeof(UnitCommand))]

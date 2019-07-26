@@ -3,60 +3,63 @@ using Kingmaker.PubSubSystem;
 using ModMaker;
 using ModMaker.Utility;
 using System.Reflection;
-using TurnBased.HUD;
+using TurnBased.UI;
 using UnityEngine;
 using static TurnBased.Main;
 
 namespace TurnBased.Controllers
 {
-    public class HUDController :
+    public class UIController :
         IModEventHandler,
-        IPartyCombatHandler,
+        //IPartyCombatHandler,
         ISceneHandler
     {
-        public static void Attach()
+        public CombatTrackerManager CombatTracker { get; private set; }
+
+        public AttackIndicatorManager AttackIndicator { get; private set; }
+
+        public MovementIndicatorManager MovementIndicator { get; private set; }
+
+        public void Attach()
         {
-            if (Mod.Core.CombatTrackerManager.IsNullOrDestroyed())
+            if (CombatTracker.IsNullOrDestroyed())
             {
-                Mod.Core.CombatTrackerManager = CombatTrackerManager.CreateObject();
+                CombatTracker = CombatTrackerManager.CreateObject();
             }
 
-            if (Mod.Core.AttackIndicatorManager.IsNullOrDestroyed())
+            if (AttackIndicator.IsNullOrDestroyed())
             {
-                Mod.Core.AttackIndicatorManager = AttackIndicatorManager.CreateObject();
+                AttackIndicator = AttackIndicatorManager.CreateObject();
             }
 
-            if (Mod.Core.MovementIndicatorManager.IsNullOrDestroyed())
+            if (MovementIndicator.IsNullOrDestroyed())
             {
-                Mod.Core.MovementIndicatorManager = MovementIndicatorManager.CreateObject();
+                MovementIndicator = MovementIndicatorManager.CreateObject();
             }
         }
 
-        public static void Detach()
+        public void Detach()
         {
-            CombatTrackerManager combatTracker = Mod.Core.CombatTrackerManager;
-            if (!combatTracker.IsNullOrDestroyed())
+            if (!CombatTracker.IsNullOrDestroyed())
             {
-                combatTracker.transform.SetParent(null, false);
-                UnityEngine.Object.DestroyImmediate(combatTracker.gameObject);
+                CombatTracker.transform.SetParent(null, false);
+                UnityEngine.Object.DestroyImmediate(CombatTracker.gameObject);
             }
-            Mod.Core.CombatTrackerManager = null;
+            CombatTracker = null;
 
-            AttackIndicatorManager attackIndicator = Mod.Core.AttackIndicatorManager;
-            if (!attackIndicator.IsNullOrDestroyed())
+            if (!AttackIndicator.IsNullOrDestroyed())
             {
-                attackIndicator.transform.SetParent(null, false);
-                UnityEngine.Object.DestroyImmediate(attackIndicator.gameObject);
+                AttackIndicator.transform.SetParent(null, false);
+                UnityEngine.Object.DestroyImmediate(AttackIndicator.gameObject);
             }
-            Mod.Core.AttackIndicatorManager = null;
+            AttackIndicator = null;
 
-            MovementIndicatorManager movementIndicator = Mod.Core.MovementIndicatorManager;
-            if (!movementIndicator.IsNullOrDestroyed())
+            if (!MovementIndicator.IsNullOrDestroyed())
             {
-                movementIndicator.transform.SetParent(null, false);
-                UnityEngine.Object.DestroyImmediate(movementIndicator.gameObject);
+                MovementIndicator.transform.SetParent(null, false);
+                UnityEngine.Object.DestroyImmediate(MovementIndicator.gameObject);
             }
-            Mod.Core.MovementIndicatorManager = null;
+            MovementIndicator = null;
         }
 
 #if DEBUG
@@ -75,7 +78,7 @@ namespace TurnBased.Controllers
                     break;
                 }
             }
-            Mod.Core.CombatTrackerManager = null;
+            Mod.Core.UI.CombatTracker = null;
 
             while (true)
             {
@@ -90,7 +93,7 @@ namespace TurnBased.Controllers
                     break;
                 }
             }
-            Mod.Core.AttackIndicatorManager = null;
+            Mod.Core.UI.AttackIndicator = null;
 
             while (true)
             {
@@ -105,7 +108,7 @@ namespace TurnBased.Controllers
                     break;
                 }
             }
-            Mod.Core.MovementIndicatorManager = null;
+            Mod.Core.UI.MovementIndicator = null;
         }
 #endif
 
@@ -115,36 +118,30 @@ namespace TurnBased.Controllers
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Attach();
             EventBus.Subscribe(this);
+
+            Mod.Core.UI = this;
+            Attach();
         }
 
         public void HandleModDisable()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Detach();
             EventBus.Unsubscribe(this);
+
+            Mod.Core.UI = null;
+            Detach();
         }
 
-        public void HandlePartyCombatStateChanged(bool inCombat)
-        {
-            Mod.Debug(MethodBase.GetCurrentMethod(), inCombat);
+        public void OnAreaBeginUnloading() { }
 
-            if (inCombat)
-            {
-                Attach();
-            }
-        }
-
-        public void OnAreaBeginUnloading()
+        public void OnAreaDidLoad()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Detach();
+            Attach();
         }
-
-        public void OnAreaDidLoad() { }
 
         #endregion
     }

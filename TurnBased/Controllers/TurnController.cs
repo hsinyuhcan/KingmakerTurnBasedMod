@@ -3,7 +3,6 @@ using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.PubSubSystem;
-using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.Utility;
@@ -45,9 +44,9 @@ namespace TurnBased.Controllers
 
         public bool EnabledFiveFootStep { get; private set; }
 
-        public bool NeedStealthCheck { get; set; }
+        public bool NeedStealthCheck { get; internal set; }
 
-        public bool WantEnterStealth { get; set; }
+        public bool WantEnterStealth { get; internal set; }
 
         #endregion
 
@@ -64,7 +63,7 @@ namespace TurnBased.Controllers
 
         #region Tick
 
-        public void Tick()
+        internal void Tick()
         {
             if (Status == TurnStatus.Preparing && IsActed())
             {
@@ -86,7 +85,7 @@ namespace TurnBased.Controllers
             }
         }
 
-        public void TickMovement(ref float deltaTime, bool isInForceMode)
+        internal void TickMovement(ref float deltaTime, bool isInForceMode)
         {
             if (Unit.IsMoving())
             {
@@ -356,7 +355,7 @@ namespace TurnBased.Controllers
 
         #region State
 
-        private bool IsActed()
+        public bool IsActed()
         {
             return TimeMoved > 0f ||
                 Cooldown.StandardAction > 0f ||
@@ -365,12 +364,12 @@ namespace TurnBased.Controllers
                 Commands.Raw.Any(command => command != null);
         }
 
-        private bool ShouldRestrictFiveFootStep()
+        public bool ShouldRestrictFiveFootStep()
         {
             return TimeMoved > 0f || Unit.CurrentSpeedMps * TIME_MOVE_ACTION <= MetersOfFiveFootStep;
         }
 
-        private bool ShouldRestrictNormalMovement()
+        public bool ShouldRestrictNormalMovement()
         {
             return MetersMovedByFiveFootStep > 0f;
         }

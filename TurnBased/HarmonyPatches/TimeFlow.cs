@@ -30,7 +30,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    internal static class TimeFlow
+    static class TimeFlow
     {
         // control combat process
         [HarmonyPatch(typeof(Game), "Tick")]
@@ -45,7 +45,7 @@ namespace TurnBased.HarmonyPatches
                     {
                         try
                         {
-                            Mod.Core.RoundController.Tick();
+                            Mod.Core.Combat.Tick();
                         }
                         catch (Exception e)
                         {
@@ -70,7 +70,7 @@ namespace TurnBased.HarmonyPatches
                     {
                         try
                         {
-                            Mod.Core.RoundController.TickTime();
+                            Mod.Core.Combat.TickTime();
                         }
                         catch (Exception e)
                         {
@@ -150,7 +150,7 @@ namespace TurnBased.HarmonyPatches
                     bool isInForceMode = __instance.GetFieldValue<UnitMovementAgent, bool>("m_IsInForceMode");
 
                     if ((__instance.Unit?.EntityData).IsCurrentUnit() && !IsDelaying() && !IsEnding() && 
-                        (isInForceMode || Mod.Core.RoundController.CurrentTurn.HasMovement()))
+                        (isInForceMode || Mod.Core.Combat.CurrentTurn.HasMovement()))
                     {
                         if (!isInForceMode)
                         {
@@ -161,7 +161,7 @@ namespace TurnBased.HarmonyPatches
                             __instance.SetFieldValue("m_SlowDownTime", 0f);
                         }
 
-                        Mod.Core.RoundController.CurrentTurn?.TickMovement(ref deltaTime, isInForceMode);
+                        Mod.Core.Combat.CurrentTurn?.TickMovement(ref deltaTime, isInForceMode);
                     }
                     else if (!IsPassing() || (__instance.Unit != null && __instance.Unit.EntityData.IsInCombat))
                     {
@@ -194,7 +194,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && !IsPassing())
                 {
-                    if (Mod.Core.RoundController.TickedRayView.Add(__instance))
+                    if (Mod.Core.Combat.TickedRayView.Add(__instance))
                     {
                         __instance.SetFieldValue("m_PrevTickTime", TimeSpan.Zero);
                     }

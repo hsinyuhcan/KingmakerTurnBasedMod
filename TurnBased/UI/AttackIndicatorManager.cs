@@ -11,7 +11,7 @@ using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
-namespace TurnBased.HUD
+namespace TurnBased.UI
 {
     public class AttackIndicatorManager : MonoBehaviour
     {
@@ -24,10 +24,14 @@ namespace TurnBased.HUD
         void Awake()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
+
+            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
         }
 
         void OnDestroy()
         {
+            HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
+
             if (!_range.IsNullOrDestroyed())
                 Destroy(_range.gameObject);
         }
@@ -37,7 +41,7 @@ namespace TurnBased.HUD
             bool isInCombat = IsInCombat();
             if (isInCombat && !Disabled && Game.Instance.SelectedAbilityHandler?.Ability == null)
             {
-                UnitEntityData unit = ShowAttackIndicatorOnHoverUI ? Mod.Core.CombatTrackerManager.HoveringUnit : null;
+                UnitEntityData unit = ShowAttackIndicatorOnHoverUI ? Mod.Core.UI.CombatTracker.HoveringUnit : null;
                 float radius = 0f;
 
                 if (unit != null && !unit.IsCurrentUnit())
@@ -46,7 +50,7 @@ namespace TurnBased.HUD
                 }
                 else
                 {
-                    TurnController currentTurn = Mod.Core.RoundController.CurrentTurn;
+                    TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
                     if (currentTurn != null)
                     {
                         unit = currentTurn.Unit;
@@ -104,6 +108,11 @@ namespace TurnBased.HUD
             DontDestroyOnLoad(tbAttackIndicatorManager._range.gameObject);
 
             return tbAttackIndicatorManager;
+        }
+
+        private void HandleToggleAttackIndicator()
+        {
+            ShowAttackIndicatorOfCurrentUnit = !ShowAttackIndicatorOfCurrentUnit;
         }
     }
 }

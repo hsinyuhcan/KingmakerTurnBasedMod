@@ -7,7 +7,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    internal static class SurpriseRound
+    static class SurpriseRound
     {
         // don't avoid joining the combat because of standard actions
         [HarmonyPatch(typeof(UnitEntityData), nameof(UnitEntityData.JoinCombat))]
@@ -40,7 +40,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(UnitCombatState __instance, ref bool __result)
             {
-                if (IsEnabled() && !Mod.Core.RoundController.CombatInitialized)
+                if (IsEnabled() && !Mod.Core.Combat.CombatInitialized)
                 {
                     __result = true;
                     return false;

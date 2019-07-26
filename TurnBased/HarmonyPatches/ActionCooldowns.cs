@@ -21,7 +21,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    internal static class ActionCooldowns
+    static class ActionCooldowns
     {
         // check the cooldown, you can perform one standard action and one move action, or perform two move action in a turn
         [HarmonyPatch(typeof(UnitCombatState), nameof(UnitCombatState.HasCooldownForCommand), typeof(UnitCommand.CommandType))]

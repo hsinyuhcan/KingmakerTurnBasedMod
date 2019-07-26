@@ -17,28 +17,22 @@ namespace TurnBased.Controllers
         IModEventHandler,
         ISceneHandler
     {
-        private IDictionary<string, BindingKeysData> Hotkeys => Mod.Settings.hotkeys;
-
-        public IReadOnlyDictionary<string, BindingKeysData> GetHotkeysCopy()
-        {
-            return new ReadOnlyDictionary<string, BindingKeysData>
-                (new Dictionary<string, BindingKeysData>(Mod.Settings.hotkeys));
-        }
+        public IDictionary<string, BindingKeysData> BindingKeys => Mod.Settings.hotkeys;
 
         private void Initialize(Dictionary<string, BindingKeysData> hotkeys)
         {
-            foreach (string name in Hotkeys.Keys.ToList())
+            foreach (string name in BindingKeys.Keys.ToList())
                 if (!hotkeys.ContainsKey(name))
-                    Hotkeys.Remove(name);
+                    BindingKeys.Remove(name);
 
             foreach (KeyValuePair<string, BindingKeysData> item in hotkeys)
-                if (!Hotkeys.ContainsKey(item.Key))
-                    Hotkeys.Add(item.Key, item.Value);
+                if (!BindingKeys.ContainsKey(item.Key))
+                    BindingKeys.Add(item.Key, item.Value);
         }
 
         public void SetHotkey(string name, BindingKeysData value)
         {
-            Hotkeys[name] = value;
+            BindingKeys[name] = value;
             TryRegisterHotkey(name, value);
         }
 
@@ -60,20 +54,19 @@ namespace TurnBased.Controllers
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
+            EventBus.Subscribe(this);
+
+            Mod.Core.Hotkeys = this;
             Initialize(new Dictionary<string, BindingKeysData>()
             {
                 {HOTKEY_FOR_TOGGLE_MODE, new BindingKeysData() { IsAltDown = true, Key = KeyCode.T } },
-                {HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, new BindingKeysData() { IsAltDown = true, Key = KeyCode.R }},
                 {HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, new BindingKeysData() { IsAltDown = true, Key = KeyCode.R }},
+                {HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, new BindingKeysData() { IsAltDown = true, Key = KeyCode.R }},
                 {HOTKEY_FOR_FIVE_FOOT_STEP, new BindingKeysData() { IsAltDown = true, Key = KeyCode.F } },
                 {HOTKEY_FOR_DELAY, new BindingKeysData() { IsAltDown = true, Key = KeyCode.D }},
                 {HOTKEY_FOR_END_TURN, new BindingKeysData() { IsAltDown = true, Key = KeyCode.E } },
             });
-
-            Mod.Core.HotkeyController = this;
-            EventBus.Subscribe(this);
-
-            foreach (KeyValuePair<string, BindingKeysData> item in Hotkeys)
+            foreach (KeyValuePair<string, BindingKeysData> item in BindingKeys)
                 TryRegisterHotkey(item.Key, item.Value);
         }
 
@@ -81,10 +74,10 @@ namespace TurnBased.Controllers
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Mod.Core.HotkeyController = null;
             EventBus.Unsubscribe(this);
 
-            foreach (string name in Hotkeys.Keys)
+            Mod.Core.Hotkeys = null;
+            foreach (string name in BindingKeys.Keys)
                 TryRegisterHotkey(name, null);
         }
 
@@ -94,7 +87,7 @@ namespace TurnBased.Controllers
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            foreach (KeyValuePair<string, BindingKeysData> item in Hotkeys)
+            foreach (KeyValuePair<string, BindingKeysData> item in BindingKeys)
                 TryRegisterHotkey(item.Key, item.Value);
         }
     }

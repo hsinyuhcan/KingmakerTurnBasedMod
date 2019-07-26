@@ -145,12 +145,12 @@ namespace TurnBased.Utility
 
         public static bool IsCurrentUnit(this UnitEntityData unit)
         {
-            return unit != null && unit == Mod.Core.RoundController.CurrentTurn?.Unit;
+            return unit != null && unit == Mod.Core.Combat.CurrentTurn?.Unit;
         }
 
         public static bool IsSurprising(this UnitEntityData unit)
         {
-            return Mod.Core.RoundController.IsSurprising(unit);
+            return Mod.Core.Combat.IsSurprising(unit);
         }
 
         public static bool IsMoving(this UnitEntityData unit)

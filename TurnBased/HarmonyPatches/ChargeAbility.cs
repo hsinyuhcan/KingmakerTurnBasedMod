@@ -17,7 +17,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    internal static class ChargeAbility
+    static class ChargeAbility
     {
         // fix Charge ability disables the obstacle detection for 1 second
         [HarmonyPatch(typeof(UnitMovementAgent), nameof(UnitMovementAgent.IsCharging), MethodType.Setter)]
@@ -41,7 +41,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(Vector3 end, ref Vector3 __result)
             {
-                if (IsInCombat() && (Mod.Core.RoundController.CurrentTurn?.Unit.View.AgentASP.IsCharging?? false))
+                if (IsInCombat() && (Mod.Core.Combat.CurrentTurn?.Unit.View.AgentASP.IsCharging?? false))
                 {
                     __result = end;
                     return false;

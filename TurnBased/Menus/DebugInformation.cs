@@ -28,7 +28,7 @@ namespace TurnBased.Menus
 
             if (GUILayout.Button("Clear HUD", GUILayout.ExpandWidth(false)))
             {
-                HUDController.Clear();
+                UIController.Clear();
             }
 
             GUILayout.Space(10f);
@@ -45,14 +45,13 @@ namespace TurnBased.Menus
             GUILayout.Label($"Time Scale: {Time.timeScale:f2}x");
             GUILayout.Label($"Game Time: {Game.Instance.Player.GameTime}");
 
-            RoundController roundController = Mod.Core.RoundController;
+            CombatController roundController = Mod.Core.Combat;
             if (roundController != null)
             {
                 TurnController currentTurn = roundController.CurrentTurn;
 
                 GUILayout.Space(10f);
                 GUILayout.Label($"Combat Initialized: {roundController.CombatInitialized}");
-                GUILayout.Label($"Game Time: {roundController.GetGameTime()} (Game Time Calculated By Mod)");
 
                 GUILayout.Space(10f);
                 if (GUILayout.Button("Reset Turn", GUILayout.ExpandWidth(false)) && currentTurn != null)
@@ -85,7 +84,7 @@ namespace TurnBased.Menus
                 GUILayout.Label($"Move Action: {currentTurn?.Commands.Raw[3]}");
                 GUILayout.Label($"Swift Action: {currentTurn?.Commands.Raw[2]}");
 
-                List<UnitEntityData> units = roundController.GetSortedUnitsInCombat().ToList();
+                List<UnitEntityData> units = roundController.GetSortedUnits().ToList();
 
                 if (units.Count > 0)
                 {

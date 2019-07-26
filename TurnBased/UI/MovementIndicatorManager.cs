@@ -10,7 +10,7 @@ using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
-namespace TurnBased.HUD
+namespace TurnBased.UI
 {
     public class MovementIndicatorManager : MonoBehaviour
     {
@@ -20,10 +20,14 @@ namespace TurnBased.HUD
         void Awake()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
+
+            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, HandleToggleMovementIndicator);
         }
 
         void OnDestroy()
         {
+            HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, HandleToggleMovementIndicator);
+
             if (!_rangeInner.IsNullOrDestroyed())
                 Destroy(_rangeInner.gameObject);
 
@@ -35,7 +39,7 @@ namespace TurnBased.HUD
         {
             if (IsInCombat())
             {
-                UnitEntityData unit = ShowMovementIndicatorOnHoverUI ? Mod.Core.CombatTrackerManager.HoveringUnit : null;
+                UnitEntityData unit = ShowMovementIndicatorOnHoverUI ? Mod.Core.UI.CombatTracker.HoveringUnit : null;
                 float radiusInner = 0f;
                 float radiusOuter = 0f;
 
@@ -46,7 +50,7 @@ namespace TurnBased.HUD
                 }
                 else
                 {
-                    TurnController currentTurn = Mod.Core.RoundController.CurrentTurn;
+                    TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
                     if (currentTurn != null)
                     {
                         unit = currentTurn.Unit;
@@ -106,6 +110,11 @@ namespace TurnBased.HUD
             DontDestroyOnLoad(tbMovementIndicatorManager._rangeOuter.gameObject);
 
             return tbMovementIndicatorManager;
+        }
+
+        private void HandleToggleMovementIndicator()
+        {
+            ShowMovementIndicatorOfCurrentUnit = !ShowMovementIndicatorOfCurrentUnit;
         }
     }
 }

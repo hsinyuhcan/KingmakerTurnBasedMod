@@ -51,11 +51,11 @@ namespace TurnBased.Menus
 
             if (!string.IsNullOrEmpty(_waitingHotkeyName) && HotkeyHelper.ReadKey(out BindingKeysData newKey))
             {
-                Mod.Core.HotkeyController.SetHotkey(_waitingHotkeyName, newKey);
+                Mod.Core.Hotkeys.SetHotkey(_waitingHotkeyName, newKey);
                 _waitingHotkeyName = null;
             }
 
-            IReadOnlyDictionary<string, BindingKeysData> hotkeys = Mod.Core.HotkeyController.GetHotkeysCopy();
+            IDictionary<string, BindingKeysData> hotkeys = Mod.Core.Hotkeys.BindingKeys;
 
             using (new GUILayout.HorizontalScope())
             {
@@ -100,7 +100,7 @@ namespace TurnBased.Menus
                     {
                         if (GUILayout.Button($"Clear", _buttonStyle))
                         {
-                            Mod.Core.HotkeyController.SetHotkey(name, null);
+                            Mod.Core.Hotkeys.SetHotkey(name, null);
 
                             if (_waitingHotkeyName == name)
                                 _waitingHotkeyName = null;

@@ -27,7 +27,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.Controllers
 {
-    public class RoundController : 
+    public class CombatController : 
         IModEventHandler,
         IPartyCombatHandler,
         ISceneHandler,
@@ -46,7 +46,7 @@ namespace TurnBased.Controllers
         private readonly UnitsOrderComaprer _unitsOrderComaprer = new UnitsOrderComaprer();
         private bool _unitsSorted;
 
-        public readonly HashSet<RayView> TickedRayView = new HashSet<RayView>();
+        internal readonly HashSet<RayView> TickedRayView = new HashSet<RayView>();
 
         public bool Enabled {
             get => _enabled;
@@ -63,7 +63,7 @@ namespace TurnBased.Controllers
 
         public TurnController CurrentTurn { get; private set; }
 
-        public void Tick()
+        internal void Tick()
         {
             // fix when the combat end by a cutscenes, HandlePartyCombatStateChanged will not be triggered
             if (_units.Count == 0)
@@ -95,7 +95,7 @@ namespace TurnBased.Controllers
                 }
 
                 // pick the next unit
-                UnitEntityData nextUnit = GetSortedUnitsInCombat().First();
+                UnitEntityData nextUnit = GetSortedUnits().First();
                 if (nextUnit.GetTimeToNextTurn() <= 0f && nextUnit.CanPerformAction())
                 {
                     InitTurn(nextUnit);
@@ -104,7 +104,7 @@ namespace TurnBased.Controllers
             }
         }
 
-        public void TickTime()
+        internal void TickTime()
         {
             if (CurrentTurn == null)
             {
@@ -116,7 +116,7 @@ namespace TurnBased.Controllers
 
                 // trim the delta time, when a turn will start at the end of this tick
                 TimeController timeController = Game.Instance.TimeController;
-                float timeToNextTurn = GetSortedUnitsInCombat().First().GetTimeToNextTurn();
+                float timeToNextTurn = GetSortedUnits().First().GetTimeToNextTurn();
                 if (timeController.GameDeltaTime > timeToNextTurn && timeToNextTurn != 0f)
                 {
                     timeController.SetPropertyValue(nameof(TimeController.DeltaTime), timeToNextTurn);
@@ -141,15 +141,10 @@ namespace TurnBased.Controllers
             }
 
             // set game time
-            Game.Instance.Player.GameTime = GetGameTime();
+            Game.Instance.Player.GameTime = _combatStartTime + TimeSpan.FromSeconds(_combatPassedTime);
         }
 
-        public TimeSpan GetGameTime()
-        {
-            return _combatStartTime + TimeSpan.FromSeconds(_combatPassedTime);
-        }
-
-        public IEnumerable<UnitEntityData> GetSortedUnitsInCombat()
+        public IEnumerable<UnitEntityData> GetSortedUnits()
         {
             if (!_unitsSorted)
             {
@@ -159,16 +154,16 @@ namespace TurnBased.Controllers
             return _units;
         }
 
+        public bool IsSurprising(UnitEntityData unit)
+        {
+            return _isSurpriseRound && _unitsInSupriseRound.Contains(unit);
+        }
+
         public void InitTurn(UnitEntityData unit)
         {
             CurrentTurn = new TurnController(unit);
             CurrentTurn.OnDelay += HandleDelayTurn;
             CurrentTurn.OnEnd += HandleEndTurn;
-        }
-
-        public bool IsSurprising(UnitEntityData unit)
-        {
-            return _isSurpriseRound && _unitsInSupriseRound.Contains(unit);
         }
 
         private void AddUnit(UnitEntityData unit)
@@ -244,26 +239,10 @@ namespace TurnBased.Controllers
             }
 
             // ability modifications
-            Mod.Core.UpdateChargeAbility();
-            Mod.Core.UpdateVitalStrikeAbility();
+            Mod.Core.Blueprint.Update();
         }
 
         #region Event Handlers
-
-        private void HandleToggleTurnBasedMode()
-        {
-            Enabled = !Enabled;
-        }
-
-        private void HandleToggleMovementIndicator()
-        {
-            ShowMovementIndicatorOfCurrentUnit = !ShowMovementIndicatorOfCurrentUnit;
-        }
-
-        private void HandleToggleAttackIndicator()
-        {
-            ShowAttackIndicatorOfCurrentUnit = !ShowAttackIndicatorOfCurrentUnit;
-        }
 
         private void HandleDelayTurn(UnitEntityData unit, UnitEntityData targetUnit)
         {
@@ -287,13 +266,9 @@ namespace TurnBased.Controllers
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Mod.Core.RoundController = this;
             EventBus.Subscribe(this);
 
-            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
-            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, HandleToggleMovementIndicator);
-            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
-
+            Mod.Core.Combat = this;
             Reset(true);
         }
 
@@ -301,14 +276,19 @@ namespace TurnBased.Controllers
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Reset(false);
-
-            HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
-            HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, HandleToggleMovementIndicator);
-            HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
-
             EventBus.Unsubscribe(this);
-            Mod.Core.RoundController = null;
+
+            Reset(false);
+            Mod.Core.Combat = null;
+        }
+
+        public void OnAreaBeginUnloading() { }
+
+        public void OnAreaDidLoad()
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod());
+
+            Reset(false);
         }
 
         public void HandlePartyCombatStateChanged(bool inCombat)
@@ -399,22 +379,6 @@ namespace TurnBased.Controllers
             }
         }
 
-        public void OnAreaBeginUnloading() { }
-
-        public void OnAreaDidLoad()
-        {
-            Mod.Debug(MethodBase.GetCurrentMethod());
-
-            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
-            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, HandleToggleMovementIndicator);
-            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
-
-            Reset(false);
-
-            Mod.Core.LastTickTimeOfAbilityExecutionProcess.Clear();
-            Mod.Core.PathfindingUnit = null;
-        }
-
         // ** fix touch spell (disallow touch more than once in the same round)
         public void HandleUnitCommandDidAct(UnitCommand command)
         {
@@ -438,7 +402,7 @@ namespace TurnBased.Controllers
 
         #endregion
 
-        private class UnitsOrderComaprer : IComparer<UnitEntityData>
+        public class UnitsOrderComaprer : IComparer<UnitEntityData>
         {
             public int Compare(UnitEntityData x, UnitEntityData y)
             {

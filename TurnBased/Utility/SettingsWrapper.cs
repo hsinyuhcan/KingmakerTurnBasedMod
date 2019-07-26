@@ -34,7 +34,7 @@ namespace TurnBased.Utility
                 if (Mod.Settings.toggleSetChargeAsFullRoundAction != value)
                 {
                     Mod.Settings.toggleSetChargeAsFullRoundAction = value;
-                    Mod.Core.UpdateChargeAbility();
+                    Mod.Core.Blueprint.UpdateChargeAbility();
                 }
             } 
         }
@@ -45,7 +45,7 @@ namespace TurnBased.Utility
                 if (Mod.Settings.toggleSetVitalStrikeAsStandardAction != value)
                 {
                     Mod.Settings.toggleSetVitalStrikeAsStandardAction = value;
-                    Mod.Core.UpdateVitalStrikeAbility();
+                    Mod.Core.Blueprint.UpdateVitalStrikeAbility();
                 }
             }
         }

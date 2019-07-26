@@ -6,7 +6,7 @@ using Kingmaker.Visual;
 using Kingmaker.Visual.Decals;
 using UnityEngine;
 
-namespace TurnBased.HUD
+namespace TurnBased.UI
 {
     public class RangeIndicatorManager : MonoBehaviour
     {
@@ -32,6 +32,12 @@ namespace TurnBased.HUD
         void Awake()
         {
             _decals = gameObject.GetComponentsInChildren<GUIDecal>();
+        }
+
+        void OnDestroy()
+        {
+            DOTween.Pause(this);
+            DOTween.Kill(this, false);
         }
 
         public static RangeIndicatorManager CreateObject(GameObject aoeRange, string name, bool hasBackground = true)

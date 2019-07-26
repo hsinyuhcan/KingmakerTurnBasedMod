@@ -93,22 +93,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\BlueprintController.cs" />
     <Compile Include="HarmonyPatches\AttackOfOpportunity.cs" />
     <Compile Include="HarmonyPatches\ChargeAbility.cs" />
     <Compile Include="HarmonyPatches\CollisionDetection.cs" />
     <Compile Include="HarmonyPatches\ConfusionCondition.cs" />
     <Compile Include="HarmonyPatches\ActionCooldowns.cs" />
-    <Compile Include="HarmonyPatches\HUD.cs" />
+    <Compile Include="HarmonyPatches\UI.cs" />
     <Compile Include="HarmonyPatches\MagusAbilities.cs" />
     <Compile Include="HarmonyPatches\SurpriseRound.cs" />
     <Compile Include="Utility\MiscExtensions.cs" />
     <Compile Include="Utility\UnitCommandExtensions.cs" />
     <Compile Include="HarmonyPatches\TimeFlow.cs" />
     <Compile Include="HarmonyPatches\Misc.cs" />
-    <Compile Include="HUD\AttackIndicatorManager.cs" />
-    <Compile Include="Controllers\HUDController.cs" />
-    <Compile Include="HUD\MovementIndicatorManager.cs" />
-    <Compile Include="HUD\RangeIndicatorManager.cs" />
+    <Compile Include="UI\AttackIndicatorManager.cs" />
+    <Compile Include="Controllers\UIController.cs" />
+    <Compile Include="UI\MovementIndicatorManager.cs" />
+    <Compile Include="UI\RangeIndicatorManager.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Menus\DebugInformation.cs" />
     <Compile Include="Menus\InterfaceOptions.cs" />
@@ -122,9 +123,9 @@
     <Compile Include="Controllers\HotkeyController.cs" />
     <Compile Include="Utility\SettingsWrapper.cs" />
     <Compile Include="Utility\StatusWrapper.cs" />
-    <Compile Include="HUD\CombatTrackerManager.cs" />
-    <Compile Include="HUD\UnitButtonManager.cs" />
-    <Compile Include="Controllers\RoundController.cs" />
+    <Compile Include="UI\CombatTrackerManager.cs" />
+    <Compile Include="UI\UnitButtonManager.cs" />
+    <Compile Include="Controllers\CombatController.cs" />
     <Compile Include="Controllers\TurnController.cs" />
   </ItemGroup>
   <ItemGroup>

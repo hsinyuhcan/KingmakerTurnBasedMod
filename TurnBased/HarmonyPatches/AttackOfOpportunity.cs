@@ -15,7 +15,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    internal static class AttackOfOpportunity
+    static class AttackOfOpportunity
     {
         // fix sometimes the game won't consider a unit is moved even if it's moved, caused AOO inconsistent
         [HarmonyPatch(typeof(UnitMoveController), nameof(UnitMoveController.Tick))]
@@ -68,7 +68,7 @@ namespace TurnBased.HarmonyPatches
                     __state = __instance.LastTarget;
                     __instance.LastTarget = target;
 
-                    if (target.IsCurrentUnit() && Mod.Core.RoundController.CurrentTurn.ImmuneAttackOfOpportunityOnDisengage)
+                    if (target.IsCurrentUnit() && Mod.Core.Combat.CurrentTurn.ImmuneAttackOfOpportunityOnDisengage)
                     {
                         __result = false;
                         return false;
