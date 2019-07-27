@@ -1,5 +1,6 @@
 ﻿Version 0.9.32
     Added the "Try To Avoid Overlapping When Moving Through Friends" option
+	Changed the combat tracker won't be shown during a dialogue anymore
     Fixed the "Fix x as y action" options are accidentally broken by the previous update
 	Fixed units won't leave combat when their in-game state changes (caused Call Forth Kanerah/Kalikke glitch)
 
