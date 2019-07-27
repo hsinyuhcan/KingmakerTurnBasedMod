@@ -2,6 +2,7 @@
 using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers;
 using Kingmaker.Controllers.Combat;
+using Kingmaker.EntitySystem;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.PubSubSystem;
 using Kingmaker.RuleSystem.Rules;
@@ -29,6 +30,7 @@ namespace TurnBased.Controllers
 {
     public class CombatController : 
         IModEventHandler,
+        IInGameHandler,
         IPartyCombatHandler,
         ISceneHandler,
         IUnitCombatHandler,
@@ -182,9 +184,11 @@ namespace TurnBased.Controllers
                 CurrentTurn = null;
             }
 
-            _units.Remove(unit);
-            _unitsInSupriseRound.Remove(unit);
-            _unitsSorted = false;
+            if (_units.Remove(unit))
+            {
+                _unitsInSupriseRound.Remove(unit);
+                _unitsSorted = false;
+            }
         }
 
         private void Reset(bool tryToInitialize, bool isPartyCombatStateChanged = false)
@@ -211,7 +215,7 @@ namespace TurnBased.Controllers
                     Game.Instance.UI.SelectionManager?.SelectAll();
             }
 
-            // Initializing
+            // initializing
             if (tryToInitialize && Enabled && Game.Instance.Player.IsInCombat)
             {
                 _units.AddRange(Game.Instance.State.Units.Where(unit => unit.IsInCombat));
@@ -248,9 +252,8 @@ namespace TurnBased.Controllers
         {
             if (unit != targetUnit)
             {
-                _units.Insert(_units.IndexOf(targetUnit) + 1, unit);
                 RemoveUnit(unit);
-
+                _units.Insert(_units.IndexOf(targetUnit) + 1, unit);
                 if (_isSurpriseRound && IsSurprising(targetUnit))
                     _unitsInSupriseRound.Add(unit);
             }
@@ -258,8 +261,8 @@ namespace TurnBased.Controllers
 
         private void HandleEndTurn(UnitEntityData unit)
         {
-            _units.Add(unit);
             RemoveUnit(unit);
+            _units.Add(unit);
         }
 
         public void HandleModEnable()
@@ -343,7 +346,7 @@ namespace TurnBased.Controllers
             else
             {
                 // if a unit joins the combat in the middle of the combat, it has to wait for exact one round (6s) to act
-                // summoned units has a buff forcing them to wait for 6s, so they don't need the action coolsown
+                // summoned units has a buff forcing them to wait for 6s, so they don't need the action cooldown
                 cooldown.Initiative = 
                     unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) ? 0f : 6f;
             }
@@ -376,6 +379,20 @@ namespace TurnBased.Controllers
             if (CombatInitialized)
             {
                 RemoveUnit(entityData);
+            }
+        }
+
+        // fix units stays in-combat state while their in-game state changes (caused Call Forth Kanerah/Kalikke glitch)
+        public void HandleObjectInGameChaged(EntityDataBase entityData)
+        {
+            if (entityData is UnitEntityData unit)
+            {
+                Mod.Debug(MethodBase.GetCurrentMethod(), entityData);
+
+                if (!unit.IsInGame && unit.IsInCombat)
+                {
+                    unit.LeaveCombat();
+                }
             }
         }
 
