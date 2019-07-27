@@ -18,7 +18,7 @@ namespace TurnBased.Controllers
         private bool? _backupChargeIsFullRoundAction;
         private bool[] _backupVitalStrikeIsFullRoundAction;
 
-        public LibraryScriptableObject LibraryObject = typeof(ResourcesLibrary).GetFieldValue<LibraryScriptableObject>("s_LibraryObject");
+        public LibraryScriptableObject LibraryObject => typeof(ResourcesLibrary).GetFieldValue<LibraryScriptableObject>("s_LibraryObject");
 
         public void Update()
         {
