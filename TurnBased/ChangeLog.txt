@@ -1,4 +1,5 @@
 ﻿Version 0.9.32
+    Added the "Try To Avoid Overlapping When Moving Through Friends" option
     Fixed the "Fix x as y action" options are accidentally broken by the previous update
 
 Version 0.9.31
@@ -51,7 +52,7 @@ Version 0.9.24
 Version 0.9.23
     Added an option to fix the cost of action to start Bardic Performance
     Fixed sometimes a Charge ability would be interrupted due to an unexpected obstacle
-    Fixed if a unit used Charge ability on its turn, other units can move through or stack with the charged unit in the next one second (game time)
+    Fixed if a unit used Charge ability on its turn, other units can move through or overlap with the charged unit in the next one second
 
 Version 0.9.22
     Added the "Auto Select The Entire Party After Combat End" option
