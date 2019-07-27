@@ -1,7 +1,5 @@
 ﻿using Harmony12;
-using Kingmaker.EntitySystem.Entities;
 using Kingmaker.View;
-using Pathfinding;
 using TurnBased.Utility;
 using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
@@ -11,49 +9,17 @@ namespace TurnBased.HarmonyPatches
 {
     static class CollisionDetection
     {
-
         // moving through friend feature
-        [HarmonyPatch(typeof(UnitMovementAgent), "UpdateUnitAvoidance")]
-        static class UnitMovementAgent_UpdateUnitAvoidance_Patch
+        [HarmonyPatch(typeof(UnitMovementAgent), nameof(UnitMovementAgent.AvoidanceDisabled), MethodType.Getter)]
+        static class UnitMovementAgent_AvoidanceDisabled_Patch
         {
             [HarmonyPrefix]
-            static bool Prefix(UnitMovementAgent __instance, UnitEntityData unit)
+            static void Postfix(UnitMovementAgent __instance, ref bool __result)
             {
-                return !IsInCombat() || !(__instance.Unit?.EntityData).CanMoveThrough(unit);
-            }
-        }
-
-        // moving through friend feature
-        [HarmonyPatch(typeof(UnitMovementAgent), "OnPathComplete", typeof(Path))]
-        static class UnitMovementAgent_OnPathComplete_Patch
-        {
-            [HarmonyPrefix]
-            static void Prefix(UnitMovementAgent __instance)
-            {
-                if (IsInCombat())
+                if (IsInCombat() && !__result)
                 {
-                    Mod.Core.PathfindingUnit = __instance.Unit?.EntityData;
+                    __result = (Mod.Core.Combat.CurrentTurn?.Unit).CanMoveThrough(__instance.Unit?.EntityData);
                 }
-            }
-
-            [HarmonyPostfix]
-            static void Postfix()
-            {
-                if (IsInCombat())
-                {
-                    Mod.Core.PathfindingUnit = null;
-                }
-            }
-        }
-
-        // moving through friend feature
-        [HarmonyPatch(typeof(ObstaclePathfinder), "IntersectObstacle")]
-        static class ObstaclePathfinder_IntersectObstacle_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitMovementAgent unit)
-            {
-                return !IsInCombat() || !Mod.Core.PathfindingUnit.CanMoveThrough(unit.Unit?.EntityData);
             }
         }
 

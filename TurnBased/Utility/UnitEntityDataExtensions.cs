@@ -32,10 +32,35 @@ namespace TurnBased.Utility
 
         public static bool CanMoveThrough(this UnitEntityData unit, UnitEntityData target)
         {
-            return unit != null && target != null &&
+            return unit != null && target != null && unit != target &&
                 (!MovingThroughOnlyAffectPlayer || unit.IsPlayerFaction) &&
                 (!MovingThroughOnlyAffectNonEnemies || !unit.IsPlayersEnemy) &&
-                ((MovingThroughNonEnemies && !unit.IsEnemy(target)) || (MovingThroughFriends && unit.IsAlly(target)));
+                ((MovingThroughNonEnemies && !unit.IsEnemy(target)) || (MovingThroughFriends && unit.IsAlly(target))) &&
+                (!AvoidOverlapping || !unit.JustOverlapping(target));
+        }
+
+        private static bool JustOverlapping(this UnitEntityData unit, UnitEntityData target)
+        {
+            Vector3? destination = unit.View.AgentASP.GetFieldValue<UnitMovementAgent, Vector3?>("m_Destination");
+
+            if (!destination.HasValue)
+                return false;
+
+            float minDistance = unit.View.AgentASP.Corpulence + target.View.AgentASP.Corpulence;
+
+            // the destination is not where the unit is intended to stop at, so we have to step back
+            destination = destination.Value + (unit.Position - destination.Value).normalized * unit.View.AgentASP.ApproachRadius;
+
+            // if the destination is going to overlap with target, forbid this behavior
+            if (target.DistanceTo(destination.Value) < minDistance)
+                return true;
+
+            // if the unit doesn't have enough movement to go through the target, forbid it from going through
+            if (unit.IsCurrentUnit())
+                return Mod.Core.Combat.CurrentTurn.GetRemainingMovementRange(true) < 
+                    Math.Min(unit.DistanceTo(target) + minDistance, unit.DistanceTo(destination.Value));
+
+            return false;
         }
 
         public static bool CanPerformAction(this UnitEntityData unit)

@@ -74,7 +74,7 @@ namespace TurnBased.Menus
 
             MovingThroughFriends =
                 GUIHelper.ToggleButton(MovingThroughFriends,
-                "Moving Through Friend﻿s" +
+                "Moving Through Friends" +
                 " (Units can move through allies)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             MovingThroughNonEnemies =
@@ -89,6 +89,10 @@ namespace TurnBased.Menus
             MovingThroughOnlyAffectNonEnemies =
                 GUIHelper.ToggleButton(MovingThroughOnlyAffectNonEnemies,
                 "Moving Through ... Only Affect Non-Enemies", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            AvoidOverlapping =
+                GUIHelper.ToggleButton(AvoidOverlapping,
+                "Try To Avoid Overlapping When Moving Through Friends", _buttonStyle, GUILayout.ExpandWidth(false));
 
             GUILayout.Space(10f);
 

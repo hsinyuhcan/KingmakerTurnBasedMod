@@ -13,11 +13,12 @@ namespace TurnBased
         public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
         public float distanceOfFiveFootStep = 1.5f;
 
-        public bool toggleMovingThroughFriends;
+        public bool toggleMovingThroughFriends = true;
         public bool toggleMovingThroughNonEnemies;
-        public bool toggleMovingThroughOnlyAffectPlayer = true;
+        public bool toggleMovingThroughOnlyAffectPlayer;
         public bool toggleMovingThroughOnlyAffectNonEnemies;
-        public float radiusOfCollision = 0.7f;
+        public bool toggleAvoidOverlapping = true;
+        public float radiusOfCollision = 0.9f;
 
         public bool toggleAutoTurnOffPlayerAI = true;
         public bool toggleAutoTurnOnPlayerAI = true;

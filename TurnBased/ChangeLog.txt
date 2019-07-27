@@ -1,6 +1,12 @@
-﻿Version 0.9.31
+﻿Version 0.9.32
+    Added the "Try To Avoid Overlapping When Moving Through Friends" option
+	Changed the combat tracker won't be shown during a dialogue anymore
+    Fixed the "Fix x as y action" options are accidentally broken by the previous update
+	Fixed units won't leave combat when their in-game state changes (caused Call Forth Kanerah/Kalikke glitch)
+
+Version 0.9.31
 	Added the Unity Mod Manager support for checking the availability of updates
-	Fixed th "Auto Turn On AI ..." option "is accidentally binding to the "Auto Turn Off AI ..." option
+	Fixed the "Auto Turn On AI ..." option "is accidentally binding to the "Auto Turn Off AI ..." option
 	
 Version 0.9.30
     Added a temporary bugfix, which fix a vanilla bug that the ability circle won't show up if you first select it via hotkey
@@ -48,7 +54,7 @@ Version 0.9.24
 Version 0.9.23
     Added an option to fix the cost of action to start Bardic Performance
     Fixed sometimes a Charge ability would be interrupted due to an unexpected obstacle
-    Fixed if a unit used Charge ability on its turn, other units can move through or stack with the charged unit in the next one second (game time)
+    Fixed if a unit used Charge ability on its turn, other units can move through or overlap with the charged unit in the next one second
 
 Version 0.9.22
     Added the "Auto Select The Entire Party After Combat End" option
@@ -104,7 +110,7 @@ Version 0.9.16
 Version 0.9.15
     Improved combat UI, better skin and offering more info
     Improved time accuracy
-    Implemented "Moving Through Friend﻿" as an option
+    Implemented "Moving Through Friend﻿s" as an option
     Changed some code logic, supposed to make it work more properly, but might cause new bugs
     Fixed the turn will be more than 6s if the time goes too fast
     Fixed the confusion effects sometimes does not work properly

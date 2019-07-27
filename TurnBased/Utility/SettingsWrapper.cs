@@ -121,6 +121,11 @@ namespace TurnBased.Utility
             }
         }
 
+        public static bool AvoidOverlapping {
+            get => Mod.Settings.toggleAvoidOverlapping;
+            set => Mod.Settings.toggleAvoidOverlapping = value;
+        }
+
         public static float RadiusOfCollision {
             get => Mod.Settings.radiusOfCollision;
             set => Mod.Settings.radiusOfCollision = value;
