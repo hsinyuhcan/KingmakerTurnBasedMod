@@ -108,7 +108,7 @@ Version 0.9.16
 Version 0.9.15
     Improved combat UI, better skin and offering more info
     Improved time accuracy
-    Implemented "Moving Through Friend﻿" as an option
+    Implemented "Moving Through Friend﻿s" as an option
     Changed some code logic, supposed to make it work more properly, but might cause new bugs
     Fixed the turn will be more than 6s if the time goes too fast
     Fixed the confusion effects sometimes does not work properly

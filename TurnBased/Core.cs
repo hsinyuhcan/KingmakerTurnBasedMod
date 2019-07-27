@@ -17,7 +17,6 @@ namespace TurnBased
         ISceneHandler
     {
         internal Dictionary<AbilityExecutionProcess, TimeSpan> LastTickTimeOfAbilityExecutionProcess = new Dictionary<AbilityExecutionProcess, TimeSpan>();
-        internal UnitEntityData PathfindingUnit;
 
         public BlueprintController Blueprint { get; internal set; } = new BlueprintController();
 
@@ -57,7 +56,6 @@ namespace TurnBased
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
 
             Mod.Core.LastTickTimeOfAbilityExecutionProcess.Clear();
-            Mod.Core.PathfindingUnit = null;
         }
     }
 }

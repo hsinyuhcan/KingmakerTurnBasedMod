@@ -32,7 +32,7 @@ namespace TurnBased.Utility
 
         public static bool CanMoveThrough(this UnitEntityData unit, UnitEntityData target)
         {
-            return unit != null && target != null &&
+            return unit != null && target != null && unit != target &&
                 (!MovingThroughOnlyAffectPlayer || unit.IsPlayerFaction) &&
                 (!MovingThroughOnlyAffectNonEnemies || !unit.IsPlayersEnemy) &&
                 ((MovingThroughNonEnemies && !unit.IsEnemy(target)) || (MovingThroughFriends && unit.IsAlly(target))) &&
