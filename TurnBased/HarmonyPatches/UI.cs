@@ -1,6 +1,5 @@
 ﻿using Harmony12;
 using Kingmaker.EntitySystem.Entities;
-using Kingmaker.UI.ActionBar;
 using Kingmaker.UI.Inspect;
 using Kingmaker.UI.Selection;
 using Kingmaker.UI.Tooltip;
@@ -47,34 +46,6 @@ namespace TurnBased.HarmonyPatches
                     return false;
                 }
                 return true;
-            }
-        }
-
-        // disable the attack indicator when the mouse hovering on an ability icon 
-        [HarmonyPatch(typeof(ActionBarSlot), nameof(ActionBarSlot.Hover), typeof(bool))]
-        static class ActionBarSlot_Hover_Patch
-        {
-            [HarmonyPostfix]
-            static void Postfix(bool state)
-            {
-                if (IsInCombat())
-                {
-                    Mod.Core.UI.AttackIndicator.Disabled = state;
-                }
-            }
-        }
-
-        // disable the attack indicator when the mouse hovering on an ability icon 
-        [HarmonyPatch(typeof(ActionBarIndexSlot), nameof(ActionBarSlot.Hover), typeof(bool))]
-        static class ActionBarIndexSlot_Hover_Patch
-        {
-            [HarmonyPostfix]
-            static void Postfix(bool state)
-            {
-                if (IsInCombat())
-                {
-                    Mod.Core.UI.AttackIndicator.Disabled = state;
-                }
             }
         }
 

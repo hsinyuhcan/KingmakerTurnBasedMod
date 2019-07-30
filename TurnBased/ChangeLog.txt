@@ -2,6 +2,7 @@
 	Fixed queued actions can't be canceled on turn start (e.g Kinetic Blade and Gather Power)
 	Fixed queued actions can't trigger a surprise round
 	Fixed Kineticist doesn't remove the previous command if you command it to attack with Kinetic Blade before the combat
+	Fixed the small circle under the in-range ability targets is hidden when the attack indicator option is enabled
 
 Version 0.9.32
     Added the "Try To Avoid Overlapping When Moving Through Friends" option
