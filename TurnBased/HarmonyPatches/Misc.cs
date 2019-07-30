@@ -9,9 +9,12 @@ using Kingmaker.EntitySystem.Entities;
 using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
 using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
+using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.Visual.Decals;
 using ModMaker.Utility;
+using System;
 using System.Linq;
 using TurnBased.Controllers;
 using TurnBased.Utility;
@@ -134,6 +137,41 @@ namespace TurnBased.HarmonyPatches
                 if (__state.HasValue)
                 {
                     Game.Instance.TimeController.SetPropertyValue(nameof(TimeController.GameDeltaTime), __state.Value);
+                }
+            }
+        }
+
+        // fix Kineticist won't remove the previous command if you command it to attack with Kinetic Blade before the combat
+        [HarmonyPatch(typeof(KineticistController), "TryRunKineticBladeActivationAction")]
+        static class KineticistController_TryRunKineticBladeActivationAction_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix(UnitCommand cmd, ref UnitCommands.CustomHandlerData? customHandler)
+            {
+                if (IsEnabled() && customHandler.HasValue && (customHandler.Value.ExecuteBefore ?? cmd) != cmd)
+                {
+                    UnitCommands commands = cmd.Executor.Commands;
+
+                    // remove conflicting command
+                    UnitCommand prior = commands.Raw[(int)cmd.Type] ??
+                        GetMethod<UnitCommands, Func<UnitCommands, UnitCommand, UnitCommand>>("GetPaired")(commands, cmd);
+                    if (Game.Instance.IsPaused && commands.PreviousCommand == null && prior != null && prior.IsRunning)
+                    {
+                        commands.PreviousCommand = prior;
+                        commands.PreviousCommand.SuppressAnimation();
+                        commands.Raw[(int)commands.PreviousCommand.Type] = null;
+                    }
+                    else
+                    {
+                        GetMethod<UnitCommands, Action<UnitCommands, UnitCommand.CommandType>>
+                            ("InterruptAndRemoveCommand")(commands, cmd.Type);
+                    }
+
+                    // update target
+                    if (cmd.Type == UnitCommand.CommandType.Standard || commands.Standard == null)
+                    {
+                        GetMethod<UnitCommands, Action<UnitCommands, UnitCommand>>("UpdateCombatTarget")(null, cmd);
+                    }
                 }
             }
         }
