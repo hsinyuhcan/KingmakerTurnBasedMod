@@ -9,7 +9,6 @@ using Kingmaker.Utility;
 using System;
 using System.Linq;
 using TurnBased.Utility;
-using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased.Controllers
@@ -217,8 +216,7 @@ namespace TurnBased.Controllers
             Unit.Logic.CallFactComponents<ITickEachRound>(logic => logic.OnNewRound());
 
             // UnitConfusionController.TickOnUnit() - set the effect of confution
-            GetMethod<UnitConfusionController, Action<UnitConfusionController, UnitEntityData>>
-                ("TickOnUnit")(new UnitConfusionController(), Unit);
+            new UnitConfusionController().TickOnUnit(Unit);
 
             // reset the counter of AOO
             if (CombatState.AttackOfOpportunityPerRound > 0 &&

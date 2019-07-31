@@ -1,8 +1,6 @@
 ﻿using Harmony12;
 using Kingmaker.UnitLogic.Commands;
-using ModMaker.Utility;
 using TurnBased.Utility;
-using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Main;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -19,7 +17,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && __instance.Executor.IsCurrentUnit())
                 {
-                    __instance.SetPropertyValue(nameof(UnitDoNothing.TimeSinceStart), 6f);
+                    __instance.SetTimeSinceStart(6f);
                     Mod.Core.Combat.CurrentTurn.ForceToEnd();
                 }
             }

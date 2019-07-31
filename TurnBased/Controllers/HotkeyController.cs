@@ -4,7 +4,6 @@ using Kingmaker.UI.SettingsUI;
 using ModMaker;
 using ModMaker.Utility;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;

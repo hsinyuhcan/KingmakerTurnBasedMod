@@ -13,6 +13,16 @@ namespace TurnBased.Utility
         {
             return command.GetFieldValue<UnitAttack, int>("m_AttackIndex");
         }
+        
+        public static void SetIsActed(this UnitCommand command, bool value)
+        {
+            command.SetPropertyValue(nameof(UnitCommand.IsActed), value);
+        }
+
+        public static void SetTimeSinceStart(this UnitCommand command, float value)
+        {
+            command.SetPropertyValue(nameof(UnitDoNothing.TimeSinceStart), value);
+        }
 
         public static bool IsFullAttack(this UnitCommand command)
         {

@@ -1,4 +1,5 @@
-﻿using Kingmaker.Controllers.Combat;
+﻿using Kingmaker.Blueprints;
+using Kingmaker.Controllers.Combat;
 using Kingmaker.Enums;
 using Kingmaker.Items;
 using Kingmaker.UnitLogic.Commands;
@@ -8,6 +9,11 @@ namespace TurnBased.Utility
 {
     public static class MiscExtensions
     {
+        public static T Get<T>(this LibraryScriptableObject library, string assetId) where T : BlueprintScriptableObject
+        {
+            return library.BlueprintsByAssetId[assetId] as T;
+        }
+
         public static void Clear(this UnitCombatState.Cooldowns cooldown)
         {
             cooldown.Initiative = 0f;

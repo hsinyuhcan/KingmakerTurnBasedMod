@@ -1,5 +1,4 @@
 ﻿using Kingmaker.Controllers;
-using Kingmaker.EntitySystem.Entities;
 using Kingmaker.PubSubSystem;
 using ModMaker;
 using ModMaker.Utility;

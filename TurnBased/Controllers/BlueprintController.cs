@@ -1,6 +1,7 @@
 ﻿using Kingmaker.Blueprints;
 using Kingmaker.UnitLogic.Abilities.Blueprints;
 using System.Linq;
+using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
@@ -18,7 +19,8 @@ namespace TurnBased.Controllers
         private bool? _backupChargeIsFullRoundAction;
         private bool[] _backupVitalStrikeIsFullRoundAction;
 
-        public LibraryScriptableObject LibraryObject => typeof(ResourcesLibrary).GetFieldValue<LibraryScriptableObject>("s_LibraryObject");
+        public LibraryScriptableObject LibraryObject 
+            => typeof(ResourcesLibrary).GetFieldValue<LibraryScriptableObject>("s_LibraryObject");
 
         public void Update()
         {
@@ -28,33 +30,33 @@ namespace TurnBased.Controllers
 
         public void UpdateChargeAbility()
         {
-            LibraryScriptableObject libraryObject = LibraryObject;
-            if (libraryObject != null)
+            LibraryScriptableObject library = LibraryObject;
+            if (library != null)
             {
                 if (!_backupChargeIsFullRoundAction.HasValue)
                     _backupChargeIsFullRoundAction =
-                        (libraryObject.BlueprintsByAssetId["c78506dd0e14f7c45a599990e4e65038"] as BlueprintAbility).IsFullRoundAction;
+                        library.Get<BlueprintAbility>("c78506dd0e14f7c45a599990e4e65038").IsFullRoundAction;
 
                 bool modify = Mod.Core.Combat.CombatInitialized && SetChargeAsFullRoundAction;
-                (libraryObject.BlueprintsByAssetId["c78506dd0e14f7c45a599990e4e65038"] as BlueprintAbility)
-                    .SetFieldValue("m_IsFullRoundAction", modify ? true : _backupChargeIsFullRoundAction.Value);
+                library.Get<BlueprintAbility>("c78506dd0e14f7c45a599990e4e65038").SetIsFullRoundAction
+                    (modify ? true : _backupChargeIsFullRoundAction.Value);
             }
         }
 
         public void UpdateVitalStrikeAbility()
         {
-            LibraryScriptableObject libraryObject = LibraryObject;
-            if (libraryObject != null)
+            LibraryScriptableObject library = LibraryObject;
+            if (library != null)
             {
                 if (_backupVitalStrikeIsFullRoundAction == null)
                     _backupVitalStrikeIsFullRoundAction = _vitalStrikeAssetGuid
-                        .Select(guid => (libraryObject.BlueprintsByAssetId[guid] as BlueprintAbility).IsFullRoundAction)
+                        .Select(guid => library.Get<BlueprintAbility>(guid).IsFullRoundAction)
                         .ToArray();
 
                 bool modify = Mod.Core.Combat.CombatInitialized && SetVitalStrikeAsStandardAction;
                 for (int i = 0; i < _vitalStrikeAssetGuid.Length; i++)
-                    (libraryObject.BlueprintsByAssetId[_vitalStrikeAssetGuid[i]] as BlueprintAbility)
-                        .SetFieldValue("m_IsFullRoundAction", modify ? false : _backupVitalStrikeIsFullRoundAction[i]);
+                    library.Get<BlueprintAbility>(_vitalStrikeAssetGuid[i]).SetIsFullRoundAction
+                        (modify ? false : _backupVitalStrikeIsFullRoundAction[i]);
             }
         }
     }

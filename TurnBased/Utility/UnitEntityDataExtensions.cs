@@ -12,7 +12,6 @@ using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using Kingmaker.Visual;
-using ModMaker.Utility;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -74,7 +73,7 @@ namespace TurnBased.Utility
 
         private static bool JustOverlapping(this UnitEntityData unit, UnitEntityData target)
         {
-            Vector3? destination = unit.View.AgentASP.GetFieldValue<UnitMovementAgent, Vector3?>("m_Destination");
+            Vector3? destination = unit.View.AgentASP.GetDestination();
 
             if (!destination.HasValue)
                 return false;
@@ -240,7 +239,7 @@ namespace TurnBased.Utility
             if (view == null || view.IsHighlighted)
                 return;
 
-            UnitMultiHighlight highlighter = view.GetFieldValue<UnitEntityView, UnitMultiHighlight>("m_Highlighter");
+            UnitMultiHighlight highlighter = view.GetHighlighter();
             if (highlighter != null)
             {
                 UIRoot uiRoot = UIRoot.Instance;

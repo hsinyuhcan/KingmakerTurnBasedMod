@@ -34,13 +34,12 @@ namespace TurnBased.HarmonyPatches
                     TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
                     if (currentTurn != null && currentTurn.Unit == unit && currentTurn.EnabledFiveFootStep)
                     {
-                        GetMethod<UIDecal, Action<UIDecal, bool>>("SetHoverVisibility")
-                            (__instance, unit.CanAttackWithWeapon(__instance.Unit, currentTurn.GetRemainingMovementRange()));
+                        __instance.SetHoverVisibility(
+                            unit.CanAttackWithWeapon(__instance.Unit, currentTurn.GetRemainingMovementRange()));
                     }
                     else
                     {
-                        GetMethod<UIDecal, Action<UIDecal, bool>>("SetHoverVisibility")
-                            (__instance, unit.CanAttackWithWeapon(__instance.Unit, 0f));
+                        __instance.SetHoverVisibility(unit.CanAttackWithWeapon(__instance.Unit, 0f));
                     }
 
                     return false;

@@ -29,7 +29,7 @@ namespace TurnBased.HarmonyPatches
                 if (IsInCombat())
                 {
                     //__instance.AvoidanceDisabled = __instance.IsCharging;
-                    __instance.SetFieldValue("m_ChargeAvoidanceFinishTime", TimeSpan.Zero);
+                    __instance.SetChargeAvoidanceFinishTime(TimeSpan.Zero);
                 }
             }
         }

@@ -115,7 +115,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && __instance.Executor.IsInCombat && !__instance.IsActed)
                 {
-                    __instance.SetPropertyValue(nameof(UnitCommand.IsActed), true);
+                    __instance.SetIsActed(true);
                 }
             }
         }

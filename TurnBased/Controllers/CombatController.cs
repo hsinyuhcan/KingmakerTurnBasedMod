@@ -14,14 +14,12 @@ using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using ModMaker;
-using ModMaker.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TurnBased.Utility;
 using UnityEngine;
-using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
@@ -121,8 +119,8 @@ namespace TurnBased.Controllers
                 float timeToNextTurn = GetSortedUnits().First().GetTimeToNextTurn();
                 if (timeController.GameDeltaTime > timeToNextTurn && timeToNextTurn != 0f)
                 {
-                    timeController.SetPropertyValue(nameof(TimeController.DeltaTime), timeToNextTurn);
-                    timeController.SetPropertyValue(nameof(TimeController.GameDeltaTime), timeToNextTurn);
+                    timeController.SetDeltaTime(timeToNextTurn);
+                    timeController.SetGameDeltaTime(timeToNextTurn);
                 }
 
                 // advance time
@@ -403,7 +401,7 @@ namespace TurnBased.Controllers
             if (IsInCombat() && command.Executor.IsCurrentUnit() && (command.IsFreeTouch() || command.IsSpellStrike()))
             {
                 UnitPartTouch unitPartTouch = command.Executor.Get<UnitPartTouch>();
-                unitPartTouch.SetPropertyValue(nameof(UnitPartTouch.AppearTime), unitPartTouch.AppearTime - TimeSpan.FromSeconds(6d));
+                unitPartTouch.SetAppearTime(unitPartTouch.AppearTime - TimeSpan.FromSeconds(6d));
             }
         }
 
