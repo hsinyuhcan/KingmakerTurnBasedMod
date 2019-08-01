@@ -55,14 +55,14 @@ namespace TurnBased.Utility
             return false;
         }
 
-        public static bool IsSpellCombat(this UnitCommand command)
+        public static bool IsSpellCombatAttack(this UnitCommand command)
         {
             return command is UnitAttack &&
                 command.IsIgnoreCooldown &&
                 command.Executor.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.MagusSpellCombatBuff);
         }
 
-        public static bool IsSpellStrike(this UnitCommand command)
+        public static bool IsSpellstrikeAttack(this UnitCommand command)
         {
             return command is UnitAttack &&
                 command.IsIgnoreCooldown &&

@@ -111,7 +111,7 @@ namespace TurnBased.HarmonyPatches
                         canTick = command.Executor.IsCurrentUnit() && !IsDelaying();
 
                         if (canTick && !command.IsStarted &&
-                            command.IsSpellCombat() && !command.Executor.HasMoveAction())
+                            command.IsSpellCombatAttack() && !command.Executor.HasMoveAction())
                         {
                             command.Executor.Descriptor.RemoveFact(BlueprintRoot.Instance.SystemMechanics.MagusSpellCombatBuff);
                             command.Interrupt();

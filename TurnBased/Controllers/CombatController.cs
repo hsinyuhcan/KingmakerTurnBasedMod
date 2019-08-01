@@ -398,7 +398,7 @@ namespace TurnBased.Controllers
         // ** fix touch spell (disallow touch more than once in the same round)
         public void HandleUnitCommandDidAct(UnitCommand command)
         {
-            if (IsInCombat() && command.Executor.IsCurrentUnit() && (command.IsFreeTouch() || command.IsSpellStrike()))
+            if (IsInCombat() && command.Executor.IsCurrentUnit() && (command.IsFreeTouch() || command.IsSpellstrikeAttack()))
             {
                 UnitPartTouch unitPartTouch = command.Executor.Get<UnitPartTouch>();
                 unitPartTouch.SetAppearTime(unitPartTouch.AppearTime - TimeSpan.FromSeconds(6d));

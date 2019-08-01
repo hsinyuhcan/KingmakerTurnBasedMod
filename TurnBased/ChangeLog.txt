@@ -3,6 +3,8 @@
 	Fixed queued actions can't trigger a surprise round
 	Fixed Kineticist doesn't remove the previous command if you command it to attack with Kinetic Blade before the combat
 	Fixed the small circle under the in-range ability targets is hidden when the attack indicator option is enabled
+	Fixed Eldritch Archer can spellstrike twice in surprise round
+	Fixed Spellstrike doesn't take effect when attacking a neutral target
 
 Version 0.9.32
     Added the "Try To Avoid Overlapping When Moving Through Friends" option
