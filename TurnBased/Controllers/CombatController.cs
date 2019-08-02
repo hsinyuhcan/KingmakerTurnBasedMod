@@ -351,8 +351,17 @@ namespace TurnBased.Controllers
             {
                 // if a unit joins the combat in the middle of the combat, it has to wait for exact one round (6s) to act
                 // summoned units has a buff forcing them to wait for 6s, so they don't need the action cooldown
+                if (IsSurpriseRound)
+                {
                     cooldown.Initiative =
                         unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) ? 0f : 6f;
+                }
+                else
+                {
+                    cooldown.Initiative = 0f;
+                    cooldown.StandardAction =
+                        unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) ? 0f : 6f;
+                }
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿Version 0.9.33
 	Changed the conditions for acting in the surprise round
 	Changed units will trigger combat before attacking or using an offensive ability, even when they are in-stealth or invisible
+	Changed joining combat during regular rounds won't cause flat-footed anymore
 	Fixed queued actions can't be canceled on turn start (e.g Kinetic Blade and Gather Power)
 	Fixed queued actions can't trigger a surprise round
 	Fixed Kineticist doesn't remove the previous command if you command it to attack with Kinetic Blade before the combat
