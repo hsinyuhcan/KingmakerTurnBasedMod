@@ -39,8 +39,7 @@ namespace TurnBased.Controllers
     {
         private bool _enabled = true;
         private TimeSpan _combatStartTime;
-        private float _combatPassedTime;
-        private bool _isSurpriseRound;
+        private float _combatTimeSinceStart;
         private List<UnitEntityData> _units = new List<UnitEntityData>();
         private HashSet<UnitEntityData> _unitsInSupriseRound = new HashSet<UnitEntityData>();
         private readonly UnitsOrderComaprer _unitsOrderComaprer = new UnitsOrderComaprer();
@@ -62,6 +61,8 @@ namespace TurnBased.Controllers
         public bool CombatInitialized { get; private set; }
 
         public TurnController CurrentTurn { get; private set; }
+
+        public bool IsSurpriseRound { get; private set; }
 
         internal void Tick()
         {
@@ -88,9 +89,9 @@ namespace TurnBased.Controllers
             if (CurrentTurn == null)
             {
                 // exiting Surprise Round
-                if (_isSurpriseRound && _combatPassedTime >= 6f)
+                if (IsSurpriseRound && _combatTimeSinceStart >= 6f)
                 {
-                    _isSurpriseRound = false;
+                    IsSurpriseRound = false;
                     _unitsInSupriseRound.Clear();
                 }
 
@@ -124,7 +125,7 @@ namespace TurnBased.Controllers
                 }
 
                 // advance time
-                _combatPassedTime += Game.Instance.TimeController.GameDeltaTime;
+                _combatTimeSinceStart += Game.Instance.TimeController.GameDeltaTime;
             }
             else
             {
@@ -141,7 +142,7 @@ namespace TurnBased.Controllers
             }
 
             // set game time
-            Game.Instance.Player.GameTime = _combatStartTime + TimeSpan.FromSeconds(_combatPassedTime);
+            Game.Instance.Player.GameTime = _combatStartTime + TimeSpan.FromSeconds(_combatTimeSinceStart);
         }
 
         public IEnumerable<UnitEntityData> GetSortedUnits()
@@ -156,7 +157,7 @@ namespace TurnBased.Controllers
 
         public bool IsSurprising(UnitEntityData unit)
         {
-            return _isSurpriseRound && _unitsInSupriseRound.Contains(unit);
+            return IsSurpriseRound && _unitsInSupriseRound.Contains(unit);
         }
 
         public void InitTurn(UnitEntityData unit)
@@ -192,17 +193,15 @@ namespace TurnBased.Controllers
         private void Reset(bool tryToInitialize, bool isPartyCombatStateChanged = false)
         {
             _combatStartTime = Game.Instance.Player.GameTime;
-            _combatPassedTime = 0f;
-            _isSurpriseRound = false;
+            _combatTimeSinceStart = 0f;
             _units.Clear();
             _unitsInSupriseRound.Clear();
             _unitsSorted = false;
-
             TickedRayView.Clear();
-
             CurrentTurn = null;
+            IsSurpriseRound = false;
 
-            // QoLs
+            // QoLs - on ending the turn-based combat
             if (CombatInitialized && !tryToInitialize)
             {
                 if (AutoTurnOnAI)
@@ -220,15 +219,21 @@ namespace TurnBased.Controllers
 
                 if (isPartyCombatStateChanged)
                 {
-                    foreach (UnitEntityData unit in _units.Where
-                        (u => u.Commands.Raw.Concat(u.Commands.Queue).Any
-                        (c => c != null && !c.IsFinished && !(c is UnitMoveTo))))
-                        _unitsInSupriseRound.Add(unit);
+                    foreach (UnitEntityData unit in _units)
+                    {
+                        if (unit.IsPlayersEnemy ?
+                            unit.HasCombatCommand(command => command.TargetUnit.IsPlayerFaction) :
+                            unit.HasCombatCommand() &&
+                            !Game.Instance.UnitGroups.Any(group => group.IsEnemy(unit) && group.Memory.ContainsVisible(unit)))
+                        {
+                            _unitsInSupriseRound.Add(unit);
+                        }
+                    }
 
                     if (_unitsInSupriseRound.Count > 0)
                     {
-                        if (_unitsInSupriseRound.Count != _units.Count)
-                            _isSurpriseRound = true;
+                        if (_unitsInSupriseRound.Count < _units.Count)
+                            IsSurpriseRound = true;
                         else
                             _unitsInSupriseRound.Clear();
                     }
@@ -241,7 +246,7 @@ namespace TurnBased.Controllers
                 CombatInitialized = false;
             }
 
-            // ability modifications
+            // update ability modifications
             Mod.Core.Blueprint.Update();
         }
 
@@ -253,7 +258,7 @@ namespace TurnBased.Controllers
             {
                 RemoveUnit(unit);
                 _units.Insert(_units.IndexOf(targetUnit) + 1, unit);
-                if (_isSurpriseRound && IsSurprising(targetUnit))
+                if (IsSurpriseRound && _combatTimeSinceStart + unit.GetTimeToNextTurn() < 6f)
                     _unitsInSupriseRound.Add(unit);
             }
         }
@@ -324,7 +329,7 @@ namespace TurnBased.Controllers
         {
             UnitEntityData unit = rule.Initiator;
             UnitCombatState.Cooldowns cooldown = unit.CombatState.Cooldown;
-            if (_combatPassedTime == 0f)
+            if (_combatTimeSinceStart == 0f)
             {
                 if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) is Buff summonedUnitAppearBuff)
                 {
@@ -339,15 +344,15 @@ namespace TurnBased.Controllers
                 {
                     // the surprised units will be flat-footed in the surprise round
                     // if there is no surprise round or the unit is surprising, the unit won't be flat-footed in the 0th round
-                    cooldown.Initiative += !_isSurpriseRound || IsSurprising(unit) ? 0f : 6f;
+                    cooldown.Initiative += !IsSurpriseRound || IsSurprising(unit) ? 0f : 6f;
                 }
             }
             else
             {
                 // if a unit joins the combat in the middle of the combat, it has to wait for exact one round (6s) to act
                 // summoned units has a buff forcing them to wait for 6s, so they don't need the action cooldown
-                cooldown.Initiative = 
-                    unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) ? 0f : 6f;
+                    cooldown.Initiative =
+                        unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) ? 0f : 6f;
             }
         }
 

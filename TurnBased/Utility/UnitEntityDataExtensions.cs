@@ -13,6 +13,7 @@ using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using Kingmaker.Visual;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static TurnBased.Main;
@@ -198,6 +199,21 @@ namespace TurnBased.Utility
                 (unitPartMagus.EldritchArcherSpell != null ||
                 (unit.Get<UnitPartTouch>()?.Ability.Data is AbilityData abilityData &&
                 unitPartMagus.IsSpellFromMagusSpellList(abilityData)));
+        }
+
+        public static IEnumerable<UnitCommand> GetAllCommands(this UnitEntityData unit)
+        {
+            return unit.Commands.Raw.Concat(unit.Commands.Queue);
+        }
+
+        public static bool HasCombatCommand(this UnitEntityData unit, Predicate<UnitCommand> pred = null)
+        {
+            return unit.GetAllCommands().Any(command => command.IsCombatCommand() && (pred == null || pred(command)));
+        }
+
+        public static bool HasOffensiveCommand(this UnitEntityData unit, Predicate<UnitCommand> pred = null)
+        {
+            return unit.GetAllCommands().Any(command => command.IsOffensiveCommand() && (pred == null || pred(command)));
         }
 
         public static bool IsCurrentUnit(this UnitEntityData unit)
