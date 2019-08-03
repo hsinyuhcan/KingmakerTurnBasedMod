@@ -1,7 +1,19 @@
 ﻿using Harmony12;
+using Kingmaker;
+using Kingmaker.Blueprints;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic.Commands.Base;
+using Kingmaker.UnitLogic.Groups;
+using Kingmaker.Utility;
+using ModMaker.Utility;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using TurnBased.Utility;
+using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Main;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -46,6 +58,71 @@ namespace TurnBased.HarmonyPatches
                     return false;
                 }
                 return true;
+            }
+        }
+
+        // allow the unit that is about to attack or be attacked to always join the combat
+        [HarmonyPatch(typeof(UnitCombatJoinController), "TickUnit", typeof(UnitEntityData))]
+        static class UnitCombatJoinController_TickUnit_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // unit.Group.IsInCombat
+                // ---------------- after  ----------------
+                // unit.Group.IsInCombat || IsAboutToAttackOrBeAttacked(unit)
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<UnitEntityData, UnitGroup>(nameof(UnitEntityData.Group)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Ldfld,
+                        GetFieldInfo<UnitGroup, CountingGuard>(nameof(UnitGroup.IsInCombat))),
+                    new CodeInstruction(OpCodes.Call),
+                    new CodeInstruction(OpCodes.Stloc_0),
+                };
+                int startIndex = codes.FindCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Dup),
+                        new CodeInstruction(OpCodes.Brtrue, codes.NewLabel(startIndex + findingCodes.Count - 1, il)),
+                        new CodeInstruction(OpCodes.Pop),
+                        new CodeInstruction(OpCodes.Ldarg_0),
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<UnitEntityData, bool>(IsAboutToAttackOrBeAttacked).Method)
+                    };
+                    return codes.InsertRange(startIndex + findingCodes.Count - 1, patchingCodes, true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static bool IsAboutToAttackOrBeAttacked(UnitEntityData unit)
+            {
+                if (IsEnabled())
+                {
+                    if (unit.HasOffensiveCommand())
+                        return true;
+
+                    foreach (UnitCommand command in Game.Instance.State.AwakeUnits.SelectMany(enemy => enemy.GetAllCommands()))
+                    {
+                        if (command.IsOffensiveCommand() && command.TargetUnit == unit)
+                        {
+                            if (unit.Descriptor.Faction.Neutral &&
+                                (unit.Blueprint.GetComponent<UnitAggroFilter>()?.ShouldAggro(unit, command.Executor) ?? true))
+                            {
+                                unit.AttackFactions.Add(command.Executor.Descriptor.Faction);
+                            }
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
         }
     }
