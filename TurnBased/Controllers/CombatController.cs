@@ -223,7 +223,8 @@ namespace TurnBased.Controllers
                 if (isPartyCombatStateChanged)
                 {
                     foreach (UnitEntityData unit in _units.Where
-                        (u => u.Commands.Raw.Any(c => c != null && !c.IsFinished && !(c is UnitMoveTo))))
+                        (u => u.Commands.Raw.Concat(u.Commands.Queue).Any
+                        (c => c != null && !c.IsFinished && !(c is UnitMoveTo))))
                         _unitsInSupriseRound.Add(unit);
 
                     if (_unitsInSupriseRound.Count > 0)

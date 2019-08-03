@@ -25,7 +25,7 @@ namespace TurnBased.Utility
     {
         public static void TryCancelCommands(this UnitEntityData unit)
         {
-            if (!unit.Commands.Raw.Any(command => command != null && command.IsRunning))
+            if (!unit.Commands.IsRunning())
             {
                 unit.HoldState = false;
                 unit.Commands.InterruptAll();

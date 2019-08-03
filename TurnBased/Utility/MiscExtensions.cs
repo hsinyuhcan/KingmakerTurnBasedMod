@@ -1,6 +1,8 @@
 ﻿using Kingmaker.Controllers.Combat;
 using Kingmaker.Enums;
 using Kingmaker.Items;
+using Kingmaker.UnitLogic.Commands;
+using System.Linq;
 
 namespace TurnBased.Utility
 {
@@ -19,9 +21,15 @@ namespace TurnBased.Utility
         {
             return (item as ItemEntityWeapon)?.Blueprint.Category == WeaponCategory.KineticBlast;
         }
+
         public static bool Approximately(this float x, float y)
         {
             return y - 0.0001f < x && x < y + 0.0001f;
+        }
+
+        public static bool IsRunning(this UnitCommands commands)
+        {
+            return commands.Raw.Any(command => command != null && command.IsRunning);
         }
     }
 }

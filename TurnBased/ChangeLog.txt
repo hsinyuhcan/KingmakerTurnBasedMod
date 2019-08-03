@@ -1,5 +1,6 @@
 ﻿Version 0.9.33
 	Fixed queued actions can't be canceled on turn start (e.g Kinetic Blade and Gather Power)
+	Fixed queued actions can't trigger a surprise round
 
 Version 0.9.32
     Added the "Try To Avoid Overlapping When Moving Through Friends" option

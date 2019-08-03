@@ -148,7 +148,7 @@ namespace TurnBased.Controllers
                     EnabledFiveFootStep = true;
             }
 
-            bool hasCommandRunning = Commands.Raw.Any(command => command != null && command.IsRunning);
+            bool hasCommandRunning = Commands.IsRunning();
 
             // check if the current unit can't do anything more in current turn
             if (!Unit.IsInCombat || !Unit.CanPerformAction() ||
@@ -180,7 +180,7 @@ namespace TurnBased.Controllers
         private bool ContinueWaiting()
         {
             // wait for the current action finish
-            if (!Commands.Raw.Any(command => command != null && command.IsRunning))
+            if (!Commands.IsRunning())
             {
                 // delay after finish
                 TimeWaitedToEndTurn += Game.Instance.TimeController.GameDeltaTime;
@@ -361,7 +361,7 @@ namespace TurnBased.Controllers
                 Cooldown.StandardAction > 0f ||
                 Cooldown.MoveAction > 0f ||
                 Cooldown.SwiftAction > 0f ||
-                Commands.Raw.Any(command => command != null);
+                !Commands.Empty;
         }
 
         public bool ShouldRestrictFiveFootStep()
