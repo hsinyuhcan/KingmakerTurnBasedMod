@@ -1,4 +1,5 @@
 ﻿Version 0.9.33
+	Added the "Auto Cancel Actions On Turn-Based Combat End" option
 	Changed the conditions for acting in the surprise round
 	Changed units will trigger combat before attacking or using an offensive ability, even when they are in-stealth or invisible
 	Changed units can take a standard action to use a full round ability in surprise round (except making a full attack)
@@ -23,7 +24,7 @@ Version 0.9.31
 Version 0.9.30
     Added a temporary bugfix, which fix a vanilla bug that the ability circle won't show up if you first select it via hotkey
     Added the "Show Unit Description When Right Click The UI Element" option
-    Added the "Auto Turn On Unit's AI When Ending The Turn-Based Combat" option
+    Added the "Auto Turn On Unit's AI On Turn-Based Combat End" option
     Added an optional icon to indicate if a unit loses its dexterity bonus to AC to current unit
     Changed the icon to indicate a "surprising" unit instead of indicating a "surprised" unit, and also changed the image usage
     Restored a change, because I misread the rule: now units are flat-footed before their first turn again.

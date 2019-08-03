@@ -201,15 +201,19 @@ namespace TurnBased.Controllers
             CurrentTurn = null;
             IsSurpriseRound = false;
 
-            // QoLs - on ending the turn-based combat
+            // QoLs - on turn-based combat end
             if (CombatInitialized && !tryToInitialize)
             {
                 if (AutoTurnOnAI)
-                    foreach (UnitEntityData unit in UIUtility.GetGroup(false, true))
+                    foreach (UnitEntityData unit in Game.Instance.Player.ControllableCharacters)
                         unit.IsAIEnabled = true;
 
                 if (AutoSelectEntireParty)
                     Game.Instance.UI.SelectionManager?.SelectAll();
+
+                if (AutoCancelActionsOnCombatEnd)
+                    foreach (UnitEntityData unit in Game.Instance.Player.ControllableCharacters)
+                        unit.TryCancelCommands();
             }
 
             // initializing

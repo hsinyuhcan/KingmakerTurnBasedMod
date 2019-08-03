@@ -141,14 +141,24 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAutoTurnOnPlayerAI = value;
         }
 
+        public static bool AutoSelectCurrentUnit {
+            get => Mod.Settings.toggleAutoSelectCurrentUnit;
+            set => Mod.Settings.toggleAutoSelectCurrentUnit = value;
+        }
+
         public static bool AutoSelectEntireParty {
             get => Mod.Settings.toggleAutoSelectEntireParty;
             set => Mod.Settings.toggleAutoSelectEntireParty = value;
         }
 
-        public static bool AutoSelectCurrentUnit {
-            get => Mod.Settings.toggleAutoSelectCurrentUnit;
-            set => Mod.Settings.toggleAutoSelectCurrentUnit = value;
+        public static bool AutoCancelActionsOnPlayerTurnStart {
+            get => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart;
+            set => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart = value;
+        }
+
+        public static bool AutoCancelActionsOnCombatEnd {
+            get => Mod.Settings.toggleAutoCancelActionsOnCombatEnd;
+            set => Mod.Settings.toggleAutoCancelActionsOnCombatEnd = value;
         }
 
         public static bool AutoEnableFiveFootStep {
@@ -156,11 +166,6 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAutoEnableFiveFootStep = value;
         }
         
-        public static bool AutoCancelActionsOnPlayerTurnStart {
-            get => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart;
-            set => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart = value;
-        }
-
         public static bool AutoCancelActionsOnPlayerFinishFiveFoot {
             get => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFiveFoot;
             set => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFiveFoot = value;

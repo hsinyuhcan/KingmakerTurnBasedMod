@@ -22,10 +22,11 @@ namespace TurnBased
 
         public bool toggleAutoTurnOffPlayerAI = true;
         public bool toggleAutoTurnOnPlayerAI = true;
-        public bool toggleAutoSelectEntireParty = true;
         public bool toggleAutoSelectCurrentUnit = true;
-        public bool toggleAutoEnableFiveFootStep;
+        public bool toggleAutoSelectEntireParty = true;
         public bool toggleAutoCancelActionsOnPlayerTurnStart = true;
+        public bool toggleAutoCancelActionsOnCombatEnd = true;
+        public bool toggleAutoEnableFiveFootStep;
         public bool toggleAutoCancelActionsOnPlayerFinishFiveFoot = true;
         public bool toggleAutoCancelActionsOnPlayerFinishFirstMove = true;
 

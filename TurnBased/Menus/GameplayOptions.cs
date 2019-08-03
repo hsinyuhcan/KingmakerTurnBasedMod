@@ -115,24 +115,28 @@ namespace TurnBased.Menus
 
             AutoTurnOnAI =
                 GUIHelper.ToggleButton(AutoTurnOnAI,
-                "Auto Turn On Unit's AI When Ending The Turn-Based Combat", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            AutoSelectEntireParty =
-                GUIHelper.ToggleButton(AutoSelectEntireParty,
-                "Auto Select The Entire Party When Ending The Turn-Based Combat", _buttonStyle, GUILayout.ExpandWidth(false));
+                "Auto Turn On Unit's AI On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoSelectCurrentUnit =
                 GUIHelper.ToggleButton(AutoSelectCurrentUnit,
                 "Auto Select Current Unit On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoEnableFiveFootStep =
-                GUIHelper.ToggleButton(AutoEnableFiveFootStep,
-                "Auto Enable 5-Foot Step On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
-            
+            AutoSelectEntireParty =
+                GUIHelper.ToggleButton(AutoSelectEntireParty,
+                "Auto Select The Entire Party On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
+
             AutoCancelActionsOnPlayerTurnStart =
                 GUIHelper.ToggleButton(AutoCancelActionsOnPlayerTurnStart,
                 "Auto Cancel Actions On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
 
+            AutoCancelActionsOnCombatEnd =
+                GUIHelper.ToggleButton(AutoCancelActionsOnCombatEnd,
+                "Auto Cancel Actions On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            AutoEnableFiveFootStep =
+                GUIHelper.ToggleButton(AutoEnableFiveFootStep,
+                "Auto Enable 5-Foot Step On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+            
             AutoCancelActionsOnPlayerFinishFiveFoot =
                 GUIHelper.ToggleButton(AutoCancelActionsOnPlayerFinishFiveFoot,
                 "Auto Cancel Actions On Player's Unit Finished The 5-Foot Step", _buttonStyle, GUILayout.ExpandWidth(false));
