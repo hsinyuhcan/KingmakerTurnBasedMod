@@ -18,6 +18,7 @@ namespace TurnBased
         public bool toggleMovingThroughOnlyAffectPlayer;
         public bool toggleMovingThroughOnlyAffectNonEnemies;
         public bool toggleAvoidOverlapping = true;
+        public bool toggleDoNotMovingThroughNonAllies = true;
         public float radiusOfCollision = 0.9f;
 
         public bool toggleAutoTurnOffPlayerAI = true;

@@ -126,6 +126,11 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAvoidOverlapping = value;
         }
 
+        public static bool DoNotMovingThroughNonAllies {
+            get => Mod.Settings.toggleDoNotMovingThroughNonAllies;
+            set => Mod.Settings.toggleDoNotMovingThroughNonAllies = value;
+        }
+
         public static float RadiusOfCollision {
             get => Mod.Settings.radiusOfCollision;
             set => Mod.Settings.radiusOfCollision = value;

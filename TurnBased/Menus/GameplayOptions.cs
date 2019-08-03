@@ -58,8 +58,6 @@ namespace TurnBased.Menus
                 "Flanking Count All Opponents Within Threaten Range" +
                 " (Regardless opponents' current command)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
-            GUILayout.Space(10f);
-
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label($"Distance Modifier Of 5-Foot Step: {DistanceOfFiveFootStep:f2}x", GUILayout.ExpandWidth(false));
@@ -94,7 +92,10 @@ namespace TurnBased.Menus
                 GUIHelper.ToggleButton(AvoidOverlapping,
                 "Try To Avoid Overlapping When Moving Through Friends", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            GUILayout.Space(10f);
+            DoNotMovingThroughNonAllies =
+                GUIHelper.ToggleButton(DoNotMovingThroughNonAllies,
+                "DO NOT Moving Through Non-Allies" +
+                " (Disable the default \"soft obstacle\" effect on non-ally units)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             using (new GUILayout.HorizontalScope())
             {
@@ -103,7 +104,7 @@ namespace TurnBased.Menus
                 RadiusOfCollision = 
                     GUIHelper.RoundedHorizontalSlider(RadiusOfCollision, 1, 0.5f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
                 GUILayout.Space(5f);
-                GUILayout.Label($"(A modifier affects all units)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+                GUILayout.Label($"(A modifier affects all units' pathfinding, NOT AFFECT REACH)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
             }
         }
 

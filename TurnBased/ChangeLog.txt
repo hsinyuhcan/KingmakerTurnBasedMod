@@ -1,4 +1,5 @@
 ﻿Version 0.9.33
+	Added the "DO NOT Moving Through Non-Allies" option
 	Added the "Auto Cancel Actions On Turn-Based Combat End" option
 	Changed the conditions for acting in the surprise round
 	Changed units will trigger combat before attacking or using an offensive ability, even when they are in-stealth or invisible
