@@ -2,10 +2,12 @@
 using Kingmaker;
 using Kingmaker.Blueprints;
 using Kingmaker.Controllers.Combat;
+using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Groups;
+using Kingmaker.UnitLogic.Parts;
 using Kingmaker.Utility;
 using ModMaker.Utility;
 using System;
@@ -62,7 +64,7 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // allow the unit that is about to attack or be attacked to always join the combat
+        // allow units to join the combat when they are about to attack or be attacked
         [HarmonyPatch(typeof(UnitCombatJoinController), "TickUnit", typeof(UnitEntityData))]
         static class UnitCombatJoinController_TickUnit_Patch
         {
@@ -107,6 +109,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsEnabled())
                 {
+                    // the unit is about to attack
                     if (unit.HasOffensiveCommand(command =>
                     {
                         UnitState state = command.TargetUnit.Descriptor.State;
@@ -114,14 +117,26 @@ namespace TurnBased.HarmonyPatches
                     }))
                         return true;
 
+                    // the unit is about to be attacked
                     foreach (UnitCommand command in Game.Instance.State.AwakeUnits.SelectMany(enemy => enemy.GetAllCommands()))
                     {
                         if (command.IsOffensiveCommand() && command.TargetUnit == unit)
                         {
-                            if (unit.Descriptor.Faction.Neutral &&
-                                (unit.Blueprint.GetComponent<UnitAggroFilter>()?.ShouldAggro(unit, command.Executor) ?? true))
+                            UnitEntityData attacker = command.Executor;
+
+                            UnitMemoryController memory = Game.Instance.UnitMemoryController;
+                            if (!unit.Descriptor.State.HasCondition(UnitCondition.Invisible) || 
+                                attacker.Descriptor.IsSeeInvisibility ||
+                                (attacker.Get<UnitPartBlindsense>()?.Reach(unit) ?? false))
                             {
-                                unit.AttackFactions.Add(command.Executor.Descriptor.Faction);
+                                memory.AddToMemory(attacker, unit);
+                            }
+                            memory.AddToMemory(unit, attacker);
+
+                            if (unit.Descriptor.Faction.Neutral &&
+                                (unit.Blueprint.GetComponent<UnitAggroFilter>()?.ShouldAggro(unit, attacker) ?? true))
+                            {
+                                unit.AttackFactions.Add(attacker.Descriptor.Faction);
                             }
                             return true;
                         }
