@@ -203,9 +203,9 @@ namespace TurnBased.Controllers
             Cooldown.Clear();
 
             // update cooldowns from pre-combat actions
-            foreach (UnitCommand command in Commands.Raw.Where(c => c != null && c.IsActed && !c.IsFinished))
+            foreach (UnitCommand command in Commands.Raw.Where(command => command != null && command.IsActing()))
             {
-                command.UpdateCooldowns();
+                command.Executor.UpdateCooldowns(command);
             }
 
             // UnitCombatCooldownsController.TickOnUnit()
@@ -243,7 +243,7 @@ namespace TurnBased.Controllers
                     EnabledFiveFootStep = true;
 
                 if (AutoCancelActionsOnPlayerTurnStart)
-                    Unit.CancelCommands();
+                    Unit.TryCancelCommands();
 
                 if (PauseOnPlayerTurnStart)
                     Game.Instance.IsPaused = true;
@@ -451,7 +451,7 @@ namespace TurnBased.Controllers
                         Game.Instance.IsPaused = true;
 
                     if (AutoCancelActionsOnPlayerFinishFiveFoot)
-                        Unit.CancelCommands();
+                        Unit.TryCancelCommands();
                 }
                 else
                 {
@@ -459,7 +459,7 @@ namespace TurnBased.Controllers
                         Game.Instance.IsPaused = true;
 
                     if (AutoCancelActionsOnPlayerFinishFirstMove)
-                        Unit.CancelCommands();
+                        Unit.TryCancelCommands();
                 }
             }
         }

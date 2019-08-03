@@ -8,6 +8,7 @@ using Kingmaker.PubSubSystem;
 using Kingmaker.UI;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
+using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using Kingmaker.Visual;
@@ -22,12 +23,44 @@ namespace TurnBased.Utility
 {
     internal static class UnitEntityDataExtensions
     {
-        public static void CancelCommands(this UnitEntityData unit)
+        public static void TryCancelCommands(this UnitEntityData unit)
         {
-            unit.HoldState = false;
-            unit.Commands.InterruptAll(command => !command.IsStarted);
-            unit.CombatState.LastTarget = null;
-            unit.CombatState.ManualTarget = null;
+            if (!unit.Commands.Raw.Any(command => command != null && command.IsRunning))
+            {
+                unit.HoldState = false;
+                unit.Commands.InterruptAll();
+                unit.CombatState.LastTarget = null;
+                unit.CombatState.ManualTarget = null;
+            }
+        }
+
+        internal static void UpdateCooldowns(this UnitEntityData unit, UnitCommand command)
+        {
+            if (unit.IsCurrentUnit())
+                Mod.Core.Combat.CurrentTurn.NeedStealthCheck = true;
+
+            if (!command.IsIgnoreCooldown)
+            {
+                UnitCombatState.Cooldowns cooldown = unit.CombatState.Cooldown;
+                switch (command.Type)
+                {
+                    case UnitCommand.CommandType.Free:
+                        break;
+                    case UnitCommand.CommandType.Move:
+                        cooldown.MoveAction += TIME_MOVE_ACTION;
+                        break;
+                    case UnitCommand.CommandType.Standard:
+                        cooldown.StandardAction += TIME_STANDARD_ACTION;
+                        if (command.IsFullRoundAction())
+                            cooldown.MoveAction += TIME_MOVE_ACTION;
+                        break;
+                    case UnitCommand.CommandType.Swift:
+                        cooldown.SwiftAction += TIME_SWIFT_ACTION;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
         }
 
         public static bool CanMoveThrough(this UnitEntityData unit, UnitEntityData target)

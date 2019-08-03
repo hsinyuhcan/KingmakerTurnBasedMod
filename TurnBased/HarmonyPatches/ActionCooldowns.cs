@@ -99,7 +99,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && command.Executor.IsInCombat)
                 {
-                    command.UpdateCooldowns();
+                    command.Executor.UpdateCooldowns(command);
                     return false;
                 }
                 return true;

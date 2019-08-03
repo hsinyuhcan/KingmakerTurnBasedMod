@@ -1,13 +1,9 @@
 ﻿using Kingmaker.Blueprints.Root;
-using Kingmaker.Controllers.Combat;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using ModMaker.Utility;
-using System;
-using static TurnBased.Main;
-using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased.Utility
 {
@@ -63,33 +59,9 @@ namespace TurnBased.Utility
                 command.Executor.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.MagusSpellStrikeBuff);
         }
 
-        internal static void UpdateCooldowns(this UnitCommand command)
+        public static bool IsActing(this UnitCommand command)
         {
-            if (command.Executor.IsCurrentUnit())
-                Mod.Core.Combat.CurrentTurn.NeedStealthCheck = true;
-
-            if (!command.IsIgnoreCooldown)
-            {
-                UnitCombatState.Cooldowns cooldown = command.Executor.CombatState.Cooldown;
-                switch (command.Type)
-                {
-                    case UnitCommand.CommandType.Free:
-                        break;
-                    case UnitCommand.CommandType.Move:
-                        cooldown.MoveAction += TIME_MOVE_ACTION;
-                        break;
-                    case UnitCommand.CommandType.Standard:
-                        cooldown.StandardAction += TIME_STANDARD_ACTION;
-                        if (command.IsFullRoundAction())
-                            cooldown.MoveAction += TIME_MOVE_ACTION;
-                        break;
-                    case UnitCommand.CommandType.Swift:
-                        cooldown.SwiftAction += TIME_SWIFT_ACTION;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
+            return command.IsActed && !command.IsFinished;
         }
     }
 }
