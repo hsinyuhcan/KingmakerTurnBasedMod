@@ -3,6 +3,7 @@ using Kingmaker;
 using Kingmaker.Blueprints;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Groups;
 using Kingmaker.Utility;
@@ -106,7 +107,11 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsEnabled())
                 {
-                    if (unit.HasOffensiveCommand())
+                    if (unit.HasOffensiveCommand(command =>
+                    {
+                        UnitState state = command.TargetUnit.Descriptor.State;
+                        return !state.IsDead && !state.IsIgnoredByCombat;
+                    }))
                         return true;
 
                     foreach (UnitCommand command in Game.Instance.State.AwakeUnits.SelectMany(enemy => enemy.GetAllCommands()))
