@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
+using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -66,11 +67,15 @@ namespace TurnBased.HarmonyPatches
                 if (IsInCombat() && __instance.Unit.IsInCombat)
                 {
                     __result = !command.IsIgnoreCooldown &&
-                        ((command.IsFullRoundSpell() && !__instance.Unit.HasFullRoundAction()) ||
-                        __instance.HasCooldownForCommand(command.Type));
+                        (ShouldRestrictCommand(__instance.Unit, command) || __instance.HasCooldownForCommand(command.Type));
                     return false;
                 }
                 return true;
+            }
+
+            static bool ShouldRestrictCommand(UnitEntityData unit, UnitCommand command)
+            {
+                return !Mod.Core.Combat.IsSurpriseRound && command.IsFullRoundAbility() && !unit.HasFullRoundAction();
             }
         }
 

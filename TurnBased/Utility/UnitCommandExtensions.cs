@@ -29,7 +29,7 @@ namespace TurnBased.Utility
             return command is UnitAttack unitAttack && unitAttack.IsFullAttack;
         }
 
-        public static bool IsFullRoundSpell(this UnitCommand command)
+        public static bool IsFullRoundAbility(this UnitCommand command)
         {
             return command is UnitUseAbility unitUseAbility &&
                 unitUseAbility.Spell != null && unitUseAbility.Spell.RequireFullRoundAction;
@@ -37,7 +37,7 @@ namespace TurnBased.Utility
 
         public static bool IsFullRoundAction(this UnitCommand command)
         {
-            return command.IsFullAttack() || command.IsFullRoundSpell();
+            return command.IsFullAttack() || command.IsFullRoundAbility();
         }
 
         public static bool IsFreeTouch(this UnitCommand command)
