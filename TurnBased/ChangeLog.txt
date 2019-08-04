@@ -5,6 +5,7 @@
 	Changed units will trigger combat before attacking or using an offensive ability, even when they are in-stealth or invisible
 	Changed units can take a standard action to use a full round ability in surprise round (except making a full attack)
 	Changed joining combat during regular rounds won't cause flat-footed anymore
+	Fixed sometimes Charge ability could be interrupted (due to many reasons)
 	Fixed queued actions can't be canceled on turn start (e.g Kinetic Blade and Gather Power)
 	Fixed queued actions can't trigger a surprise round
 	Fixed Kineticist doesn't remove the previous command if you command it to attack with Kinetic Blade before the combat
@@ -67,7 +68,7 @@ Version 0.9.24
 
 Version 0.9.23
     Added an option to fix the cost of action to start Bardic Performance
-    Fixed sometimes a Charge ability would be interrupted due to an unexpected obstacle
+    Fixed sometimes Charge ability would be interrupted due to an unexpected obstacle
     Fixed if a unit used Charge ability on its turn, other units can move through or overlap with the charged unit in the next one second
 
 Version 0.9.22
