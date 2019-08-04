@@ -3,6 +3,7 @@ using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Inspect;
+using Kingmaker.Items;
 using Kingmaker.Items.Slots;
 using Kingmaker.PubSubSystem;
 using Kingmaker.UI;
@@ -80,17 +81,19 @@ namespace TurnBased.Utility
             if (!destination.HasValue)
                 return false;
 
+            bool isCharging = agentASP.IsCharging || agentASP.GetIsInForceMode();
             float minDistance = agentASP.Corpulence + target.View.AgentASP.Corpulence;
 
             // the destination is not where the unit is intended to stop at, so we have to step back
-            destination = destination.Value + (unit.Position - destination.Value).normalized * agentASP.ApproachRadius;
+            destination = destination.Value - (destination.Value - unit.Position).normalized *
+                (isCharging ? unit.GetAttackApproachRadius(target) : agentASP.ApproachRadius);
 
             // if the destination is going to overlap with target, forbid this behavior
             if (target.DistanceTo(destination.Value) < minDistance)
                 return true;
 
             // if the unit doesn't have enough movement to go through the target, forbid it from going through
-            if (unit.IsCurrentUnit() && !agentASP.IsCharging && !agentASP.GetIsInForceMode())
+            if (unit.IsCurrentUnit() && !isCharging)
                 return Mod.Core.Combat.CurrentTurn.GetRemainingMovementRange(true) < 
                     Math.Min(unit.DistanceTo(target) + minDistance, unit.DistanceTo(destination.Value));
 
@@ -110,12 +113,17 @@ namespace TurnBased.Utility
                 unit.DistanceTo(target) < unit.View.Corpulence + target.View.Corpulence + hand.Weapon.AttackRange.Meters + movement;
         }
 
+        public static float GetAttackApproachRadius(this UnitEntityData unit, UnitEntityData target)
+        {
+            return unit.View.Corpulence + target.View.Corpulence + unit.GetAttackRange();
+        }
+
         public static float GetAttackRange(this UnitEntityData unit)
         {
-            WeaponSlot hand = unit.GetFirstWeaponSlot();
-            if (hand != null)
+            ItemEntityWeapon weapon = unit.GetFirstWeapon();
+            if (weapon != null)
             {
-                float meters = hand.Weapon.AttackRange.Meters;
+                float meters = weapon.AttackRange.Meters;
                 return unit.View.Corpulence + meters;
             }
             else

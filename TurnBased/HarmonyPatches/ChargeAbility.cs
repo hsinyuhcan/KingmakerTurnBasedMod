@@ -14,6 +14,7 @@ using TurnBased.Utility;
 using UnityEngine;
 using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Main;
+using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -80,7 +81,11 @@ namespace TurnBased.HarmonyPatches
                     {
                         bool isCharging = agentASP.IsCharging;
                         agentASP.IsCharging = true;
-                        agentASP.ForcePath(new ForcedPath(new List<Vector3> { unitAttack.Executor.Position, unitAttack.TargetUnit.Position }));
+                        agentASP.ForcePath(new ForcedPath(new List<Vector3>
+                        {
+                            unitAttack.Executor.Position,
+                            unitAttack.TargetUnit.Position
+                        }));
                         agentASP.IsCharging = isCharging;
 
                         if (agentASP.IsReallyMoving)
@@ -89,6 +94,22 @@ namespace TurnBased.HarmonyPatches
                                 Math.Max(agentASP.MaxSpeedOverride ?? 0f, unitAttack.Executor.CombatSpeedMps * 2f);
                         }
                     }
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        // don't ignore all obstacles when charging
+        [HarmonyPatch(typeof(UnitMovementAgent), "ChargingAvoidance", MethodType.Getter)]
+        static class UnitMovementAgent_ChargingAvoidance_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(ref bool __result)
+            {
+                if (IsInCombat() && AvoidOverlappingOnCharge)
+                {
+                    __result = false;
                     return false;
                 }
                 return true;

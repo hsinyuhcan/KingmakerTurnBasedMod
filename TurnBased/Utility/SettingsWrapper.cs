@@ -126,6 +126,11 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAvoidOverlapping = value;
         }
 
+        public static bool AvoidOverlappingOnCharge {
+            get => Mod.Settings.toggleAvoidOverlappingOnCharge;
+            set => Mod.Settings.toggleAvoidOverlappingOnCharge = value;
+        }
+
         public static bool DoNotMovingThroughNonAllies {
             get => Mod.Settings.toggleDoNotMovingThroughNonAllies;
             set => Mod.Settings.toggleDoNotMovingThroughNonAllies = value;

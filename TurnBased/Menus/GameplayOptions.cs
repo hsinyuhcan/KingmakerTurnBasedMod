@@ -90,7 +90,13 @@ namespace TurnBased.Menus
 
             AvoidOverlapping =
                 GUIHelper.ToggleButton(AvoidOverlapping,
-                "Try To Avoid Overlapping When Moving Through Friends", _buttonStyle, GUILayout.ExpandWidth(false));
+                "Try To Avoid Overlapping When Moving Through Friends" +
+                " (Forbid moving through a unit if they will overlap each other)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+
+            AvoidOverlappingOnCharge =
+                GUIHelper.ToggleButton(AvoidOverlappingOnCharge,
+                "Try To Avoid Overlapping When Charging" +
+                " (Try to avoid obstacles and be blocked while no valid path)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             DoNotMovingThroughNonAllies =
                 GUIHelper.ToggleButton(DoNotMovingThroughNonAllies,
