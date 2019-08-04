@@ -110,12 +110,20 @@ namespace TurnBased.HarmonyPatches
                     {
                         canTick = command.Executor.IsCurrentUnit() && !IsDelaying();
 
-                        if (canTick && !command.IsStarted &&
-                            command.IsSpellCombatAttack() && !command.Executor.HasMoveAction())
+                        if (canTick && !command.IsStarted)
                         {
-                            command.Executor.Descriptor.RemoveFact(BlueprintRoot.Instance.SystemMechanics.MagusSpellCombatBuff);
-                            command.Interrupt();
-                            canTick = false;
+                            if (command.IsSpellCombatAttack() && !command.Executor.HasMoveAction())
+                            {
+                                command.Executor.Descriptor.RemoveFact(BlueprintRoot.Instance.SystemMechanics.MagusSpellCombatBuff);
+                                command.Interrupt();
+                                canTick = false;
+                            }
+
+                            if (command is UnitUseAbility unitUseAbility && !unitUseAbility.Spell.IsAvailableForCast)
+                            {
+                                command.Interrupt();
+                                canTick = false;
+                            }
                         }
                     }
 

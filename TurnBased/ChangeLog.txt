@@ -15,6 +15,7 @@
 	Fixed the small circle under the in-range ability targets is hidden when the attack indicator option is enabled
 	Fixed Eldritch Archer can spellstrike twice in surprise round
 	Fixed Spellstrike doesn't take effect when attacking a neutral target
+	Fixed using Charge right after disabling Defensive Stance will waste the action
 
 Version 0.9.32
     Added the "Try To Avoid Overlapping When Moving Through Friends" option
