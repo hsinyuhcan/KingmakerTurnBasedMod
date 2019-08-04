@@ -2,6 +2,7 @@
 using ModMaker.Utility;
 using UnityEngine;
 using UnityModManagerNet;
+using static ModMaker.Utility.RichTextExtensions;
 using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 
@@ -37,6 +38,10 @@ namespace TurnBased.Menus
                 GUIHelper.ToggleButton(DoNotMarkInvisibleUnit,
                 "Do Not Mark Invisible Units" +
                 " (Disable highlight, camera, indicators... etc)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+
+            DoNotShowInvisibleUnitOnCombatTracker =
+                GUIHelper.ToggleButton(DoNotShowInvisibleUnitOnCombatTracker,
+                "Do Not Show Invisible Units On The Combat Tracker", _buttonStyle, GUILayout.ExpandWidth(false));
 
             GUILayout.Space(10f);
 

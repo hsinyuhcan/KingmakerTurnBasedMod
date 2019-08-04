@@ -59,6 +59,7 @@ namespace TurnBased
         public bool toggleShowUnitDescriptionOnRightClickUI = true;
 
         public bool toggleDoNotMarkInvisibleUnit = true;
+        public bool toggleDoNotShowInvisibleUnitOnCombatTracker = true;
 
         public int CombatTrackerMaxUnits = 15;
         public float combatTrackerWidth = 375f;

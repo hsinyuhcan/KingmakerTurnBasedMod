@@ -392,7 +392,7 @@ namespace TurnBased.UI
         private void UpdateUnits(IEnumerable<UnitEntityData> units)
         {
             bool isDirty = false;
-            List<UnitButtonManager> refreshed = new List<UnitButtonManager>();
+            List<UnitButtonManager> newUnits = new List<UnitButtonManager>();
 
             int oldCount = _unitButtonDic.Count;
             int newCount = 0;
@@ -405,8 +405,11 @@ namespace TurnBased.UI
                     break;
                 }
 
-                refreshed.Add(EnsureUnit(unit, newCount, ref isDirty));
-                newCount++;
+                if (!DoNotShowInvisibleUnitOnCombatTracker || unit.IsVisibleForPlayer)
+                {
+                    newUnits.Add(EnsureUnit(unit, newCount, ref isDirty));
+                    newCount++;
+                }
             }
 
             if (newCount != oldCount)
@@ -419,7 +422,7 @@ namespace TurnBased.UI
             if (isDirty)
             {
                 // remove disabled button
-                foreach (UnitButtonManager button in _unitButtonDic.Values.Except(refreshed).ToList())
+                foreach (UnitButtonManager button in _unitButtonDic.Values.Except(newUnits).ToList())
                 {
                     RemoveUnit(button);
                 }
@@ -445,8 +448,6 @@ namespace TurnBased.UI
         {
             if (!_unitButtonDic.TryGetValue(unit, out UnitButtonManager button))
             {
-                Mod.Debug(MethodBase.GetCurrentMethod(), unit, index);
-
                 if (_unitButtonTemplate.IsNullOrDestroyed())
                 {
                     _unitButtonTemplate = UnitButtonManager.CreateObject();
