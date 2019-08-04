@@ -2,6 +2,7 @@
 	Added the "DO NOT Moving Through Non-Allies" option
 	Added the "Try To Avoid Overlapping When Charging" option
 	Added the "Auto Cancel Actions On Turn-Based Combat End" option
+	Added the "Do Not Mark Invisible Units" option
 	Changed the conditions for acting in the surprise round
 	Changed units will trigger combat before attacking or using an offensive ability, even when they are in-stealth or invisible
 	Changed units can take a standard action to use a full round ability in surprise round (except making a full attack)

@@ -99,9 +99,9 @@ namespace TurnBased.UI
                 UpdateUnits(roundController.GetSortedUnits());
                 UpdateButtons(roundController.CurrentTurn);
 
-                if (_width != HUDWidth)
+                if (_width != CombatTrackerWidth)
                 {
-                    _width = HUDWidth;
+                    _width = CombatTrackerWidth;
                     Resize(_width);
                 }
 
@@ -400,7 +400,7 @@ namespace TurnBased.UI
             // renew elements
             foreach (UnitEntityData unit in units)
             {
-                if (newCount >= HUDMaxUnitsDisplayed)
+                if (newCount >= CombatTrackerMaxUnits)
                 {
                     break;
                 }

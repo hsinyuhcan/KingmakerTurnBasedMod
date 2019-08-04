@@ -72,7 +72,7 @@ namespace TurnBased.UI
                     }
                 }
 
-                if (unit != null && radius > 0)
+                if (unit != null && radius > 0 && (!DoNotMarkInvisibleUnit || unit.IsVisibleForPlayer))
                 {
                     _range.SetPosition(unit);
                     _range.SetRadius(radius);

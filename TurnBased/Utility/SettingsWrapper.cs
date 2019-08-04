@@ -307,15 +307,20 @@ namespace TurnBased.Utility
             get => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI;
             set => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI = value;
         }
-        
-        public static float HUDWidth {
-            get => Mod.Settings.hudWidth;
-            set => Mod.Settings.hudWidth = value;
+
+        public static bool DoNotMarkInvisibleUnit {
+            get => Mod.Settings.toggleDoNotMarkInvisibleUnit;
+            set => Mod.Settings.toggleDoNotMarkInvisibleUnit = value;
         }
 
-        public static int HUDMaxUnitsDisplayed {
-            get => Mod.Settings.hudMaxUnitsDisplayed;
-            set => Mod.Settings.hudMaxUnitsDisplayed = value;
+        public static float CombatTrackerWidth {
+            get => Mod.Settings.combatTrackerWidth;
+            set => Mod.Settings.combatTrackerWidth = value;
+        }
+
+        public static int CombatTrackerMaxUnits {
+            get => Mod.Settings.CombatTrackerMaxUnits;
+            set => Mod.Settings.CombatTrackerMaxUnits = value;
         }
 
         #endregion

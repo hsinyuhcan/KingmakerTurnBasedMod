@@ -58,8 +58,10 @@ namespace TurnBased
         public bool toggleCameraScrollToUnitOnClickUI = true;
         public bool toggleShowUnitDescriptionOnRightClickUI = true;
 
-        public int hudMaxUnitsDisplayed = 15;
-        public float hudWidth = 375f;
+        public bool toggleDoNotMarkInvisibleUnit = true;
+
+        public int CombatTrackerMaxUnits = 15;
+        public float combatTrackerWidth = 375f;
 
         // hotkeys
         public SerializableDictionary<string, BindingKeysData> hotkeys = new SerializableDictionary<string, BindingKeysData>();

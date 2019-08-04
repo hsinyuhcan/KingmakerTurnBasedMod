@@ -264,6 +264,9 @@ namespace TurnBased.Utility
             if (view == null || view.IsHighlighted)
                 return;
 
+            if (highlight && DoNotMarkInvisibleUnit && !unit.IsVisibleForPlayer)
+                return;
+
             UnitMultiHighlight highlighter = view.GetHighlighter();
             if (highlighter != null)
             {
@@ -292,10 +295,10 @@ namespace TurnBased.Utility
 
         public static void ScrollTo(this UnitEntityData unit)
         {
-            if (unit != null && !unit.IsHiddenBecauseDead && unit.IsViewActive)
+            if (unit != null && !unit.IsHiddenBecauseDead && unit.IsViewActive &&
+                (!DoNotMarkInvisibleUnit || unit.IsVisibleForPlayer))
             {
                 Game.Instance.UI.GetCameraRig().ScrollTo(unit.Position);
-                //Game.Instance.CameraController?.Follower?.Follow(_unit);
             }
         }
 
