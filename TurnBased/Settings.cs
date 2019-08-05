@@ -68,6 +68,7 @@ namespace TurnBased
         public SerializableDictionary<string, BindingKeysData> hotkeys = new SerializableDictionary<string, BindingKeysData>();
 
         // time scale
+        public float minimumFPS = 20f;
         public float timeScaleBetweenTurns = 5f;
         public float timeScaleInPlayerTurn = 1f;
         public float timeScaleInNonPlayerTurn = 2f;

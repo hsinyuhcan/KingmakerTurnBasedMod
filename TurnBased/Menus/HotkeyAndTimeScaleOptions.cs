@@ -131,6 +131,16 @@ namespace TurnBased.Menus
         {
             using (new GUILayout.HorizontalScope())
             {
+                GUILayout.Label($"Minimum FPS: {MinimumFPS:f0}", GUILayout.ExpandWidth(false));
+                GUILayout.Space(5f);
+                MinimumFPS =
+                    GUIHelper.RoundedHorizontalSlider(MinimumFPS, 0, 12f, 20f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+                GUILayout.Space(5f);
+                GUILayout.Label("(Auto decrease Time Scale to prevent FPS drops below this value)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+            }
+
+            using (new GUILayout.HorizontalScope())
+            {
                 GUILayout.Label($"Time Scale Multiplier Between Turns: {TimeScaleBetweenTurns:f2}x", GUILayout.ExpandWidth(false));
                 GUILayout.Space(5f);
                 TimeScaleBetweenTurns =

@@ -332,6 +332,11 @@ namespace TurnBased.Utility
 
         #region Time Scale
 
+        public static float MinimumFPS {
+            get => Mod.Settings.minimumFPS;
+            set => Mod.Settings.minimumFPS = value;
+        }
+
         public static float TimeScaleBetweenTurns {
             get => Mod.Settings.timeScaleBetweenTurns;
             set => Mod.Settings.timeScaleBetweenTurns = value;
