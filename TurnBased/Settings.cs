@@ -18,21 +18,22 @@ namespace TurnBased
         public bool toggleMovingThroughOnlyAffectPlayer;
         public bool toggleMovingThroughOnlyAffectNonEnemies;
         public bool toggleAvoidOverlapping = true;
+        public bool toggleAvoidOverlappingOnCharge = true;
+        public bool toggleDoNotMovingThroughNonAllies = true;
         public float radiusOfCollision = 0.9f;
 
         public bool toggleAutoTurnOffPlayerAI = true;
         public bool toggleAutoTurnOnPlayerAI = true;
-        public bool toggleAutoSelectEntireParty = true;
         public bool toggleAutoSelectCurrentUnit = true;
-        public bool toggleAutoEnableFiveFootStep;
+        public bool toggleAutoSelectEntireParty = true;
         public bool toggleAutoCancelActionsOnPlayerTurnStart = true;
+        public bool toggleAutoCancelActionsOnCombatEnd = true;
+        public bool toggleAutoEnableFiveFootStep;
         public bool toggleAutoCancelActionsOnPlayerFinishFiveFoot = true;
         public bool toggleAutoCancelActionsOnPlayerFinishFirstMove = true;
 
         public bool toggleAutoEndTurn;
         public bool toggleDoNotAutoEndTurnWhenHasSwiftAction = true;
-
-        public bool toggleAllowCommandNonPlayerToPerformSpecialActions;
 
         // interface
         public bool toggleHighlightCurrentUnit = true;
@@ -55,13 +56,17 @@ namespace TurnBased
         public bool toggleCameraScrollToUnitOnClickUI = true;
         public bool toggleShowUnitDescriptionOnRightClickUI = true;
 
-        public int hudMaxUnitsDisplayed = 15;
-        public float hudWidth = 375f;
+        public bool toggleDoNotMarkInvisibleUnit = true;
+        public bool toggleDoNotShowInvisibleUnitOnCombatTracker = true;
+
+        public int CombatTrackerMaxUnits = 15;
+        public float combatTrackerWidth = 375f;
 
         // hotkeys
         public SerializableDictionary<string, BindingKeysData> hotkeys = new SerializableDictionary<string, BindingKeysData>();
 
         // time scale
+        public float minimumFPS = 20f;
         public float timeScaleBetweenTurns = 5f;
         public float timeScaleInPlayerTurn = 1f;
         public float timeScaleInNonPlayerTurn = 2f;

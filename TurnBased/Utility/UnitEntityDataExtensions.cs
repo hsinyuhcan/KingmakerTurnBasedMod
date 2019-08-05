@@ -3,16 +3,18 @@ using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Inspect;
+using Kingmaker.Items;
 using Kingmaker.Items.Slots;
 using Kingmaker.PubSubSystem;
 using Kingmaker.UI;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
+using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using Kingmaker.Visual;
-using ModMaker.Utility;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static TurnBased.Main;
@@ -22,12 +24,45 @@ namespace TurnBased.Utility
 {
     internal static class UnitEntityDataExtensions
     {
-        public static void CancelCommands(this UnitEntityData unit)
+        public static void TryCancelCommands(this UnitEntityData unit)
         {
-            unit.HoldState = false;
-            unit.Commands.InterruptAll(command => !command.IsStarted);
-            unit.CombatState.LastTarget = null;
-            unit.CombatState.ManualTarget = null;
+            if (!unit.Commands.IsRunning())
+            {
+                unit.HoldState = false;
+                unit.Commands.InterruptAll();
+                unit.CombatState.LastTarget = null;
+                unit.CombatState.ManualTarget = null;
+                unit.View.AgentASP?.Stop();
+            }
+        }
+
+        internal static void UpdateCooldowns(this UnitEntityData unit, UnitCommand command)
+        {
+            if (unit.IsCurrentUnit())
+                Mod.Core.Combat.CurrentTurn.NeedStealthCheck = true;
+
+            if (!command.IsIgnoreCooldown)
+            {
+                UnitCombatState.Cooldowns cooldown = unit.CombatState.Cooldown;
+                switch (command.Type)
+                {
+                    case UnitCommand.CommandType.Free:
+                        break;
+                    case UnitCommand.CommandType.Move:
+                        cooldown.MoveAction += TIME_MOVE_ACTION;
+                        break;
+                    case UnitCommand.CommandType.Standard:
+                        cooldown.StandardAction += TIME_STANDARD_ACTION;
+                        if (command.IsFullRoundAction())
+                            cooldown.MoveAction += TIME_MOVE_ACTION;
+                        break;
+                    case UnitCommand.CommandType.Swift:
+                        cooldown.SwiftAction += TIME_SWIFT_ACTION;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
         }
 
         public static bool CanMoveThrough(this UnitEntityData unit, UnitEntityData target)
@@ -41,22 +76,25 @@ namespace TurnBased.Utility
 
         private static bool JustOverlapping(this UnitEntityData unit, UnitEntityData target)
         {
-            Vector3? destination = unit.View.AgentASP.GetFieldValue<UnitMovementAgent, Vector3?>("m_Destination");
+            UnitMovementAgent agentASP = unit.View.AgentASP;
+            Vector3? destination = agentASP.GetDestination();
 
             if (!destination.HasValue)
                 return false;
 
-            float minDistance = unit.View.AgentASP.Corpulence + target.View.AgentASP.Corpulence;
+            bool isCharging = agentASP.IsCharging || agentASP.GetIsInForceMode();
+            float minDistance = agentASP.Corpulence + target.View.AgentASP.Corpulence;
 
             // the destination is not where the unit is intended to stop at, so we have to step back
-            destination = destination.Value + (unit.Position - destination.Value).normalized * unit.View.AgentASP.ApproachRadius;
+            destination = destination.Value - (destination.Value - unit.Position).normalized *
+                (isCharging ? unit.GetAttackApproachRadius(target) : agentASP.ApproachRadius);
 
             // if the destination is going to overlap with target, forbid this behavior
             if (target.DistanceTo(destination.Value) < minDistance)
                 return true;
 
             // if the unit doesn't have enough movement to go through the target, forbid it from going through
-            if (unit.IsCurrentUnit())
+            if (unit.IsCurrentUnit() && !isCharging)
                 return Mod.Core.Combat.CurrentTurn.GetRemainingMovementRange(true) < 
                     Math.Min(unit.DistanceTo(target) + minDistance, unit.DistanceTo(destination.Value));
 
@@ -76,12 +114,17 @@ namespace TurnBased.Utility
                 unit.DistanceTo(target) < unit.View.Corpulence + target.View.Corpulence + hand.Weapon.AttackRange.Meters + movement;
         }
 
+        public static float GetAttackApproachRadius(this UnitEntityData unit, UnitEntityData target)
+        {
+            return unit.View.Corpulence + target.View.Corpulence + unit.GetAttackRange();
+        }
+
         public static float GetAttackRange(this UnitEntityData unit)
         {
-            WeaponSlot hand = unit.GetFirstWeaponSlot();
-            if (hand != null)
+            ItemEntityWeapon weapon = unit.GetFirstWeapon();
+            if (weapon != null)
             {
-                float meters = hand.Weapon.AttackRange.Meters;
+                float meters = weapon.AttackRange.Meters;
                 return unit.View.Corpulence + meters;
             }
             else
@@ -168,6 +211,21 @@ namespace TurnBased.Utility
                 unitPartMagus.IsSpellFromMagusSpellList(abilityData)));
         }
 
+        public static IEnumerable<UnitCommand> GetAllCommands(this UnitEntityData unit)
+        {
+            return unit.Commands.Raw.Concat(unit.Commands.Queue);
+        }
+
+        public static bool HasCombatCommand(this UnitEntityData unit, Predicate<UnitCommand> pred = null)
+        {
+            return unit.GetAllCommands().Any(command => command.IsCombatCommand() && (pred == null || pred(command)));
+        }
+
+        public static bool HasOffensiveCommand(this UnitEntityData unit, Predicate<UnitCommand> pred = null)
+        {
+            return unit.GetAllCommands().Any(command => command.IsOffensiveCommand() && (pred == null || pred(command)));
+        }
+
         public static bool IsCurrentUnit(this UnitEntityData unit)
         {
             return unit != null && unit == Mod.Core.Combat.CurrentTurn?.Unit;
@@ -207,7 +265,10 @@ namespace TurnBased.Utility
             if (view == null || view.IsHighlighted)
                 return;
 
-            UnitMultiHighlight highlighter = view.GetFieldValue<UnitEntityView, UnitMultiHighlight>("m_Highlighter");
+            if (highlight && DoNotMarkInvisibleUnit && !unit.IsVisibleForPlayer)
+                return;
+
+            UnitMultiHighlight highlighter = view.GetHighlighter();
             if (highlighter != null)
             {
                 UIRoot uiRoot = UIRoot.Instance;
@@ -235,10 +296,10 @@ namespace TurnBased.Utility
 
         public static void ScrollTo(this UnitEntityData unit)
         {
-            if (unit != null && !unit.IsHiddenBecauseDead && unit.IsViewActive)
+            if (unit != null && !unit.IsHiddenBecauseDead && unit.IsViewActive &&
+                (!DoNotMarkInvisibleUnit || unit.IsVisibleForPlayer))
             {
                 Game.Instance.UI.GetCameraRig().ScrollTo(unit.Position);
-                //Game.Instance.CameraController?.Follower?.Follow(_unit);
             }
         }
 

@@ -110,12 +110,20 @@ namespace TurnBased.HarmonyPatches
                     {
                         canTick = command.Executor.IsCurrentUnit() && !IsDelaying();
 
-                        if (canTick && !command.IsStarted &&
-                            command.IsSpellCombat() && !command.Executor.HasMoveAction())
+                        if (canTick && !command.IsStarted)
                         {
-                            command.Executor.Descriptor.RemoveFact(BlueprintRoot.Instance.SystemMechanics.MagusSpellCombatBuff);
-                            command.Interrupt();
-                            canTick = false;
+                            if (command.IsSpellCombatAttack() && !command.Executor.HasMoveAction())
+                            {
+                                command.Executor.Descriptor.RemoveFact(BlueprintRoot.Instance.SystemMechanics.MagusSpellCombatBuff);
+                                command.Interrupt();
+                                canTick = false;
+                            }
+
+                            if (command is UnitUseAbility unitUseAbility && !unitUseAbility.Spell.IsAvailableForCast)
+                            {
+                                command.Interrupt();
+                                canTick = false;
+                            }
                         }
                     }
 
@@ -147,7 +155,7 @@ namespace TurnBased.HarmonyPatches
                     // in combat - not current  x           x           x           x
                     // in combat - current      x           o           x           x
 
-                    bool isInForceMode = __instance.GetFieldValue<UnitMovementAgent, bool>("m_IsInForceMode");
+                    bool isInForceMode = __instance.GetIsInForceMode();
 
                     if ((__instance.Unit?.EntityData).IsCurrentUnit() && !IsDelaying() && !IsEnding() && 
                         (isInForceMode || Mod.Core.Combat.CurrentTurn.HasMovement()))
@@ -155,10 +163,10 @@ namespace TurnBased.HarmonyPatches
                         if (!isInForceMode)
                         {
                             // disable acceleration effect
-                            __state = __instance.GetFieldValue<UnitMovementAgent, float>("m_MinSpeed");
-                            __instance.SetFieldValue("m_MinSpeed", 1f);
-                            __instance.SetFieldValue("m_WarmupTime", 0f);
-                            __instance.SetFieldValue("m_SlowDownTime", 0f);
+                            __state = __instance.GetMinSpeed();
+                            __instance.SetMinSpeed(1f);
+                            __instance.SetWarmupTime(0f);
+                            __instance.SetSlowDownTime(0f);
                         }
 
                         Mod.Core.Combat.CurrentTurn?.TickMovement(ref deltaTime, isInForceMode);
@@ -180,7 +188,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (__state.HasValue)
                 {
-                    __instance.SetFieldValue("m_MinSpeed", __state.Value);
+                    __instance.SetMinSpeed(__state.Value);
                 }
             }
         }
@@ -196,7 +204,7 @@ namespace TurnBased.HarmonyPatches
                 {
                     if (Mod.Core.Combat.TickedRayView.Add(__instance))
                     {
-                        __instance.SetFieldValue("m_PrevTickTime", TimeSpan.Zero);
+                        __instance.SetPrevTickTime(TimeSpan.Zero);
                     }
                 }
             }
@@ -282,7 +290,7 @@ namespace TurnBased.HarmonyPatches
                     if (unitPartConfusion != null &&
                         unitPartConfusion.RoundStartTime == Game.Instance.TimeController.GameTime)
                     {
-                        unitPartConfusion.RoundStartTime -= TimeSpan.FromSeconds(0.5d);
+                        unitPartConfusion.RoundStartTime -= TimeSpan.FromTicks(1L);
                     }
                 }
             }
@@ -458,7 +466,7 @@ namespace TurnBased.HarmonyPatches
                 if (IsInCombat() && !IsPassing())
                 {
                     __state = Game.Instance.TimeController.DeltaTime;
-                    Game.Instance.TimeController.SetPropertyValue(nameof(TimeController.DeltaTime), 0f);
+                    Game.Instance.TimeController.SetDeltaTime(0f);
                 }
             }
 
@@ -467,7 +475,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (__state.HasValue)
                 {
-                    Game.Instance.TimeController.SetPropertyValue(nameof(TimeController.DeltaTime), __state.Value);
+                    Game.Instance.TimeController.SetDeltaTime(__state.Value);
                 }
             }
 
@@ -497,7 +505,7 @@ namespace TurnBased.HarmonyPatches
                 if (IsInCombat() && !IsPassing())
                 {
                     __state = Game.Instance.TimeController.GameDeltaTime;
-                    Game.Instance.TimeController.SetPropertyValue(nameof(TimeController.GameDeltaTime), 0f);
+                    Game.Instance.TimeController.SetGameDeltaTime(0f);
                 }
             }
 
@@ -506,7 +514,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (__state.HasValue)
                 {
-                    Game.Instance.TimeController.SetPropertyValue(nameof(TimeController.GameDeltaTime), __state.Value);
+                    Game.Instance.TimeController.SetGameDeltaTime(__state.Value);
                 }
             }
 

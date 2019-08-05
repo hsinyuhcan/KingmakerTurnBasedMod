@@ -96,8 +96,9 @@ namespace TurnBased.UI
         {
             if (IsInCombat() && Unit != null)
             {
-                UpdateState(false);
+                UpdateState();
                 UpdateText();
+                UpdateColorMask();
                 UpdateUnitHighlight();
                 UpdateCarama();
             }
@@ -118,8 +119,6 @@ namespace TurnBased.UI
             DestroyImmediate(tbUnitButton.GetComponent<JournalQuestNaviElement>());
             DestroyImmediate(tbUnitButton.transform.Find("BackgroundInActive/Decal").gameObject);
             DestroyImmediate(tbUnitButton.transform.Find("Complied").gameObject);
-            //DestroyImmediate(tbUnitButton.transform.Find("NeedToAttention").gameObject);
-            //DestroyImmediate(tbUnitButton.transform.Find("New").gameObject);
 
             RectTransform rectUnitButton = (RectTransform)tbUnitButton.transform;
             rectUnitButton.anchorMin = new Vector2(0f, 1f);
@@ -245,7 +244,7 @@ namespace TurnBased.UI
             OnExit(Unit);
         }
 
-        private void UpdateState(bool forceUpdate)
+        private void UpdateState(bool forceUpdate = false)
         {
             bool isCurrent = Unit != null && Unit.IsCurrentUnit();
 
@@ -334,10 +333,10 @@ namespace TurnBased.UI
                 _colorMask.color = UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.None).AddendumColor;
         }
 
-        private void UpdateText(bool froce = false)
+        private void UpdateText(bool froceUpdate = false)
         {
             TextMeshProUGUI label = _isCurrent ? _activeLabel : _label;
-            if (froce || _width != label.rectTransform.rect.width)
+            if (froceUpdate || _width != label.rectTransform.rect.width)
             {
                 _width = label.rectTransform.rect.width;
 

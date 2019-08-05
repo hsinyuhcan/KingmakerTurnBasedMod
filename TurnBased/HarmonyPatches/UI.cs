@@ -1,6 +1,5 @@
 ﻿using Harmony12;
 using Kingmaker.EntitySystem.Entities;
-using Kingmaker.UI.ActionBar;
 using Kingmaker.UI.Inspect;
 using Kingmaker.UI.Selection;
 using Kingmaker.UI.Tooltip;
@@ -35,13 +34,11 @@ namespace TurnBased.HarmonyPatches
                     TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
                     if (currentTurn != null && currentTurn.Unit == unit && currentTurn.EnabledFiveFootStep)
                     {
-                        GetMethod<UIDecal, Action<UIDecal, bool>>("SetHoverVisibility")
-                            (__instance, unit.CanAttackWithWeapon(__instance.Unit, currentTurn.GetRemainingMovementRange()));
+                        __instance.SetHoverVisibility(unit.CanAttackWithWeapon(__instance.Unit, currentTurn.GetRemainingMovementRange()));
                     }
                     else
                     {
-                        GetMethod<UIDecal, Action<UIDecal, bool>>("SetHoverVisibility")
-                            (__instance, unit.CanAttackWithWeapon(__instance.Unit, 0f));
+                        __instance.SetHoverVisibility(unit.CanAttackWithWeapon(__instance.Unit, 0f));
                     }
 
                     return false;
@@ -50,37 +47,9 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // disable the attack indicator when the mouse hovering on an ability icon 
-        [HarmonyPatch(typeof(ActionBarSlot), nameof(ActionBarSlot.Hover), typeof(bool))]
-        static class ActionBarSlot_Hover_Patch
-        {
-            [HarmonyPostfix]
-            static void Postfix(bool state)
-            {
-                if (IsInCombat())
-                {
-                    Mod.Core.UI.AttackIndicator.Disabled = state;
-                }
-            }
-        }
-
-        // disable the attack indicator when the mouse hovering on an ability icon 
-        [HarmonyPatch(typeof(ActionBarIndexSlot), nameof(ActionBarSlot.Hover), typeof(bool))]
-        static class ActionBarIndexSlot_Hover_Patch
-        {
-            [HarmonyPostfix]
-            static void Postfix(bool state)
-            {
-                if (IsInCombat())
-                {
-                    Mod.Core.UI.AttackIndicator.Disabled = state;
-                }
-            }
-        }
-
         // make Unit.Inspect() extension work
         [HarmonyPatch(typeof(InspectController), nameof(InspectController.HandleUnitRightClick), typeof(UnitEntityView))]
-        static class UnitViewHandsEquipment_HandleEquipmentSlotUpdated_Patch
+        static class InspectController_HandleUnitRightClick_Patch
         {
             [HarmonyTranspiler]
             static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)

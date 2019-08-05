@@ -9,7 +9,6 @@ using Kingmaker.Utility;
 using System;
 using System.Linq;
 using TurnBased.Utility;
-using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased.Controllers
@@ -148,7 +147,7 @@ namespace TurnBased.Controllers
                     EnabledFiveFootStep = true;
             }
 
-            bool hasCommandRunning = Commands.Raw.Any(command => command != null && command.IsRunning);
+            bool hasCommandRunning = Commands.IsRunning();
 
             // check if the current unit can't do anything more in current turn
             if (!Unit.IsInCombat || !Unit.CanPerformAction() ||
@@ -180,7 +179,7 @@ namespace TurnBased.Controllers
         private bool ContinueWaiting()
         {
             // wait for the current action finish
-            if (!Commands.Raw.Any(command => command != null && command.IsRunning))
+            if (!Commands.IsRunning())
             {
                 // delay after finish
                 TimeWaitedToEndTurn += Game.Instance.TimeController.GameDeltaTime;
@@ -203,9 +202,9 @@ namespace TurnBased.Controllers
             Cooldown.Clear();
 
             // update cooldowns from pre-combat actions
-            foreach (UnitCommand command in Commands.Raw.Where(c => c != null && c.IsActed && !c.IsFinished))
+            foreach (UnitCommand command in Commands.Raw.Where(command => command != null && command.IsActing()))
             {
-                command.UpdateCooldowns();
+                command.Executor.UpdateCooldowns(command);
             }
 
             // UnitCombatCooldownsController.TickOnUnit()
@@ -217,8 +216,7 @@ namespace TurnBased.Controllers
             Unit.Logic.CallFactComponents<ITickEachRound>(logic => logic.OnNewRound());
 
             // UnitConfusionController.TickOnUnit() - set the effect of confution
-            GetMethod<UnitConfusionController, Action<UnitConfusionController, UnitEntityData>>
-                ("TickOnUnit")(new UnitConfusionController(), Unit);
+            new UnitConfusionController().TickOnUnit(Unit);
 
             // reset the counter of AOO
             if (CombatState.AttackOfOpportunityPerRound > 0 &&
@@ -243,7 +241,7 @@ namespace TurnBased.Controllers
                     EnabledFiveFootStep = true;
 
                 if (AutoCancelActionsOnPlayerTurnStart)
-                    Unit.CancelCommands();
+                    Unit.TryCancelCommands();
 
                 if (PauseOnPlayerTurnStart)
                     Game.Instance.IsPaused = true;
@@ -310,21 +308,18 @@ namespace TurnBased.Controllers
 
         public bool CanToggleFiveFootStep()
         {
-            return (EnabledFiveFootStep ? HasNormalMovement() : HasFiveFootStep()) &&
-                (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) &&
-                (AllowCommandNonPlayerToPerformSpecialActions || Unit.IsDirectlyControllable);
+            return (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) && Unit.IsDirectlyControllable &&
+                (EnabledFiveFootStep ? HasNormalMovement() : HasFiveFootStep());
         }
 
         public bool CanDelay()
         {
-            return Status == TurnStatus.Preparing &&
-                (AllowCommandNonPlayerToPerformSpecialActions || Unit.IsDirectlyControllable);
+            return Status == TurnStatus.Preparing && Unit.IsDirectlyControllable;
         }
 
         public bool CanEndTurn()
         {
-            return (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) &&
-                (AllowCommandNonPlayerToPerformSpecialActions || Unit.IsDirectlyControllable);
+            return (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) && Unit.IsDirectlyControllable;
         }
 
         public void CommandToggleFiveFootStep()
@@ -361,7 +356,7 @@ namespace TurnBased.Controllers
                 Cooldown.StandardAction > 0f ||
                 Cooldown.MoveAction > 0f ||
                 Cooldown.SwiftAction > 0f ||
-                Commands.Raw.Any(command => command != null);
+                !Commands.Empty;
         }
 
         public bool ShouldRestrictFiveFootStep()
@@ -451,7 +446,7 @@ namespace TurnBased.Controllers
                         Game.Instance.IsPaused = true;
 
                     if (AutoCancelActionsOnPlayerFinishFiveFoot)
-                        Unit.CancelCommands();
+                        Unit.TryCancelCommands();
                 }
                 else
                 {
@@ -459,7 +454,7 @@ namespace TurnBased.Controllers
                         Game.Instance.IsPaused = true;
 
                     if (AutoCancelActionsOnPlayerFinishFirstMove)
-                        Unit.CancelCommands();
+                        Unit.TryCancelCommands();
                 }
             }
         }

@@ -58,8 +58,6 @@ namespace TurnBased.Menus
                 "Flanking Count All Opponents Within Threaten Range" +
                 " (Regardless opponents' current command)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
-            GUILayout.Space(10f);
-
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label($"Distance Modifier Of 5-Foot Step: {DistanceOfFiveFootStep:f2}x", GUILayout.ExpandWidth(false));
@@ -92,9 +90,18 @@ namespace TurnBased.Menus
 
             AvoidOverlapping =
                 GUIHelper.ToggleButton(AvoidOverlapping,
-                "Try To Avoid Overlapping When Moving Through Friends", _buttonStyle, GUILayout.ExpandWidth(false));
+                "Try To Avoid Overlapping When Moving Through Friends" +
+                " (Forbid moving through a unit if they will overlap each other)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
-            GUILayout.Space(10f);
+            AvoidOverlappingOnCharge =
+                GUIHelper.ToggleButton(AvoidOverlappingOnCharge,
+                "Try To Avoid Overlapping When Charging" +
+                " (Try to avoid obstacles and be blocked while no valid path)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+
+            DoNotMovingThroughNonAllies =
+                GUIHelper.ToggleButton(DoNotMovingThroughNonAllies,
+                "DO NOT Moving Through Non-Allies" +
+                " (Disable the default \"soft obstacle\" effect on non-ally units)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             using (new GUILayout.HorizontalScope())
             {
@@ -103,7 +110,7 @@ namespace TurnBased.Menus
                 RadiusOfCollision = 
                     GUIHelper.RoundedHorizontalSlider(RadiusOfCollision, 1, 0.5f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
                 GUILayout.Space(5f);
-                GUILayout.Label($"(A modifier affects all units)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+                GUILayout.Label($"(A modifier affects all units' pathfinding, NOT AFFECT REACH)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
             }
         }
 
@@ -115,24 +122,28 @@ namespace TurnBased.Menus
 
             AutoTurnOnAI =
                 GUIHelper.ToggleButton(AutoTurnOnAI,
-                "Auto Turn On Unit's AI When Ending The Turn-Based Combat", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            AutoSelectEntireParty =
-                GUIHelper.ToggleButton(AutoSelectEntireParty,
-                "Auto Select The Entire Party When Ending The Turn-Based Combat", _buttonStyle, GUILayout.ExpandWidth(false));
+                "Auto Turn On Unit's AI On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoSelectCurrentUnit =
                 GUIHelper.ToggleButton(AutoSelectCurrentUnit,
                 "Auto Select Current Unit On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoEnableFiveFootStep =
-                GUIHelper.ToggleButton(AutoEnableFiveFootStep,
-                "Auto Enable 5-Foot Step On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
-            
+            AutoSelectEntireParty =
+                GUIHelper.ToggleButton(AutoSelectEntireParty,
+                "Auto Select The Entire Party On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
+
             AutoCancelActionsOnPlayerTurnStart =
                 GUIHelper.ToggleButton(AutoCancelActionsOnPlayerTurnStart,
                 "Auto Cancel Actions On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
 
+            AutoCancelActionsOnCombatEnd =
+                GUIHelper.ToggleButton(AutoCancelActionsOnCombatEnd,
+                "Auto Cancel Actions On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            AutoEnableFiveFootStep =
+                GUIHelper.ToggleButton(AutoEnableFiveFootStep,
+                "Auto Enable 5-Foot Step On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+            
             AutoCancelActionsOnPlayerFinishFiveFoot =
                 GUIHelper.ToggleButton(AutoCancelActionsOnPlayerFinishFiveFoot,
                 "Auto Cancel Actions On Player's Unit Finished The 5-Foot Step", _buttonStyle, GUILayout.ExpandWidth(false));
@@ -151,13 +162,6 @@ namespace TurnBased.Menus
             DoNotAutoEndTurnWhenHasSwiftAction =
                 GUIHelper.ToggleButton(DoNotAutoEndTurnWhenHasSwiftAction,
                 "DO NOT Auto End Turn When Current Unit Still Has The Swift Action", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            GUILayout.Space(10f);
-
-            AllowCommandNonPlayerToPerformSpecialActions =
-                GUIHelper.ToggleButton(AllowCommandNonPlayerToPerformSpecialActions,
-                "Allow Command Non-Player Units To Perform Special Actions" +
-                " (5-foot step, Delay and End Turn)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
         }
     }
 }

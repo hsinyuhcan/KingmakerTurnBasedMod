@@ -2,6 +2,7 @@
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.PubSubSystem;
 using Kingmaker.UI.AbilityTarget;
+using Kingmaker.UnitLogic.Abilities;
 using ModMaker.Utility;
 using System.Reflection;
 using TurnBased.Controllers;
@@ -13,11 +14,16 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.UI
 {
-    public class AttackIndicatorManager : MonoBehaviour
+    public class AttackIndicatorManager : 
+        MonoBehaviour,
+        IAbilityTargetHoverUIHandler,
+        IAbilityTargetSelectionUIHandler,
+        IShowAoEAffectedUIHandler
     {
+        private bool _isAbilityHovered;
+        private bool _isAbilitySelected;
+        private bool _isHandlingAOEMove;
         private RangeIndicatorManager _range;
-
-        public bool Disabled;
 
         public UnitEntityData Unit { get; private set; }
 
@@ -25,11 +31,15 @@ namespace TurnBased.UI
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
+            EventBus.Subscribe(this);
+
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
         }
 
         void OnDestroy()
         {
+            EventBus.Unsubscribe(this);
+
             HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
 
             if (!_range.IsNullOrDestroyed())
@@ -38,8 +48,7 @@ namespace TurnBased.UI
 
         void Update()
         {
-            bool isInCombat = IsInCombat();
-            if (isInCombat && !Disabled && Game.Instance.SelectedAbilityHandler?.Ability == null)
+            if (IsInCombat() && !_isAbilityHovered && !_isAbilitySelected)
             {
                 UnitEntityData unit = ShowAttackIndicatorOnHoverUI ? Mod.Core.UI.CombatTracker.HoveringUnit : null;
                 float radius = 0f;
@@ -63,7 +72,7 @@ namespace TurnBased.UI
                     }
                 }
 
-                if (unit != null && radius > 0)
+                if (unit != null && radius > 0 && (!DoNotMarkInvisibleUnit || unit.IsVisibleForPlayer))
                 {
                     _range.SetPosition(unit);
                     _range.SetRadius(radius);
@@ -81,12 +90,8 @@ namespace TurnBased.UI
                 _range.SetVisible(false);
 
                 Unit = null;
-                EventBus.RaiseEvent<IShowAoEAffectedUIHandler>(h => h.HandleAoECancel());
-            }
-
-            if (!isInCombat && Disabled)
-            {
-                Disabled = false;
+                if (_isHandlingAOEMove)
+                    EventBus.RaiseEvent<IShowAoEAffectedUIHandler>(h => h.HandleAoECancel());
             }
         }
 
@@ -113,6 +118,31 @@ namespace TurnBased.UI
         private void HandleToggleAttackIndicator()
         {
             ShowAttackIndicatorOfCurrentUnit = !ShowAttackIndicatorOfCurrentUnit;
+        }
+
+        public void HandleAbilityTargetHover(AbilityData ability, bool hover)
+        {
+            _isAbilityHovered = hover;
+        }
+
+        public void HandleAbilityTargetSelectionStart(AbilityData ability)
+        {
+            _isAbilitySelected = true;
+        }
+
+        public void HandleAbilityTargetSelectionEnd(AbilityData ability)
+        {
+            _isAbilitySelected = false;
+        }
+
+        public void HandleAoEMove(Vector3 pos, AbilityData ability)
+        {
+            _isHandlingAOEMove = ability == null;
+        }
+
+        public void HandleAoECancel()
+        {
+            _isHandlingAOEMove = false;
         }
     }
 }

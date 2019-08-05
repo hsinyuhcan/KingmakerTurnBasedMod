@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
+using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -66,15 +67,19 @@ namespace TurnBased.HarmonyPatches
                 if (IsInCombat() && __instance.Unit.IsInCombat)
                 {
                     __result = !command.IsIgnoreCooldown &&
-                        ((command.IsFullRoundSpell() && !__instance.Unit.HasFullRoundAction()) ||
-                        __instance.HasCooldownForCommand(command.Type));
+                        (ShouldRestrictCommand(__instance.Unit, command) || __instance.HasCooldownForCommand(command.Type));
                     return false;
                 }
                 return true;
             }
+
+            static bool ShouldRestrictCommand(UnitEntityData unit, UnitCommand command)
+            {
+                return !Mod.Core.Combat.IsSurpriseRound && command.IsFullRoundAbility() && !unit.HasFullRoundAction();
+            }
         }
 
-        // restrict full round action by move action cooldown
+        // restrict full attack by checking move action cooldown instead of LastUsageOfMoveActionTime
         [HarmonyPatch(typeof(UnitCombatState), nameof(UnitCombatState.IsFullAttackRestrictedBecauseOfMoveAction), MethodType.Getter)]
         static class UnitCombatState_get_IsFullAttackRestrictedBecauseOfMoveAction_Patch
         {
@@ -99,7 +104,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && command.Executor.IsInCombat)
                 {
-                    command.UpdateCooldowns();
+                    command.Executor.UpdateCooldowns(command);
                     return false;
                 }
                 return true;
@@ -115,7 +120,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && __instance.Executor.IsInCombat && !__instance.IsActed)
                 {
-                    __instance.SetPropertyValue(nameof(UnitCommand.IsActed), true);
+                    __instance.SetIsActed(true);
                 }
             }
         }

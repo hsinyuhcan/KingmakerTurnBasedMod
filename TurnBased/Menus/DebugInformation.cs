@@ -79,8 +79,8 @@ namespace TurnBased.Menus
                 GUILayout.Label($"Standard Action: {currentTurn?.Commands.Standard}" +
                     $" (IsFullRoundAction: {currentTurn?.Commands.Raw[1].IsFullRoundAction()}" +
                     $", IsFreeTouch: {currentTurn?.Commands.Raw[1].IsFreeTouch()}" +
-                    $", IsSpellCombat: {currentTurn?.Commands.Raw[1].IsSpellCombat()}" +
-                    $", IsSpellStrike: {currentTurn?.Commands.Raw[1].IsSpellStrike()})");
+                    $", IsSpellCombat: {currentTurn?.Commands.Raw[1].IsSpellCombatAttack()}" +
+                    $", IsSpellStrike: {currentTurn?.Commands.Raw[1].IsSpellstrikeAttack()})");
                 GUILayout.Label($"Move Action: {currentTurn?.Commands.Raw[3]}");
                 GUILayout.Label($"Swift Action: {currentTurn?.Commands.Raw[2]}");
 

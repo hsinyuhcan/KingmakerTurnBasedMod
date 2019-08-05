@@ -1,8 +1,29 @@
-﻿Version 0.9.32
+﻿Version 0.9.33
+	Added the "DO NOT Moving Through Non-Allies" option
+	Added the "Try To Avoid Overlapping When Charging" option
+	Added the "Auto Cancel Actions On Turn-Based Combat End" option
+	Added the "Do Not Mark Invisible Units" option
+	Added the "Do Not Show Invisible Units On The Combat Tracker" option
+	Added the "Minimum FPS" option, and auto decrease Time Scale to prevent FPS drops below this value
+	Changed the conditions for acting in the surprise round
+	Changed units will trigger the combat before attacking or using an offensive ability, even when they are in-stealth or invisible
+	Changed units can take a standard action to use a full round ability in surprise round (except making a full attack)
+	Changed joining combat during regular rounds won't cause flat-footed anymore
+	Fixed sometimes Charge ability could be interrupted (due to many reasons)
+	Fixed queued actions can't be canceled on turn start (e.g Kinetic Blade and Gather Power)
+	Fixed queued actions can't trigger a surprise round
+	Fixed Kineticist doesn't remove the previous command if you command it to attack with Kinetic Blade before the combat
+	Fixed the small circle under the in-range ability targets is hidden when the attack indicator option is enabled
+	Fixed Eldritch Archer can spellstrike twice in surprise round
+	Fixed Spellstrike doesn't take effect when attacking a neutral target
+	Fixed the color of UI element doesn't change when attacking neutral units
+	Fixed using Charge right after disabling Defensive Stance will waste the action
+
+Version 0.9.32
     Added the "Try To Avoid Overlapping When Moving Through Friends" option
-	Changed the combat tracker won't be shown during a dialogue anymore
+    Changed the combat tracker won't be shown during a dialogue anymore
     Fixed the "Fix x as y action" options are accidentally broken by the previous update
-	Fixed units won't leave combat when their in-game state changes (caused Call Forth Kanerah/Kalikke glitch)
+    Fixed units won't leave combat when their in-game state changes (caused Call Forth Kanerah/Kalikke glitch)
 
 Version 0.9.31
 	Added the Unity Mod Manager support for checking the availability of updates
@@ -11,7 +32,7 @@ Version 0.9.31
 Version 0.9.30
     Added a temporary bugfix, which fix a vanilla bug that the ability circle won't show up if you first select it via hotkey
     Added the "Show Unit Description When Right Click The UI Element" option
-    Added the "Auto Turn On Unit's AI When Ending The Turn-Based Combat" option
+    Added the "Auto Turn On Unit's AI On Turn-Based Combat End" option
     Added an optional icon to indicate if a unit loses its dexterity bonus to AC to current unit
     Changed the icon to indicate a "surprising" unit instead of indicating a "surprised" unit, and also changed the image usage
     Restored a change, because I misread the rule: now units are flat-footed before their first turn again.
@@ -53,7 +74,7 @@ Version 0.9.24
 
 Version 0.9.23
     Added an option to fix the cost of action to start Bardic Performance
-    Fixed sometimes a Charge ability would be interrupted due to an unexpected obstacle
+    Fixed sometimes Charge ability would be interrupted due to an unexpected obstacle
     Fixed if a unit used Charge ability on its turn, other units can move through or overlap with the charged unit in the next one second
 
 Version 0.9.22

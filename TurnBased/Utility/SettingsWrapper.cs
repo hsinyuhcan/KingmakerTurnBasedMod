@@ -126,6 +126,16 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAvoidOverlapping = value;
         }
 
+        public static bool AvoidOverlappingOnCharge {
+            get => Mod.Settings.toggleAvoidOverlappingOnCharge;
+            set => Mod.Settings.toggleAvoidOverlappingOnCharge = value;
+        }
+
+        public static bool DoNotMovingThroughNonAllies {
+            get => Mod.Settings.toggleDoNotMovingThroughNonAllies;
+            set => Mod.Settings.toggleDoNotMovingThroughNonAllies = value;
+        }
+
         public static float RadiusOfCollision {
             get => Mod.Settings.radiusOfCollision;
             set => Mod.Settings.radiusOfCollision = value;
@@ -141,14 +151,24 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAutoTurnOnPlayerAI = value;
         }
 
+        public static bool AutoSelectCurrentUnit {
+            get => Mod.Settings.toggleAutoSelectCurrentUnit;
+            set => Mod.Settings.toggleAutoSelectCurrentUnit = value;
+        }
+
         public static bool AutoSelectEntireParty {
             get => Mod.Settings.toggleAutoSelectEntireParty;
             set => Mod.Settings.toggleAutoSelectEntireParty = value;
         }
 
-        public static bool AutoSelectCurrentUnit {
-            get => Mod.Settings.toggleAutoSelectCurrentUnit;
-            set => Mod.Settings.toggleAutoSelectCurrentUnit = value;
+        public static bool AutoCancelActionsOnPlayerTurnStart {
+            get => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart;
+            set => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart = value;
+        }
+
+        public static bool AutoCancelActionsOnCombatEnd {
+            get => Mod.Settings.toggleAutoCancelActionsOnCombatEnd;
+            set => Mod.Settings.toggleAutoCancelActionsOnCombatEnd = value;
         }
 
         public static bool AutoEnableFiveFootStep {
@@ -156,11 +176,6 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAutoEnableFiveFootStep = value;
         }
         
-        public static bool AutoCancelActionsOnPlayerTurnStart {
-            get => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart;
-            set => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart = value;
-        }
-
         public static bool AutoCancelActionsOnPlayerFinishFiveFoot {
             get => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFiveFoot;
             set => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFiveFoot = value;
@@ -179,11 +194,6 @@ namespace TurnBased.Utility
         public static bool DoNotAutoEndTurnWhenHasSwiftAction {
             get => Mod.Settings.toggleDoNotAutoEndTurnWhenHasSwiftAction;
             set => Mod.Settings.toggleDoNotAutoEndTurnWhenHasSwiftAction = value;
-        }
-
-        public static bool AllowCommandNonPlayerToPerformSpecialActions {
-            get => Mod.Settings.toggleAllowCommandNonPlayerToPerformSpecialActions;
-            set => Mod.Settings.toggleAllowCommandNonPlayerToPerformSpecialActions = value;
         }
 
         #endregion
@@ -292,20 +302,35 @@ namespace TurnBased.Utility
             get => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI;
             set => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI = value;
         }
-        
-        public static float HUDWidth {
-            get => Mod.Settings.hudWidth;
-            set => Mod.Settings.hudWidth = value;
+
+        public static bool DoNotMarkInvisibleUnit {
+            get => Mod.Settings.toggleDoNotMarkInvisibleUnit;
+            set => Mod.Settings.toggleDoNotMarkInvisibleUnit = value;
         }
 
-        public static int HUDMaxUnitsDisplayed {
-            get => Mod.Settings.hudMaxUnitsDisplayed;
-            set => Mod.Settings.hudMaxUnitsDisplayed = value;
+        public static bool DoNotShowInvisibleUnitOnCombatTracker {
+            get => Mod.Settings.toggleDoNotShowInvisibleUnitOnCombatTracker;
+            set => Mod.Settings.toggleDoNotShowInvisibleUnitOnCombatTracker = value;
+        }
+        
+        public static float CombatTrackerWidth {
+            get => Mod.Settings.combatTrackerWidth;
+            set => Mod.Settings.combatTrackerWidth = value;
+        }
+
+        public static int CombatTrackerMaxUnits {
+            get => Mod.Settings.CombatTrackerMaxUnits;
+            set => Mod.Settings.CombatTrackerMaxUnits = value;
         }
 
         #endregion
 
         #region Time Scale
+
+        public static float MinimumFPS {
+            get => Mod.Settings.minimumFPS;
+            set => Mod.Settings.minimumFPS = value;
+        }
 
         public static float TimeScaleBetweenTurns {
             get => Mod.Settings.timeScaleBetweenTurns;

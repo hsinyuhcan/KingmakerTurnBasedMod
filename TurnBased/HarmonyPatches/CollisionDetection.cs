@@ -13,13 +13,29 @@ namespace TurnBased.HarmonyPatches
         [HarmonyPatch(typeof(UnitMovementAgent), nameof(UnitMovementAgent.AvoidanceDisabled), MethodType.Getter)]
         static class UnitMovementAgent_AvoidanceDisabled_Patch
         {
-            [HarmonyPrefix]
+            [HarmonyPostfix]
             static void Postfix(UnitMovementAgent __instance, ref bool __result)
             {
                 if (IsInCombat() && !__result)
                 {
                     __result = (Mod.Core.Combat.CurrentTurn?.Unit).CanMoveThrough(__instance.Unit?.EntityData);
                 }
+            }
+        }
+
+        // forbid moving through non-allys
+        [HarmonyPatch(typeof(UnitMovementAgent), "IsSoftObstacle", typeof(UnitMovementAgent))]
+        static class UnitMovementAgent_IsSoftObstacle_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitMovementAgent __instance, ref bool __result)
+            {
+                if (IsInCombat() && DoNotMovingThroughNonAllies)
+                {
+                    __result = !__instance.CombatMode;
+                    return false;
+                }
+                return true;
             }
         }
 
