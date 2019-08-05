@@ -79,7 +79,7 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // restrict full round action by move action cooldown
+        // restrict full attack by checking move action cooldown instead of LastUsageOfMoveActionTime
         [HarmonyPatch(typeof(UnitCombatState), nameof(UnitCombatState.IsFullAttackRestrictedBecauseOfMoveAction), MethodType.Getter)]
         static class UnitCombatState_get_IsFullAttackRestrictedBecauseOfMoveAction_Patch
         {

@@ -53,6 +53,8 @@ namespace TurnBased.Controllers
             set {
                 if (_enabled != value)
                 {
+                    Mod.Debug(MethodBase.GetCurrentMethod(), value);
+
                     _enabled = value;
                     Reset(value);
                 }
@@ -67,7 +69,7 @@ namespace TurnBased.Controllers
 
         internal void Tick()
         {
-            // fix when the combat end by a cutscenes, HandlePartyCombatStateChanged will not be triggered
+            // fix when the combat end by a cutscene, HandlePartyCombatStateChanged will not be triggered
             if (_units.Count == 0)
             {
                 foreach (UnitEntityData allCharacter in Game.Instance.Player.AllCharacters)
@@ -483,16 +485,6 @@ namespace TurnBased.Controllers
                         return 1;
                 }
 
-                //bool xIsSurprising = x.IsSurprising();
-                //bool yIsSurprising = y.IsSurprising();
-                //if (xIsSurprising ^ yIsSurprising)
-                //{
-                //    if (xIsSurprising)
-                //        return -1;
-                //    else
-                //        return 1;
-                //}
-
                 float xTime = x.GetTimeToNextTurn();
                 float yTime = y.GetTimeToNextTurn();
 
@@ -502,12 +494,6 @@ namespace TurnBased.Controllers
                     return -1;
                 else
                     return 1;
-
-                //int result = x.GetTimeToNextTurn().CompareTo(y.GetTimeToNextTurn());
-                //if (result == 0)
-                //    return y.CombatState.Initiative.CompareTo(x.CombatState.Initiative);
-                //else
-                //return result;
             }
         }
     }

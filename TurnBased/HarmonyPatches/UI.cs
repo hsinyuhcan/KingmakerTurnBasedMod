@@ -34,8 +34,7 @@ namespace TurnBased.HarmonyPatches
                     TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
                     if (currentTurn != null && currentTurn.Unit == unit && currentTurn.EnabledFiveFootStep)
                     {
-                        __instance.SetHoverVisibility(
-                            unit.CanAttackWithWeapon(__instance.Unit, currentTurn.GetRemainingMovementRange()));
+                        __instance.SetHoverVisibility(unit.CanAttackWithWeapon(__instance.Unit, currentTurn.GetRemainingMovementRange()));
                     }
                     else
                     {
@@ -50,7 +49,7 @@ namespace TurnBased.HarmonyPatches
 
         // make Unit.Inspect() extension work
         [HarmonyPatch(typeof(InspectController), nameof(InspectController.HandleUnitRightClick), typeof(UnitEntityView))]
-        static class UnitViewHandsEquipment_HandleEquipmentSlotUpdated_Patch
+        static class InspectController_HandleUnitRightClick_Patch
         {
             [HarmonyTranspiler]
             static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)

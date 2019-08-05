@@ -32,6 +32,7 @@ namespace TurnBased.Utility
                 unit.Commands.InterruptAll();
                 unit.CombatState.LastTarget = null;
                 unit.CombatState.ManualTarget = null;
+                unit.View.AgentASP?.Stop();
             }
         }
 

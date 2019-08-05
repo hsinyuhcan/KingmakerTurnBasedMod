@@ -196,11 +196,6 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleDoNotAutoEndTurnWhenHasSwiftAction = value;
         }
 
-        public static bool AllowCommandNonPlayerToPerformSpecialActions {
-            get => Mod.Settings.toggleAllowCommandNonPlayerToPerformSpecialActions;
-            set => Mod.Settings.toggleAllowCommandNonPlayerToPerformSpecialActions = value;
-        }
-
         #endregion
 
         #region Interface

@@ -35,8 +35,6 @@ namespace TurnBased
         public bool toggleAutoEndTurn;
         public bool toggleDoNotAutoEndTurnWhenHasSwiftAction = true;
 
-        public bool toggleAllowCommandNonPlayerToPerformSpecialActions;
-
         // interface
         public bool toggleHighlightCurrentUnit = true;
         public bool toggleCameraScrollToCurrentUnit = true;

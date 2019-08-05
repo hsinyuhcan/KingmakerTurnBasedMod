@@ -6,7 +6,7 @@
 	Added the "Do Not Show Invisible Units On The Combat Tracker" option
 	Added the "Minimum FPS" option, and auto decrease Time Scale to prevent FPS drops below this value
 	Changed the conditions for acting in the surprise round
-	Changed units will trigger combat before attacking or using an offensive ability, even when they are in-stealth or invisible
+	Changed units will trigger the combat before attacking or using an offensive ability, even when they are in-stealth or invisible
 	Changed units can take a standard action to use a full round ability in surprise round (except making a full attack)
 	Changed joining combat during regular rounds won't cause flat-footed anymore
 	Fixed sometimes Charge ability could be interrupted (due to many reasons)

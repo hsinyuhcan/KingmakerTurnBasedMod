@@ -290,7 +290,7 @@ namespace TurnBased.HarmonyPatches
                     if (unitPartConfusion != null &&
                         unitPartConfusion.RoundStartTime == Game.Instance.TimeController.GameTime)
                     {
-                        unitPartConfusion.RoundStartTime -= TimeSpan.FromSeconds(0.5d);
+                        unitPartConfusion.RoundStartTime -= TimeSpan.FromTicks(1L);
                     }
                 }
             }

@@ -308,21 +308,18 @@ namespace TurnBased.Controllers
 
         public bool CanToggleFiveFootStep()
         {
-            return (EnabledFiveFootStep ? HasNormalMovement() : HasFiveFootStep()) &&
-                (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) &&
-                (AllowCommandNonPlayerToPerformSpecialActions || Unit.IsDirectlyControllable);
+            return (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) && Unit.IsDirectlyControllable &&
+                (EnabledFiveFootStep ? HasNormalMovement() : HasFiveFootStep());
         }
 
         public bool CanDelay()
         {
-            return Status == TurnStatus.Preparing &&
-                (AllowCommandNonPlayerToPerformSpecialActions || Unit.IsDirectlyControllable);
+            return Status == TurnStatus.Preparing && Unit.IsDirectlyControllable;
         }
 
         public bool CanEndTurn()
         {
-            return (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) &&
-                (AllowCommandNonPlayerToPerformSpecialActions || Unit.IsDirectlyControllable);
+            return (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) && Unit.IsDirectlyControllable;
         }
 
         public void CommandToggleFiveFootStep()

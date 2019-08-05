@@ -162,13 +162,6 @@ namespace TurnBased.Menus
             DoNotAutoEndTurnWhenHasSwiftAction =
                 GUIHelper.ToggleButton(DoNotAutoEndTurnWhenHasSwiftAction,
                 "DO NOT Auto End Turn When Current Unit Still Has The Swift Action", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            GUILayout.Space(10f);
-
-            AllowCommandNonPlayerToPerformSpecialActions =
-                GUIHelper.ToggleButton(AllowCommandNonPlayerToPerformSpecialActions,
-                "Allow Command Non-Player Units To Perform Special Actions" +
-                " (5-foot step, Delay and End Turn)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
         }
     }
 }
