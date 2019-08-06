@@ -2,16 +2,43 @@
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Enums;
 using Kingmaker.Items;
+using Kingmaker.UnitLogic.Abilities;
+using Kingmaker.UnitLogic.Abilities.Blueprints;
 using Kingmaker.UnitLogic.Commands;
+using Kingmaker.Utility;
 using System.Linq;
 
 namespace TurnBased.Utility
 {
     public static class MiscExtensions
     {
-        public static T Get<T>(this LibraryScriptableObject library, string assetId) where T : BlueprintScriptableObject
+        public static float GetAbilityRadius(this AbilityData ability)
         {
-            return library.BlueprintsByAssetId[assetId] as T;
+            if (ability.Blueprint.Range != AbilityRange.Unlimited)
+            {
+                float meters;
+
+                if (ability.TargetAnchor == AbilityTargetAnchor.Owner)
+                {
+                    if (ability.Blueprint.AoERadius == 0.Feet())
+                    {
+                        return 0f;
+                    }
+                    meters = ability.Blueprint.AoERadius.Meters;
+                }
+                else
+                {
+                    meters = ability.GetVisualDistance();
+                }
+
+                if (ability.IsPierceOrCone)
+                {
+                    meters += ability.Caster.Unit.Corpulence;
+                }
+
+                return meters;
+            }
+            return 0f;
         }
 
         public static void Clear(this UnitCombatState.Cooldowns cooldown)
@@ -23,14 +50,19 @@ namespace TurnBased.Utility
             cooldown.AttackOfOpportunity = 0f;
         }
 
+        public static bool Approximately(this float x, float y)
+        {
+            return y - 0.0001f < x && x < y + 0.0001f;
+        }
+
         public static bool IsKineticBlast(this ItemEntity item)
         {
             return (item as ItemEntityWeapon)?.Blueprint.Category == WeaponCategory.KineticBlast;
         }
 
-        public static bool Approximately(this float x, float y)
+        public static T Get<T>(this LibraryScriptableObject library, string assetId) where T : BlueprintScriptableObject
         {
-            return y - 0.0001f < x && x < y + 0.0001f;
+            return library.BlueprintsByAssetId[assetId] as T;
         }
 
         public static bool IsRunning(this UnitCommands commands)

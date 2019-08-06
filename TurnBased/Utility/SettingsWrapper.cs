@@ -235,6 +235,16 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleShowAttackIndicatorOfNonPlayer = value;
         }
 
+        public static bool ShowAttackIndicatorOnHoverUI {
+            get => Mod.Settings.toggleShowAttackIndicatorOnHoverUI;
+            set => Mod.Settings.toggleShowAttackIndicatorOnHoverUI = value;
+        }
+
+        public static bool ShowAutoCastAbilityRange {
+            get => Mod.Settings.toggleShowAutoCastAbilityRange;
+            set => Mod.Settings.toggleShowAutoCastAbilityRange = value;
+        }
+
         public static bool ShowMovementIndicatorOfCurrentUnit {
             get => Mod.Settings.toggleShowMovementIndicatorOfCurrentUnit;
             set => Mod.Settings.toggleShowMovementIndicatorOfCurrentUnit = value;
@@ -250,28 +260,9 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleShowMovementIndicatorOfNonPlayer = value;
         }
 
-        public static bool ShowAttackIndicatorOnHoverUI {
-            get => Mod.Settings.toggleShowAttackIndicatorOnHoverUI;
-            set => Mod.Settings.toggleShowAttackIndicatorOnHoverUI = value;
-        }
-
         public static bool ShowMovementIndicatorOnHoverUI {
             get => Mod.Settings.toggleShowMovementIndicatorOnHoverUI;
             set => Mod.Settings.toggleShowMovementIndicatorOnHoverUI = value;
-        }
-
-        public static bool ShowIsFlatFootedIconOnHoverUI {
-            get => Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI;
-            set {
-                if (Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI != value)
-                {
-                    Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI = value;
-                    if (value)
-                    {
-                        ShowIsFlatFootedIconOnUI = false;
-                    }
-                }
-            }
         }
 
         public static bool ShowIsFlatFootedIconOnUI {
@@ -283,6 +274,20 @@ namespace TurnBased.Utility
                     if (value)
                     {
                         ShowIsFlatFootedIconOnHoverUI = false;
+                    }
+                }
+            }
+        }
+
+        public static bool ShowIsFlatFootedIconOnHoverUI {
+            get => Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI;
+            set {
+                if (Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI != value)
+                {
+                    Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI = value;
+                    if (value)
+                    {
+                        ShowIsFlatFootedIconOnUI = false;
                     }
                 }
             }

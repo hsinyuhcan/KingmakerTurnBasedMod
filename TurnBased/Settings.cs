@@ -44,14 +44,17 @@ namespace TurnBased
         public bool toggleShowAttackIndicatorOfCurrentUnit = true;
         public bool toggleShowAttackIndicatorOfPlayer = true;
         public bool toggleShowAttackIndicatorOfNonPlayer;
+        public bool toggleShowAttackIndicatorOnHoverUI = true;
+        public bool toggleShowAutoCastAbilityRange = true;
+
         public bool toggleShowMovementIndicatorOfCurrentUnit = true;
         public bool toggleShowMovementIndicatorOfPlayer = true;
         public bool toggleShowMovementIndicatorOfNonPlayer;
-
-        public bool toggleShowAttackIndicatorOnHoverUI = true;
         public bool toggleShowMovementIndicatorOnHoverUI = true;
-        public bool toggleShowIsFlatFootedIconOnHoverUI;
+
         public bool toggleShowIsFlatFootedIconOnUI = true;
+        public bool toggleShowIsFlatFootedIconOnHoverUI;
+
         public bool toggleSelectUnitOnClickUI;
         public bool toggleCameraScrollToUnitOnClickUI = true;
         public bool toggleShowUnitDescriptionOnRightClickUI = true;
