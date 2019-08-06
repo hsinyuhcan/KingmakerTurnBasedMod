@@ -1,4 +1,7 @@
-﻿Version 0.9.33
+﻿Version 0.9.24
+	Fixed "Inspect" is broken by the previous update
+
+Version 0.9.33
 	Added the "DO NOT Moving Through Non-Allies" option
 	Added the "Try To Avoid Overlapping When Charging" option
 	Added the "Auto Cancel Actions On Turn-Based Combat End" option
