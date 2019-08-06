@@ -219,7 +219,7 @@ namespace TurnBased.Controllers
                     foreach (UnitEntityData unit in _units)
                     {
                         if (unit.IsPlayersEnemy ?
-                            unit.HasCombatCommand(command => command.TargetUnit.IsPlayerFaction) :
+                            !unit.IsVisibleForPlayer || unit.HasCombatCommand(command => command.TargetUnit.IsPlayerFaction) :
                             unit.HasCombatCommand() &&
                             !Game.Instance.UnitGroups.Any(group => group.IsEnemy(unit) && group.Memory.ContainsVisible(unit)))
                         {
