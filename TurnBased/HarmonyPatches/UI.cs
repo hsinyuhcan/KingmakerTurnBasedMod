@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using TurnBased.Controllers;
 using TurnBased.Utility;
 using UnityEngine;
 using static ModMaker.Utility.ReflectionCache;
@@ -26,24 +25,44 @@ namespace TurnBased.HarmonyPatches
         static class UIDecal_HandleAoEMove_Patch
         {
             [HarmonyPrefix]
-            static bool Prefix(UIDecal __instance, AbilityData abilityData)
+            static bool Prefix(UIDecal __instance, Vector3 pos, AbilityData abilityData)
             {
                 if (IsInCombat() && abilityData == null)
                 {
                     UnitEntityData unit = Mod.Core.UI.AttackIndicator.Unit;
-                    TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
-                    if (currentTurn != null && currentTurn.Unit == unit && currentTurn.EnabledFiveFootStep)
-                    {
-                        __instance.SetHoverVisibility(unit.CanAttackWithWeapon(__instance.Unit, currentTurn.GetRemainingMovementRange()));
-                    }
-                    else
-                    {
-                        __instance.SetHoverVisibility(unit.CanAttackWithWeapon(__instance.Unit, 0f));
-                    }
+                    __instance.SetHoverVisibility(unit.CanTarget(__instance.Unit, pos.x, pos.y != 0f, pos.z != 0f));
 
                     return false;
                 }
                 return true;
+            }
+        }
+
+        // fix visual distance of certain range type inconsistent with real distance
+        [HarmonyPatch(typeof(AbilityData), nameof(AbilityData.GetVisualDistance))]
+        static class AbilityData_GetVisualDistance_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // return Blueprint.GetRange(flag).Meters + corpulence + 0.5f;
+                // ---------------- after  ----------------
+                // return Blueprint.GetRange(flag).Meters + corpulence;
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldc_R4, 0.5f),
+                    new CodeInstruction(OpCodes.Add),
+                };
+                int startIndex = codes.FindLastCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    return codes.RemoveRange(startIndex, findingCodes.Count, false).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
             }
         }
 

@@ -18,13 +18,16 @@ namespace TurnBased.UI
         public Color VisibleColor {
             get => _visibleColor;
             set {
-                _visibleColor = value;
-
-                if (_visible)
+                if (_visibleColor != value)
                 {
-                    DOTween.Pause(this);
-                    DOTween.Kill(this, false);
-                    SetColor(_visibleColor);
+                    _visibleColor = value;
+
+                    if (_visible)
+                    {
+                        DOTween.Pause(this);
+                        DOTween.Kill(this, false);
+                        SetColor(_visibleColor);
+                    }
                 }
             }
         }

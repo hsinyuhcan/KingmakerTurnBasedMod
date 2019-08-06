@@ -4,7 +4,6 @@ using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Inspect;
 using Kingmaker.Items;
-using Kingmaker.Items.Slots;
 using Kingmaker.PubSubSystem;
 using Kingmaker.UI;
 using Kingmaker.UnitLogic;
@@ -107,43 +106,24 @@ namespace TurnBased.Utility
             return (state.CanAct || state.CanMove) && unit.View != null && !unit.View.IsGetUp;
         }
 
-        public static bool CanAttackWithWeapon(this UnitEntityData unit, UnitEntityData target, float movement)
+        public static bool CanTarget(this UnitEntityData unit, UnitEntityData target, float radius,
+            bool canTargetEnemies, bool canTargetFriends)
         {
-            WeaponSlot hand = unit?.GetFirstWeaponSlot();
-            return hand != null && target != null && unit.IsEnemy(target) &&
-                unit.DistanceTo(target) < unit.View.Corpulence + target.View.Corpulence + hand.Weapon.AttackRange.Meters + movement;
+            radius += target.View.Corpulence;
+            return target != null && radius != 0f && unit.DistanceTo(target) < radius && 
+                (unit.CanAttack(target) ? canTargetEnemies : canTargetFriends);
         }
 
         public static float GetAttackApproachRadius(this UnitEntityData unit, UnitEntityData target)
         {
-            return unit.View.Corpulence + target.View.Corpulence + unit.GetAttackRange();
+            float radius = unit.GetAttackRadius();
+            return radius != 0f ? radius + target.View.Corpulence : 0f;
         }
 
-        public static float GetAttackRange(this UnitEntityData unit)
+        public static float GetAttackRadius(this UnitEntityData unit)
         {
             ItemEntityWeapon weapon = unit.GetFirstWeapon();
-            if (weapon != null)
-            {
-                float meters = weapon.AttackRange.Meters;
-                return unit.View.Corpulence + meters;
-            }
-            else
-            {
-                return 0f;
-            }
-        }
-
-        public static WeaponSlot GetFirstWeaponSlot(this UnitEntityData unit)
-        {
-            if (unit.Body.PrimaryHand.MaybeWeapon != null)
-            {
-                return unit.Body.PrimaryHand;
-            }
-            if (unit.Body.SecondaryHand.MaybeWeapon != null)
-            {
-                return unit.Body.SecondaryHand;
-            }
-            return unit.Body.AdditionalLimbs.FirstOrDefault(limb => limb.MaybeWeapon != null);
+            return weapon != null ? unit.View.Corpulence + weapon.AttackRange.Meters : 0f;
         }
 
         public static float GetTimeToNextTurn(this UnitEntityData unit)

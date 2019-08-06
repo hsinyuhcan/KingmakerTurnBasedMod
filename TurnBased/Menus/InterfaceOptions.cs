@@ -81,6 +81,16 @@ namespace TurnBased.Menus
                 GUIHelper.ToggleButton(ShowAttackIndicatorOfNonPlayer,
                 "Show Attack Indicator ... Of Non-Player", _buttonStyle, GUILayout.ExpandWidth(false));
 
+            ShowAttackIndicatorOnHoverUI =
+                GUIHelper.ToggleButton(ShowAttackIndicatorOnHoverUI,
+                "Show Attack Indicator When Mouse Hover The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            ShowAutoCastAbilityRange =
+                GUIHelper.ToggleButton(ShowAutoCastAbilityRange,
+                "Show Ability Range Instead Of Attack Range When Using Auto Cast", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            GUILayout.Space(10f);
+
             ShowMovementIndicatorOfCurrentUnit =
                 GUIHelper.ToggleButton(ShowMovementIndicatorOfCurrentUnit,
                 "Show Movement Indicator Of Current Unit", _buttonStyle, GUILayout.ExpandWidth(false));
@@ -93,23 +103,19 @@ namespace TurnBased.Menus
                 GUIHelper.ToggleButton(ShowMovementIndicatorOfNonPlayer,
                 "Show Movement Indicator ... Of Non-Player", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            GUILayout.Space(10f);
-
-            ShowAttackIndicatorOnHoverUI =
-                GUIHelper.ToggleButton(ShowAttackIndicatorOnHoverUI,
-                "Show Attack Indicator When Mouse Hover The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
-
             ShowMovementIndicatorOnHoverUI =
                 GUIHelper.ToggleButton(ShowMovementIndicatorOnHoverUI,
                 "Show Movement Indicator When Mouse Hover The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            ShowIsFlatFootedIconOnHoverUI =
-                GUIHelper.ToggleButton(ShowIsFlatFootedIconOnHoverUI,
-                "Show An Icon To Indicate If The Unit Lost Dexterity Bonus To AC When Mouse Hover The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
+            GUILayout.Space(10f);
 
             ShowIsFlatFootedIconOnUI =
                 GUIHelper.ToggleButton(ShowIsFlatFootedIconOnUI,
                 "Show An Icon To Indicate If The Unit Lost Dexterity Bonus To AC", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            ShowIsFlatFootedIconOnHoverUI =
+                GUIHelper.ToggleButton(ShowIsFlatFootedIconOnHoverUI,
+                "Show An Icon To Indicate If The Unit Lost Dexterity Bonus To AC When Mouse Hover The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
 
             GUILayout.Space(10f);
 

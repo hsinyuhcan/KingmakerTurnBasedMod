@@ -3,6 +3,7 @@ using Kingmaker.EntitySystem.Entities;
 using Kingmaker.PubSubSystem;
 using Kingmaker.UI.AbilityTarget;
 using Kingmaker.UnitLogic.Abilities;
+using Kingmaker.UnitLogic.Abilities.Blueprints;
 using ModMaker.Utility;
 using System.Reflection;
 using TurnBased.Controllers;
@@ -50,24 +51,27 @@ namespace TurnBased.UI
         {
             if (IsInCombat() && !_isAbilityHovered && !_isAbilitySelected)
             {
-                UnitEntityData unit = ShowAttackIndicatorOnHoverUI ? Mod.Core.UI.CombatTracker.HoveringUnit : null;
+                UnitEntityData unit;
                 float radius = 0f;
+                bool canTargetEnemies = true;
+                bool canTargetFriends = false;
 
-                if (unit != null && !unit.IsCurrentUnit())
+                if ((unit = ShowAttackIndicatorOnHoverUI ? Mod.Core.UI.CombatTracker.HoveringUnit : null) != null && 
+                    !unit.IsCurrentUnit())
                 {
-                    radius = unit.GetAttackRange();
+                    GetRadius();
                 }
                 else
                 {
                     TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
-                    if (currentTurn != null)
+                    if ((unit = currentTurn?.Unit) != null && ShowAttackIndicatorOfCurrentUnit &&
+                        (unit.IsDirectlyControllable ? ShowAttackIndicatorOfPlayer : ShowAttackIndicatorOfNonPlayer))
                     {
-                        unit = currentTurn.Unit;
-                        if (ShowAttackIndicatorOfCurrentUnit &&
-                            (unit.IsDirectlyControllable ? ShowAttackIndicatorOfPlayer : ShowAttackIndicatorOfNonPlayer))
+                        GetRadius();
+
+                        if (radius > 0f && currentTurn.EnabledFiveFootStep)
                         {
-                            radius = currentTurn.EnabledFiveFootStep ?
-                                unit.GetAttackRange() + currentTurn.GetRemainingMovementRange() : unit.GetAttackRange();
+                            radius += currentTurn.GetRemainingMovementRange();
                         }
                     }
                 }
@@ -79,9 +83,28 @@ namespace TurnBased.UI
                     _range.SetVisible(true);
 
                     Unit = unit;
-                    EventBus.RaiseEvent<IShowAoEAffectedUIHandler>(h => h.HandleAoEMove(new Vector3(), null));
+                    EventBus.RaiseEvent<IShowAoEAffectedUIHandler>
+                        (h => h.HandleAoEMove(new Vector3(radius, canTargetEnemies ? 1f : 0f, canTargetFriends ? 1f : 0f), null));
 
                     return;
+                }
+
+                void GetRadius()
+                {
+                    AbilityData ability = ShowAutoCastAbilityRange ? unit.GetAvailableAutoUseAbility() : null;
+                    if (ability != null)
+                    {
+                        radius = ability.GetAbilityRadius();
+                        canTargetEnemies = ability.Blueprint.CanTargetEnemies;
+                        canTargetFriends = ability.Blueprint.CanTargetFriends;
+                        _range.VisibleColor = ability.TargetAnchor == AbilityTargetAnchor.Owner ? Color.green : Color.yellow;
+
+                    }
+                    else
+                    {
+                        radius = unit.GetAttackRadius();
+                        _range.VisibleColor = Color.red;
+                    }
                 }
             }
 
@@ -109,7 +132,6 @@ namespace TurnBased.UI
             AttackIndicatorManager tbAttackIndicatorManager = tbAttackIndicator.AddComponent<AttackIndicatorManager>();
 
             tbAttackIndicatorManager._range = RangeIndicatorManager.CreateObject(aoeRange, "AttackRange", false);
-            tbAttackIndicatorManager._range.VisibleColor = Color.red;
             DontDestroyOnLoad(tbAttackIndicatorManager._range.gameObject);
 
             return tbAttackIndicatorManager;

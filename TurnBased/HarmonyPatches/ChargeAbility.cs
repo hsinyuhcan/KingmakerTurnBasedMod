@@ -58,7 +58,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPostfix]
             static void Postfix(UnitAttack __instance, UnitEntityData executor)
             {
-                if (IsInCombat() && (executor.View.AgentASP?.IsCharging ?? false))
+                if (IsInCombat() && (executor.View?.AgentASP?.IsCharging ?? false))
                 {
                     __instance.IgnoreCooldown(null);
                     __instance.IsCharge = true;
