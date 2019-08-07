@@ -61,11 +61,11 @@ namespace TurnBased.Menus
 
                 GUILayout.Space(10f);
                 GUILayout.Label($"Turn Status: {currentTurn?.Status}");
-                GUILayout.Label($"Time Waited For AI: {currentTurn?.TimeWaitedForIdleAI:f2}");
-                GUILayout.Label($"Time Waited To End Turn: {currentTurn?.TimeWaitedToEndTurn:f2}");
-                GUILayout.Label($"Time Moved: {currentTurn?.TimeMoved:f2}");
-                GUILayout.Label($"Meters Moved (5-Foot Step): {currentTurn?.MetersMovedByFiveFootStep:f2}");
-                GUILayout.Label($"Feet Moved (5-Foot Step): {currentTurn?.MetersMovedByFiveFootStep / Feet.FeetToMetersRatio:f2}");
+                GUILayout.Label($"Time Waited For AI: {currentTurn?.TimeWaitedForIdleAI:f4}");
+                GUILayout.Label($"Time Waited To End Turn: {currentTurn?.TimeWaitedToEndTurn:f4}");
+                GUILayout.Label($"Time Moved: {currentTurn?.TimeMoved:f4}");
+                GUILayout.Label($"Time Moved (5-Foot Step): {currentTurn?.TimeMovedByFiveFootStep:f4}");
+                GUILayout.Label($"Feet Moved (5-Foot Step): {currentTurn?.MetersMovedByFiveFootStep / Feet.FeetToMetersRatio:f4}");
                 GUILayout.Label($"Has Normal Movement: {currentTurn?.HasNormalMovement()}");
                 GUILayout.Label($"Has 5-Foot Step: {currentTurn?.HasFiveFootStep()}");
                 GUILayout.Label($"Has Free Touch: {currentTurn?.Unit.HasFreeTouch()}");

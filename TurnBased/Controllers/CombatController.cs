@@ -6,7 +6,6 @@ using Kingmaker.EntitySystem;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.PubSubSystem;
 using Kingmaker.RuleSystem.Rules;
-using Kingmaker.UI.Common;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Buffs;
 using Kingmaker.UnitLogic.Commands;
@@ -219,7 +218,7 @@ namespace TurnBased.Controllers
                     foreach (UnitEntityData unit in _units)
                     {
                         if (unit.IsPlayersEnemy ?
-                            unit.HasCombatCommand(command => command.TargetUnit.IsPlayerFaction) :
+                            !unit.IsVisibleForPlayer || unit.HasCombatCommand(command => command.TargetUnit.IsPlayerFaction) :
                             unit.HasCombatCommand() &&
                             !Game.Instance.UnitGroups.Any(group => group.IsEnemy(unit) && group.Memory.ContainsVisible(unit)))
                         {

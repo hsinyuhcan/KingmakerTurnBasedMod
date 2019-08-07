@@ -15,6 +15,8 @@ namespace TurnBased.Controllers
 {
     public class TurnController
     {
+        private bool _aiUsedFiveFootStep;
+        private bool _enabledFiveFootStep;
         private UnitEntityData _delayTarget;
 
         public readonly UnitEntityData Unit;
@@ -37,11 +39,25 @@ namespace TurnBased.Controllers
 
         public float TimeMoved { get; private set; }
 
+        public float TimeMovedByFiveFootStep { get; private set; }
+
         public float MetersMovedByFiveFootStep { get; private set; }
 
         public bool ImmuneAttackOfOpportunityOnDisengage { get; private set; }
 
-        public bool EnabledFiveFootStep { get; private set; }
+        public bool EnabledFiveFootStep {
+            get => _enabledFiveFootStep;
+            private set {
+                if (_enabledFiveFootStep != value)
+                {
+                    _enabledFiveFootStep = value;
+                    if (!value && _aiUsedFiveFootStep && HasNormalMovement())
+                    {
+                        Cooldown.MoveAction += TimeMovedByFiveFootStep;
+                    }
+                }
+            }
+        }
 
         public bool NeedStealthCheck { get; internal set; }
 
@@ -91,7 +107,7 @@ namespace TurnBased.Controllers
                 if (isInForceMode)
                 {
                     TimeMoved += deltaTime;
-                    EnabledFiveFootStep = false;
+                    //EnabledFiveFootStep = false;
                 }
                 else
                 {
@@ -113,6 +129,7 @@ namespace TurnBased.Controllers
                         if (EnabledFiveFootStep)
                         {
                             TimeMoved += deltaTime;
+                            TimeMovedByFiveFootStep += deltaTime;
                             MetersMovedByFiveFootStep += deltaTime * Unit.CurrentSpeedMps;
                             EnabledFiveFootStep = HasFiveFootStep();
                             ImmuneAttackOfOpportunityOnDisengage = true;
@@ -137,14 +154,34 @@ namespace TurnBased.Controllers
 
             if (EnabledFiveFootStep)
             {
-                if (!HasFiveFootStep())
-                    EnabledFiveFootStep = false;
+                EnabledFiveFootStep = HasFiveFootStep();
             }
             else
             {
-                // auto enabled 5-foot step if possible when having no normal movement left
-                if (!HasNormalMovement() && HasFiveFootStep())
-                    EnabledFiveFootStep = true;
+                // auto enabled 5-foot step if possible when:
+                // 1. the unit has no normal movement left
+                // 2. an AI unit can approach target with 5-foot step
+                if (HasFiveFootStep())
+                {
+                    if (!HasNormalMovement())
+                    {
+                        EnabledFiveFootStep = true;
+                    }
+                    else if (!Unit.IsDirectlyControllable)
+                    {
+                        UnitCommand command = Commands.Standard;
+                        if ((command is UnitAttack || command is UnitUseAbility) && !command.IsStarted)
+                        {
+                            UnitEntityData target = command.TargetUnit;
+                            if (target != null && target != Unit && 
+                                Unit.DistanceTo(target) < command.ApproachRadius + MetersOfFiveFootStep)
+                            {
+                                EnabledFiveFootStep = true;
+                                _aiUsedFiveFootStep = true;
+                            }
+                        }
+                    }
+                }
             }
 
             bool hasCommandRunning = Commands.IsRunning();
@@ -366,7 +403,7 @@ namespace TurnBased.Controllers
 
         public bool ShouldRestrictNormalMovement()
         {
-            return MetersMovedByFiveFootStep > 0f;
+            return !_aiUsedFiveFootStep && MetersMovedByFiveFootStep > 0f;
         }
 
         public bool HasFiveFootStep()

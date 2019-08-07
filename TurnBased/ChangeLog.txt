@@ -1,4 +1,8 @@
-﻿Version 0.9.34
+﻿Version 0.9.35
+	Changed unseen enemies will be able to act in the surprise round
+	Changed AI units will try to approach target with 5-foot step if possible
+
+Version 0.9.34
 	Added the "Show Ability Range Instead Of Attack Range When Using Auto Cast" option
 	Fixed "Inspect" is broken by the previous update
 
