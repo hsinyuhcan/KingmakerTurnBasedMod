@@ -107,7 +107,7 @@ namespace TurnBased.Controllers
                 if (isInForceMode)
                 {
                     TimeMoved += deltaTime;
-                    //EnabledFiveFootStep = false;
+                    EnabledFiveFootStep = false;
                 }
                 else
                 {
