@@ -1,4 +1,5 @@
 ﻿using Kingmaker.Blueprints.Root;
+using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
@@ -81,8 +82,10 @@ namespace TurnBased.Utility
 
         public static bool IsOffensiveCommand(this UnitCommand command)
         {
+            UnitEntityData executor;
+            UnitEntityData target;
             return command != null && !command.IsFinished && (command is UnitAttack || command is UnitUseAbility) &&
-                command.TargetUnit != null && command.Target != command.Executor && command.Executor.CanAttack(command.TargetUnit);
+                (target = command.TargetUnit) != null && target != (executor = command.Executor) && executor.CanAttack(target);
         }
     }
 }
