@@ -1,0 +1,95 @@
+﻿using ModMaker;
+using ModMaker.Utility;
+using System;
+using TurnBased.Utility;
+using UnityEngine;
+using UnityModManagerNet;
+using static ModMaker.Utility.RichTextExtensions;
+using static TurnBased.Main;
+using static TurnBased.Utility.SettingsWrapper;
+
+namespace TurnBased.Menus
+{
+    public class BugfixOptions : IMenuSelectablePage
+    {
+        GUIStyle _buttonStyle;
+        GUIStyle _labelStyle;
+
+        public string Name => "Bugfix";
+
+        public int Priority => 600;
+
+        public void OnGUI(UnityModManager.ModEntry modEntry)
+        {
+            if (Mod == null || !Mod.Enabled)
+                return;
+
+            if (_buttonStyle == null)
+            {
+                _buttonStyle = new GUIStyle(GUI.skin.button) { alignment = TextAnchor.MiddleLeft };
+                _labelStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleLeft, padding = _buttonStyle.padding };
+            }
+
+            OnGUIBugfix();
+        }
+
+        void OnGUIBugfix()
+        {
+            BugfixToggle(FixNeverInCombatWithoutMC,
+                "Fix when the main character is not in your party, the game will never consider that you are in combat", false, true);
+
+            BugfixToggle(new BugfixOption(true, false),
+                "Fix combat will not end properly if it's ended by a cutsense", false, false);
+
+            BugfixToggle(new BugfixOption(true, true),
+                "Fix units will never leave combat if they become inactive (cause Call Forth Kanerah / Kalikke glitch)", false, false);
+
+            BugfixToggle(FixActionTypeOfBardicPerformance,
+                "Fix the action type of starting a Bardic Performance with / without Singing Steel", true, true);
+
+            BugfixToggle(FixActionTypeOfCharge,
+                "Fix the action type of Charge (Standard Action => Full Round Action)", true, true,
+                () => Mod.Core.Blueprint.UpdateChargeAbility());
+
+            BugfixToggle(FixActionTypeOfVitalStrike,
+                "Fix the action type of Vital Strike (Full Round Action => Standard Action)", true, true,
+                () => Mod.Core.Blueprint.UpdateVitalStrikeAbility());
+
+            BugfixToggle(FixActionTypeOfKineticBlade,
+                "Fix activating Kinetic Blade is regarded as drawing weapon and costs an additional standard action", true, true);
+
+            BugfixToggle(FixKineticistWontStopPriorCommand,
+                "Fix Kineticist will not stop its previous action if you command it to attack with Kinetic Blade before combat", true, true);
+
+            BugfixToggle(FixSpellstrikeOnNeutralUnit,
+                "Fix Spellstrike does not take effect when attacking a neutral target", true, true);
+
+            BugfixToggle(FixHasMotionThisTick,
+                "Fix sometimes the game does not regard a unit that is forced to move as a unit that is moved (cause AoO inconsistent)", true, true);
+
+            BugfixToggle(FixAbilityCircleRadius,
+                "Fix the visual circle of certain abilities is inconsistent with the real range", false, true);
+
+            BugfixToggle(FixAbilityCircleNotAppear,
+                "Fix the ability circle does not appear properly when you first time select any ability of the unit using the hotkey", true, true);
+        }
+
+        private void BugfixToggle(BugfixOption option, string text, bool canToggleTB, bool canToggleRT, Action onToggle = null)
+        {
+            using (new GUILayout.HorizontalScope())
+            {
+                if (canToggleTB)
+                    GUIHelper.ToggleButton(ref option.ForTB, "TB", onToggle, onToggle, _buttonStyle, GUILayout.ExpandWidth(false));
+                else
+                    GUIHelper.ToggleButton(option.ForTB, "TB", _labelStyle, GUILayout.ExpandWidth(false));
+
+                if (canToggleRT)
+                    GUIHelper.ToggleButton(ref option.ForRT, "RT", onToggle, onToggle, _buttonStyle, GUILayout.ExpandWidth(false));
+                else
+                    GUIHelper.ToggleButton(option.ForRT, "RT", _labelStyle, GUILayout.ExpandWidth(false));
+
+                GUILayout.Label(text, _labelStyle, GUILayout.ExpandWidth(false));
+            }
+        }
+    }
+}

@@ -38,34 +38,6 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // fix visual distance of certain range type inconsistent with real distance
-        [HarmonyPatch(typeof(AbilityData), nameof(AbilityData.GetVisualDistance))]
-        static class AbilityData_GetVisualDistance_Patch
-        {
-            [HarmonyTranspiler]
-            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
-            {
-                // ---------------- before ----------------
-                // return Blueprint.GetRange(flag).Meters + corpulence + 0.5f;
-                // ---------------- after  ----------------
-                // return Blueprint.GetRange(flag).Meters + corpulence;
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
-                {
-                    new CodeInstruction(OpCodes.Ldc_R4, 0.5f),
-                    new CodeInstruction(OpCodes.Add),
-                };
-                int startIndex = codes.FindLastCodes(findingCodes);
-                if (startIndex >= 0)
-                {
-                    return codes.RemoveRange(startIndex, findingCodes.Count, false).Complete();
-                }
-                else
-                {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
-                }
-            }
-        }
-
         // make Unit.Inspect() extension work
         [HarmonyPatch(typeof(InspectController), nameof(InspectController.HandleUnitRightClick), typeof(UnitEntityView))]
         static class InspectController_HandleUnitRightClick_Patch

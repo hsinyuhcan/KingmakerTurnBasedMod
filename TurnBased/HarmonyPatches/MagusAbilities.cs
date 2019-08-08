@@ -2,19 +2,12 @@
 using Kingmaker;
 using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers;
-using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.Utility;
-using ModMaker.Utility;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using TurnBased.Utility;
-using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -83,7 +76,7 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // fix Magus Spell Combat (check MoveAction isteand of LastMoveTime)
+        // fix Magus Spell Combat (check MoveAction instead of LastMoveTime)
         [HarmonyPatch(typeof(UnitPartMagus), nameof(UnitPartMagus.IsSpellCombatThisRoundAllowed), typeof(bool))]
         static class UnitPartMagus_IsSpellCombatThisRoundAllowed_Patch
         {
@@ -100,26 +93,6 @@ namespace TurnBased.HarmonyPatches
                     return false;
                 }
                 return true;
-            }
-        }
-
-        // fix Spellstrike doesn't take effect when attacking a neutral target
-        [HarmonyPatch(typeof(UnitUseAbility), nameof(UnitUseAbility.CreateCastCommand))]
-        static class UnitUseAbility_CreateCastCommand_Patch
-        {
-            [HarmonyTranspiler]
-            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
-            {
-                // ---------------- before ----------------
-                // unit.IsEnemy(target.Unit)
-                // ---------------- after  ----------------
-                // unit.CanAttack(target.Unit)
-                return codes.ReplaceAll(
-                    new CodeInstruction(OpCodes.Callvirt,
-                        GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
-                    new CodeInstruction(OpCodes.Callvirt,
-                        GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.CanAttack))),
-                    true);
             }
         }
     }

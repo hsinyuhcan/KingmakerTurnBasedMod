@@ -1,7 +1,8 @@
 ﻿Version 0.9.36
+	Separated all bugfixes to a new settings tab and make them toggleable
 	Changed the background color of the combat tracker, now it has better contrast
 	Fixed using 5-foot step after charging is accidentally allowed by the previous update
-	Fixed the combat will starts when using any ability on non-enemy objects
+	Fixed combat will start when using any ability on non-enemy objects
 
 Version 0.9.35
 	Changed unseen enemies will be able to act in the surprise round

@@ -17,7 +17,7 @@ namespace TurnBased
     {
         internal Dictionary<AbilityExecutionProcess, TimeSpan> LastTickTimeOfAbilityExecutionProcess = new Dictionary<AbilityExecutionProcess, TimeSpan>();
 
-        public BlueprintController Blueprint { get; internal set; } = new BlueprintController();
+        public BlueprintController Blueprint { get; private set; }
 
         public CombatController Combat { get; internal set; }
 
@@ -35,8 +35,9 @@ namespace TurnBased
             Mod.Debug(MethodBase.GetCurrentMethod());
 
             EventBus.Subscribe(this);
-
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
+
+            Blueprint = new BlueprintController();
         }
 
         public void HandleModDisable()
@@ -44,8 +45,10 @@ namespace TurnBased
             Mod.Debug(MethodBase.GetCurrentMethod());
             
             EventBus.Unsubscribe(this);
-
             HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
+
+            Blueprint.Dispose();
+            Blueprint = null;
         }
 
         public void OnAreaBeginUnloading() { }

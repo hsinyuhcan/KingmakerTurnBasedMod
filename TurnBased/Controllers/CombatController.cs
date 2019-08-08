@@ -68,7 +68,7 @@ namespace TurnBased.Controllers
 
         internal void Tick()
         {
-            // fix when the combat end by a cutscene, HandlePartyCombatStateChanged will not be triggered
+            // fix if combat is ended by a cutscene, HandlePartyCombatStateChanged will not be triggered
             if (_units.Count == 0)
             {
                 foreach (UnitEntityData allCharacter in Game.Instance.Player.AllCharacters)
@@ -183,6 +183,8 @@ namespace TurnBased.Controllers
 
         private void Reset(bool tryToInitialize, bool isPartyCombatStateChanged = false)
         {
+            Mod.Debug(MethodBase.GetCurrentMethod(), tryToInitialize, isPartyCombatStateChanged);
+
             _timeScale.Reset();
             _combatStartTime = Game.Instance.Player.GameTime;
             _combatTimeSinceStart = 0f;
@@ -281,8 +283,8 @@ namespace TurnBased.Controllers
 
             EventBus.Unsubscribe(this);
 
-            Reset(false);
             Mod.Core.Combat = null;
+            Reset(false);
         }
 
         public void OnAreaBeginUnloading() { }
@@ -391,7 +393,7 @@ namespace TurnBased.Controllers
             }
         }
 
-        // fix units stays in-combat state while their in-game state changes (caused Call Forth Kanerah/Kalikke glitch)
+        // fix units will never leave combat if they become inactive (cause Call Forth Kanerah / Kalikke glitch)
         public void HandleObjectInGameChaged(EntityDataBase entityData)
         {
             if (entityData is UnitEntityData unit)

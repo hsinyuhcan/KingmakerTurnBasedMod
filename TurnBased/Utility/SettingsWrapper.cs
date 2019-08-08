@@ -28,33 +28,6 @@ namespace TurnBased.Utility
 
         #region Gameplay
 
-        public static bool SetChargeAsFullRoundAction {
-            get => Mod.Settings.toggleSetChargeAsFullRoundAction;
-            set {
-                if (Mod.Settings.toggleSetChargeAsFullRoundAction != value)
-                {
-                    Mod.Settings.toggleSetChargeAsFullRoundAction = value;
-                    Mod.Core.Blueprint.UpdateChargeAbility();
-                }
-            } 
-        }
-
-        public static bool SetVitalStrikeAsStandardAction {
-            get => Mod.Settings.toggleSetVitalStrikeAsStandardAction;
-            set {
-                if (Mod.Settings.toggleSetVitalStrikeAsStandardAction != value)
-                {
-                    Mod.Settings.toggleSetVitalStrikeAsStandardAction = value;
-                    Mod.Core.Blueprint.UpdateVitalStrikeAbility();
-                }
-            }
-        }
-
-        public static bool FixTheCostToStartBardicPerformance {
-            get => Mod.Settings.toggleFixTheCostToStartBardicPerformance;
-            set => Mod.Settings.toggleFixTheCostToStartBardicPerformance = value;
-        }
-
         public static bool FlankingCountAllOpponents {
             get => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange;
             set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange = value;
@@ -324,8 +297,8 @@ namespace TurnBased.Utility
         }
 
         public static int CombatTrackerMaxUnits {
-            get => Mod.Settings.CombatTrackerMaxUnits;
-            set => Mod.Settings.CombatTrackerMaxUnits = value;
+            get => Mod.Settings.combatTrackerMaxUnits;
+            set => Mod.Settings.combatTrackerMaxUnits = value;
         }
 
         #endregion
@@ -366,6 +339,30 @@ namespace TurnBased.Utility
             get => Mod.Settings.timeToWaitForEndingTurn;
             set => Mod.Settings.timeToWaitForEndingTurn = value;
         }
+
+        #endregion
+
+        #region Bugfix
+
+        public static BugfixOption FixNeverInCombatWithoutMC => Mod.Settings.toggleFixNeverInCombatWithoutMC;
+
+        public static BugfixOption FixActionTypeOfBardicPerformance => Mod.Settings.toggleFixActionTypeOfBardicPerformance;
+
+        public static BugfixOption FixActionTypeOfCharge => Mod.Settings.toggleFixActionTypeOfCharge;
+
+        public static BugfixOption FixActionTypeOfVitalStrike => Mod.Settings.toggleFixActionTypeOfVitalStrike;
+
+        public static BugfixOption FixActionTypeOfKineticBlade => Mod.Settings.toggleFixActionTypeOfKineticBlade;
+
+        public static BugfixOption FixKineticistWontStopPriorCommand => Mod.Settings.toggleFixKineticistWontStopPriorCommand;
+
+        public static BugfixOption FixSpellstrikeOnNeutralUnit => Mod.Settings.toggleFixSpellstrikeOnNeutralUnit;
+
+        public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
+
+        public static BugfixOption FixAbilityCircleRadius => Mod.Settings.toggleFixAbilityCircleRadius;
+
+        public static BugfixOption FixAbilityCircleNotAppear => Mod.Settings.toggleFixAbilityCircleNotAppear;
 
         #endregion
 

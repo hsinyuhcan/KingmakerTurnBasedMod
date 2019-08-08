@@ -1,5 +1,4 @@
-﻿using DG.Tweening;
-using Harmony12;
+﻿using Harmony12;
 using Kingmaker;
 using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers;
@@ -9,11 +8,7 @@ using Kingmaker.EntitySystem.Entities;
 using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
 using Kingmaker.UnitLogic;
-using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
-using Kingmaker.UnitLogic.Commands.Base;
-using Kingmaker.Visual.Decals;
-using System.Linq;
 using TurnBased.Controllers;
 using TurnBased.Utility;
 using static TurnBased.Main;
@@ -24,22 +19,6 @@ namespace TurnBased.HarmonyPatches
 {
     static class Misc
     {
-        // fix when main character is not in the party, the game will never consider the player is in combat
-        [HarmonyPatch(typeof(Player), nameof(Player.IsInCombat), MethodType.Getter)]
-        static class Player_get_IsInCombat_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(Player __instance, ref bool __result)
-            {
-                if (IsEnabled())
-                {
-                    __result = __instance.PartyCharacters.FirstOrDefault().Value?.Group.IsInCombat ?? false;
-                    return false;
-                }
-                return true;
-            }
-        }
-
         // delay one round for summoned units after casting a summon spell
         [HarmonyPatch(typeof(RuleSummonUnit), nameof(RuleSummonUnit.OnTrigger), typeof(RulebookEventContext))]
         static class RuleSummonUnit_OnTrigger_Patch
@@ -135,51 +114,6 @@ namespace TurnBased.HarmonyPatches
                 {
                     Game.Instance.TimeController.SetGameDeltaTime(__state.Value);
                 }
-            }
-        }
-
-        // fix Kineticist won't remove the previous command if you command it to attack with Kinetic Blade before the combat
-        [HarmonyPatch(typeof(KineticistController), "TryRunKineticBladeActivationAction")]
-        static class KineticistController_TryRunKineticBladeActivationAction_Patch
-        {
-            [HarmonyPostfix]
-            static void Postfix(UnitCommand cmd, ref UnitCommands.CustomHandlerData? customHandler)
-            {
-                if (IsEnabled() && customHandler.HasValue && (customHandler.Value.ExecuteBefore ?? cmd) != cmd)
-                {
-                    UnitCommands commands = cmd.Executor.Commands;
-
-                    // remove conflicting command
-                    UnitCommand prior = commands.Raw[(int)cmd.Type] ?? commands.GetPaired(cmd);
-                    if (Game.Instance.IsPaused && commands.PreviousCommand == null && prior != null && prior.IsRunning)
-                    {
-                        commands.PreviousCommand = prior;
-                        commands.PreviousCommand.SuppressAnimation();
-                        commands.Raw[(int)commands.PreviousCommand.Type] = null;
-                    }
-                    else
-                    {
-                        commands.InterruptAndRemoveCommand(cmd.Type);
-                    }
-
-                    // update target
-                    if (cmd.Type == UnitCommand.CommandType.Standard || commands.Standard == null)
-                    {
-                        commands.UpdateCombatTarget(cmd);
-                    }
-                }
-            }
-        }
-
-        // fix the ability circle will not show up properly when you first time select an ability on an unit via hotkey  
-        [HarmonyPatch(typeof(GUIDecal), "InitAnimator")]
-        static class GUIDecal_InitAnimator_Patch
-        {
-            [HarmonyPostfix]
-            static void Postfix(Tweener ___m_AppearAnimation, Tweener ___m_DisappearAnimation)
-            {
-                ___m_AppearAnimation.Pause();
-                ___m_DisappearAnimation.Pause();
             }
         }
     }

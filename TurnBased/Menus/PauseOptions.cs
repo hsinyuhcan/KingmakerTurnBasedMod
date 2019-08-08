@@ -13,7 +13,7 @@ namespace TurnBased.Menus
 
         public string Name => "Pause";
 
-        public int Priority => 500;
+        public int Priority => 800;
 
         public void OnGUI(UnityModManager.ModEntry modEntry)
         {

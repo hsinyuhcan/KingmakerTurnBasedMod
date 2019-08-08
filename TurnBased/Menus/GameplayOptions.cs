@@ -41,18 +41,6 @@ namespace TurnBased.Menus
 
         void OnGUIMechanic()
         {
-            SetChargeAsFullRoundAction =
-                GUIHelper.ToggleButton(SetChargeAsFullRoundAction,
-                "Set Charge As Full Round Action", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            SetVitalStrikeAsStandardAction =
-                GUIHelper.ToggleButton(SetVitalStrikeAsStandardAction,
-                "Set Vital Strike As Standard Action", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            FixTheCostToStartBardicPerformance =
-                GUIHelper.ToggleButton(FixTheCostToStartBardicPerformance,
-                "Fix The Cost Of Action To Start Bardic Performance", _buttonStyle, GUILayout.ExpandWidth(false));
-            
             FlankingCountAllOpponents =
                 GUIHelper.ToggleButton(FlankingCountAllOpponents,
                 "Flanking Count All Opponents Within Threaten Range" +

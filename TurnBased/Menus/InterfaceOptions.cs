@@ -14,7 +14,7 @@ namespace TurnBased.Menus
 
         public string Name => "Interface";
 
-        public int Priority => 300;
+        public int Priority => 200;
 
         public void OnGUI(UnityModManager.ModEntry modEntry)
         {

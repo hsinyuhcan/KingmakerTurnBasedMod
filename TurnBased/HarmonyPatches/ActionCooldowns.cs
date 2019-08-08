@@ -3,21 +3,10 @@ using Kingmaker;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
-using Kingmaker.Items;
-using Kingmaker.Items.Slots;
-using Kingmaker.UnitLogic.ActivatableAbilities;
-using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
-using Kingmaker.View.Equipment;
-using ModMaker.Utility;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using TurnBased.Utility;
-using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Main;
-using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -59,7 +48,7 @@ namespace TurnBased.HarmonyPatches
 
         // check the cooldown, fix full round spell restriction
         [HarmonyPatch(typeof(UnitCombatState), nameof(UnitCombatState.HasCooldownForCommand), typeof(UnitCommand))]
-        static class UnitCombatState_HasCooldownForUnitCommand_Patch
+        static class UnitCombatState_HasCooldownForCommand_Patch
         {
             [HarmonyPrefix]
             static bool Prefix(UnitCombatState __instance, UnitCommand command, ref bool __result)
@@ -122,88 +111,6 @@ namespace TurnBased.HarmonyPatches
                 {
                     __instance.SetIsActed(true);
                 }
-            }
-        }
-
-        // fix the cooldown of action to start Bardic Performance
-        [HarmonyPatch(typeof(UnitActivateAbility), "GetCommandType", typeof(ActivatableAbility))]
-        static class UnitActivateAbility_GetCommandType_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(ActivatableAbility ability, ref UnitCommand.CommandType __result)
-            {
-                if (IsEnabled() && FixTheCostToStartBardicPerformance)
-                {
-                    if (ability.Blueprint.Group == ActivatableAbilityGroup.BardicPerformance)
-                    {
-                        if (ability.Owner.State.Features.QuickenPerformance2)
-                        {
-                            __result = ability.Owner.State.Features.SingingSteel ?
-                                UnitCommand.CommandType.Free : UnitCommand.CommandType.Swift;
-                        }
-                        else if (ability.Owner.State.Features.QuickenPerformance1)
-                        {
-                            __result = ability.Owner.State.Features.SingingSteel ?
-                                UnitCommand.CommandType.Swift : UnitCommand.CommandType.Move;
-                        }
-                        else
-                        {
-                            __result = ability.Owner.State.Features.SingingSteel ?
-                                UnitCommand.CommandType.Move : UnitCommand.CommandType.Standard;
-                        }
-                    }
-                    else
-                    {
-                        __result = ability.Blueprint.ActivateWithUnitCommandType;
-                    }
-                    return false;
-                }
-                return true;
-            }
-        }
-
-        // fix the cooldown of action to activate the Kinetic Blade
-        [HarmonyPatch(typeof(UnitViewHandsEquipment), nameof(UnitViewHandsEquipment.HandleEquipmentSlotUpdated), typeof(HandSlot), typeof(ItemEntity))]
-        static class UnitViewHandsEquipment_HandleEquipmentSlotUpdated_Patch
-        {
-            [HarmonyTranspiler]
-            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
-            {
-                // ---------------- before ----------------
-                // ... InCombat ...
-                // ---------------- after  ----------------
-                // !DontCostAction(slot, previousItem) && InCombat
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
-                {
-                    new CodeInstruction(OpCodes.Ldarg_0),
-                    new CodeInstruction(OpCodes.Call,
-                        GetPropertyInfo<UnitViewHandsEquipment, bool>(nameof(UnitViewHandsEquipment.InCombat)).GetGetMethod(true)),
-                    new CodeInstruction(OpCodes.Brfalse),
-                };
-                int startIndex = codes.FindCodes(findingCodes);
-                if (startIndex >= 0)
-                {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
-                    {
-                        new CodeInstruction(OpCodes.Ldarg_1),
-                        new CodeInstruction(OpCodes.Ldarg_2),
-                        new CodeInstruction(OpCodes.Call,
-                            new Func<HandSlot, ItemEntity, bool>(DontCostAction).Method),
-                        new CodeInstruction(OpCodes.Brtrue, codes.Item(startIndex + 2).operand),
-                    };
-                    return codes.InsertRange(startIndex, patchingCodes, true).Complete();
-                }
-                else
-                {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
-                }
-            }
-
-            static bool DontCostAction(HandSlot slot, ItemEntity previousItem)
-            {
-                return IsInCombat() &&
-                    ((slot.MaybeItem.IsKineticBlast() && previousItem == null) ||
-                    (slot.MaybeItem == null && previousItem.IsKineticBlast()));
             }
         }
 

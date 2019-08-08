@@ -1,5 +1,6 @@
 ﻿using Kingmaker.UI.SettingsUI;
 using ModMaker.Utility;
+using TurnBased.Utility;
 using UnityModManagerNet;
 
 namespace TurnBased
@@ -7,9 +8,6 @@ namespace TurnBased
     public class Settings : UnityModManager.ModSettings
     {
         // gameplay
-        public bool toggleSetChargeAsFullRoundAction = true;
-        public bool toggleSetVitalStrikeAsStandardAction = true;
-        public bool toggleFixTheCostToStartBardicPerformance = true;
         public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
         public float distanceOfFiveFootStep = 1.5f;
 
@@ -62,7 +60,7 @@ namespace TurnBased
         public bool toggleDoNotMarkInvisibleUnit = true;
         public bool toggleDoNotShowInvisibleUnitOnCombatTracker = true;
 
-        public int CombatTrackerMaxUnits = 15;
+        public int combatTrackerMaxUnits = 15;
         public float combatTrackerWidth = 375f;
 
         // hotkeys
@@ -76,6 +74,18 @@ namespace TurnBased
         public float castingTimeOfFullRoundSpell = 0.5f;
         public float timeToWaitForIdleAI = 0.5f;
         public float timeToWaitForEndingTurn = 0.1f;
+
+        // bugfix
+        public BugfixOption toggleFixNeverInCombatWithoutMC = new BugfixOption(true, false);
+        public BugfixOption toggleFixActionTypeOfBardicPerformance = new BugfixOption(true, false);
+        public BugfixOption toggleFixActionTypeOfCharge = new BugfixOption(true, false);
+        public BugfixOption toggleFixActionTypeOfVitalStrike = new BugfixOption(true, false);
+        public BugfixOption toggleFixActionTypeOfKineticBlade = new BugfixOption(true, false);
+        public BugfixOption toggleFixKineticistWontStopPriorCommand = new BugfixOption(true, false);
+        public BugfixOption toggleFixSpellstrikeOnNeutralUnit = new BugfixOption(true, false);
+        public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
+        public BugfixOption toggleFixAbilityCircleRadius = new BugfixOption(true, false);
+        public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);
 
         // pause
         public bool togglePauseOnPlayerTurnStart;
