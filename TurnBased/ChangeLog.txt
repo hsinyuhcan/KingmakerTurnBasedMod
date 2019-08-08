@@ -1,4 +1,5 @@
 ﻿Version 0.9.36
+	Changed the background color of the combat tracker, now it has better contrast
 	Fixed using 5-foot step after charging is accidentally allowed by the previous update
 
 Version 0.9.35
