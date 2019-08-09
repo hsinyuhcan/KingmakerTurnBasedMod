@@ -1,15 +1,18 @@
 ﻿using DG.Tweening;
 using Harmony12;
 using Kingmaker;
+using Kingmaker.Blueprints;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Items;
 using Kingmaker.Items.Slots;
 using Kingmaker.UnitLogic.Abilities;
+using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
+using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View.Equipment;
 using Kingmaker.Visual.Decals;
 using ModMaker.Utility;
@@ -182,6 +185,42 @@ namespace TurnBased.HarmonyPatches
             static bool IsTarget(UnitEntityData unit, UnitEntityData target)
             {
                 return (Mod.Enabled && FixSpellstrikeOnNeutralUnit) ? unit.CanAttack(target) : unit.IsEnemy(target);
+            }
+        }
+
+        // fix Spellstrike does not take effect when using Metamagic (Reach) on a touch spell
+        [HarmonyPatch(typeof(AbilityData), nameof(AbilityData.IsRay), MethodType.Getter)]
+        static class AbilityData_get_IsRay_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix(AbilityData __instance, ref bool __result)
+            {
+                if (Mod.Enabled && FixSpellstrikeWithMetamagicReach && !__result)
+                {
+                    if (__instance.Blueprint.GetComponent<AbilityDeliverTouch>() != null &&
+                        __instance.HasMetamagic(Metamagic.Reach))
+                    {
+                        __result = true;
+                    }
+                }
+            }
+        }
+
+        // fix Spellstrike does not take effect when using Metamagic (Reach) on a touch spell
+        [HarmonyPatch(typeof(UnitPartMagus), nameof(UnitPartMagus.IsSpellFromMagusSpellList), typeof(AbilityData))]
+        static class UnitPartMagus_IsSpellFromMagusSpellList_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix(UnitPartMagus __instance, AbilityData spell, ref bool __result)
+            {
+                if (Mod.Enabled && FixSpellstrikeWithMetamagicReach && !__result)
+                {
+                    if (__instance.Spellbook.Blueprint.SpellList.SpellsByLevel.Any(list =>
+                        list.Spells.Any(item => item.StickyTouch?.TouchDeliveryAbility == spell.Blueprint)))
+                    {
+                        __result = true;
+                    }
+                }
             }
         }
 

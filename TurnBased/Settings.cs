@@ -85,6 +85,7 @@ namespace TurnBased
         public BugfixOption toggleFixActionTypeOfKineticBlade = new BugfixOption(true, false);
         public BugfixOption toggleFixKineticistWontStopPriorCommand = new BugfixOption(true, false);
         public BugfixOption toggleFixSpellstrikeOnNeutralUnit = new BugfixOption(true, false);
+        public BugfixOption toggleFixSpellstrikeWithMetamagicReach = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityNotAutoDeactivateIfCombatEnded = new BugfixOption(true, false);
         public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleRadius = new BugfixOption(true, false);

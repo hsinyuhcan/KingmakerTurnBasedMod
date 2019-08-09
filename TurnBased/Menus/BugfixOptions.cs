@@ -4,7 +4,6 @@ using System;
 using TurnBased.Utility;
 using UnityEngine;
 using UnityModManagerNet;
-using static ModMaker.Utility.RichTextExtensions;
 using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 
@@ -71,6 +70,9 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixSpellstrikeOnNeutralUnit,
                 "Fix Spellstrike does not take effect when attacking a neutral target", true, true);
+
+            BugfixToggle(FixSpellstrikeWithMetamagicReach,
+                "Fix Spellstrike does not take effect when using Metamagic (Reach) on a touch spell", true, true);
 
             BugfixToggle(FixAbilityNotAutoDeactivateIfCombatEnded,
                 "Fix some abilities will not be auto deactivated after combat (Inspire Greatness, Inspire Heroics)", true, true,

@@ -428,7 +428,7 @@ namespace TurnBased.Controllers
             if (IsInCombat() && command.Executor.IsCurrentUnit() && (command.IsFreeTouch() || command.IsSpellstrikeAttack()))
             {
                 UnitPartTouch unitPartTouch = command.Executor.Get<UnitPartTouch>();
-                unitPartTouch.SetAppearTime(unitPartTouch.AppearTime - TimeSpan.FromSeconds(6d));
+                unitPartTouch?.SetAppearTime(unitPartTouch.AppearTime - TimeSpan.FromSeconds(6d));
             }
         }
 

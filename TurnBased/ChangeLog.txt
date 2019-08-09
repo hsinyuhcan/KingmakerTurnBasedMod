@@ -4,6 +4,7 @@
 	Added an option to set Overrun ability as a full round action
 	Added an option to set Angelic Form ability as a move action
 	Added an optoin to auto deactivated certain abilities after combat (Inspire Greatness, Inspire Heroics)
+	Added an option to fix Spellstrike does not take effect when using Metamagic (Reach) on a touch spell
 	Changed the background color of the combat tracker, now it has better contrast
 	Changed summoned units can act in surprise round if the summon is finished and their caster can act in surprise round
 	Changed summoned units that is not summoned using a full round action can act immediately after their caster's turn
