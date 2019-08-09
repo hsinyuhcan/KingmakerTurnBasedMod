@@ -4,7 +4,8 @@
 	Changed summoned units can act in surprise round if the summon is finished and their caster can act in surprise round
 	Changed summoned units that is not summoned using a full round action can act immediately after their caster's turn
 	Fixed the duration of the summon spells is one-round less than what it should be
-	Fixed using 5-foot step after charging is accidentally allowed by the previous update
+	Fixed using 5-foot step after a charge is accidentally allowed by the previous update
+	Fixed sometimes the movement speed become twice after a charge
 	Fixed combat will start when using any ability on non-enemy objects
 
 Version 0.9.35

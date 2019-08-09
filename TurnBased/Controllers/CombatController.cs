@@ -450,13 +450,20 @@ namespace TurnBased.Controllers
         }
 
         // ** return the move action if current unit attacked only once during a full attack
+        // restore the movement speed to normal after a charge
         public void HandleUnitCommandDidEnd(UnitCommand command)
         {
-            if (IsInCombat() && command.Executor.IsCurrentUnit() && 
-                command.IsActed && !command.IsIgnoreCooldown &&
-                command is UnitAttack unitAttack && unitAttack.IsFullAttack && unitAttack.GetAttackIndex() == 1)
+            if (IsInCombat() && command is UnitAttack unitAttack)
             {
-                CurrentTurn.Cooldown.MoveAction -= TIME_MOVE_ACTION;
+                if (unitAttack.IsCharge)
+                {
+                    command.Executor.View.AgentASP.MaxSpeedOverride = null;
+                }
+                else if(command.Executor.IsCurrentUnit() &&
+                    command.IsActed && !command.IsIgnoreCooldown && unitAttack.IsFullAttack && unitAttack.GetAttackIndex() == 1)
+                {
+                    CurrentTurn.Cooldown.MoveAction -= TIME_MOVE_ACTION;
+                }
             }
         }
 
