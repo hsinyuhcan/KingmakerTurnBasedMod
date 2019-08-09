@@ -36,6 +36,9 @@ namespace TurnBased
 
                     _enabled = value;
                     Combat.Reset(value);
+
+                    EventBus.RaiseEvent<IWarningNotificationUIHandler>(h =>
+                        h.HandleWarning(value ? "Turn-Based Combat" : "Real-Time with Pause", false));
                 }
             }
         }
