@@ -26,6 +26,9 @@ namespace TurnBased.UI
         private ButtonPF _buttonEndTurn;
         private ButtonPF _buttonFiveFoorStep;
         private ButtonPF _buttonDelay;
+        private TextMeshProUGUI _buttonEndTurnText;
+        private TextMeshProUGUI _buttonFiveFoorStepText;
+        private TextMeshProUGUI _buttonDelayText;
         private Image _buttonFiveFoorStepImage;
         private Image _buttonDelayImage;
         private Sprite _buttonNormalSprite;
@@ -61,6 +64,10 @@ namespace TurnBased.UI
 
             _buttonDelay = _buttonBlock.Find("SpecialActionButtons/Btn_Delay").gameObject.GetComponent<ButtonPF>();
             _buttonDelay.onClick.AddListener(new UnityAction(HandleClickDelay));
+
+            _buttonEndTurnText = _buttonEndTurn.GetComponentInChildren<TextMeshProUGUI>();
+            _buttonFiveFoorStepText = _buttonFiveFoorStep.GetComponentInChildren<TextMeshProUGUI>();
+            _buttonDelayText = _buttonDelay.GetComponentInChildren<TextMeshProUGUI>();
 
             _buttonFiveFoorStepImage = _buttonFiveFoorStep.gameObject.GetComponent<Image>();
             _buttonDelayImage = _buttonDelay.gameObject.GetComponent<Image>();
@@ -387,6 +394,17 @@ namespace TurnBased.UI
                     _buttonEndTurn.interactable = false;
                 }
             }
+
+            UpdateButtonsColor();
+        }
+
+        private void UpdateButtonsColor()
+        {
+            Color enable = Color.white;
+            Color disable = new Color(0.7f, 0.8f, 1f);
+            _buttonEndTurnText.color = _buttonEndTurn.interactable ? enable : disable;
+            _buttonFiveFoorStepText.color = _buttonFiveFoorStep.interactable ? enable : disable;
+            _buttonDelayText.color = _buttonDelay.interactable ? enable : disable;
         }
 
         private void UpdateUnits(IEnumerable<UnitEntityData> units)
