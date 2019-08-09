@@ -14,7 +14,7 @@ namespace TurnBased.Menus
 
         public string Name => "Interface";
 
-        public int Priority => 300;
+        public int Priority => 200;
 
         public void OnGUI(UnityModManager.ModEntry modEntry)
         {
@@ -36,12 +36,12 @@ namespace TurnBased.Menus
 
             DoNotMarkInvisibleUnit =
                 GUIHelper.ToggleButton(DoNotMarkInvisibleUnit,
-                "Do Not Mark Invisible Units" +
+                "DO NOT Mark Invisible Units" +
                 " (Disable highlight, camera, indicators... etc)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             DoNotShowInvisibleUnitOnCombatTracker =
                 GUIHelper.ToggleButton(DoNotShowInvisibleUnitOnCombatTracker,
-                "Do Not Show Invisible Units On The Combat Tracker", _buttonStyle, GUILayout.ExpandWidth(false));
+                "DO NOT Show Invisible Units On The Combat Tracker", _buttonStyle, GUILayout.ExpandWidth(false));
 
             GUILayout.Space(10f);
 
@@ -88,6 +88,10 @@ namespace TurnBased.Menus
             ShowAutoCastAbilityRange =
                 GUIHelper.ToggleButton(ShowAutoCastAbilityRange,
                 "Show Ability Range Instead Of Attack Range When Using Auto Cast", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            CheckForObstaclesOnTargeting =
+                GUIHelper.ToggleButton(CheckForObstaclesOnTargeting,
+                "Check For Obstacles When Determining Whether The Enemy Is Within Range", _buttonStyle, GUILayout.ExpandWidth(false));
 
             GUILayout.Space(10f);
 

@@ -1,10 +1,12 @@
-﻿using Kingmaker.Controllers;
+﻿using Kingmaker.Blueprints;
+using Kingmaker.Controllers;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Items;
 using Kingmaker.UI.Selection;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities.Blueprints;
+using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
@@ -21,6 +23,16 @@ namespace TurnBased.Utility
         public static void SetIsFullRoundAction(this BlueprintAbility blueprintAbility, bool value)
         {
             blueprintAbility.SetFieldValue("m_IsFullRoundAction", value);
+        }
+
+        public static void SetActivateWithUnitCommand(this BlueprintActivatableAbility blueprintAbility, UnitCommand.CommandType value)
+        {
+            blueprintAbility.SetFieldValue("m_ActivateWithUnitCommand", value);
+        }
+
+        public static bool GetInitialized(this LibraryScriptableObject library)
+        {
+            return library.GetFieldValue<LibraryScriptableObject, bool>("m_Initialized");
         }
 
         public static void SetPrevTickTime(this RayView rayView, TimeSpan value)

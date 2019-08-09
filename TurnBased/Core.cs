@@ -15,9 +15,11 @@ namespace TurnBased
         IModEventHandler,
         ISceneHandler
     {
+        private bool _enabled = true;
+
         internal Dictionary<AbilityExecutionProcess, TimeSpan> LastTickTimeOfAbilityExecutionProcess = new Dictionary<AbilityExecutionProcess, TimeSpan>();
 
-        public BlueprintController Blueprint { get; internal set; } = new BlueprintController();
+        public BlueprintController Blueprint { get; } = new BlueprintController();
 
         public CombatController Combat { get; internal set; }
 
@@ -25,9 +27,26 @@ namespace TurnBased
 
         public UIController UI { get; internal set; }
 
+        public bool Enabled {
+            get => _enabled;
+            set {
+                if (_enabled != value)
+                {
+                    Mod.Debug(MethodBase.GetCurrentMethod(), value);
+
+                    _enabled = value;
+                    Combat.Reset(value);
+
+                    EventBus.RaiseEvent<IWarningNotificationUIHandler>(h =>
+                        h.HandleWarning(value ? "Turn-Based Combat" : "Real-Time with Pause", false));
+                }
+            }
+        }
+
         private void HandleToggleTurnBasedMode()
         {
-            Combat.Enabled = !Combat.Enabled;
+            Enabled = !Enabled;
+            Mod.Core.Blueprint.Update();
         }
 
         public void HandleModEnable()
@@ -35,8 +54,9 @@ namespace TurnBased
             Mod.Debug(MethodBase.GetCurrentMethod());
 
             EventBus.Subscribe(this);
-
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
+
+            Mod.Core.Blueprint.Update();
         }
 
         public void HandleModDisable()
@@ -44,8 +64,9 @@ namespace TurnBased
             Mod.Debug(MethodBase.GetCurrentMethod());
             
             EventBus.Unsubscribe(this);
-
             HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
+
+            Mod.Core.Blueprint.Update(false);
         }
 
         public void OnAreaBeginUnloading() { }
@@ -54,6 +75,7 @@ namespace TurnBased
         {
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
 
+            Mod.Core.Blueprint.Update();
             Mod.Core.LastTickTimeOfAbilityExecutionProcess.Clear();
         }
     }

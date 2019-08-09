@@ -28,33 +28,6 @@ namespace TurnBased.Utility
 
         #region Gameplay
 
-        public static bool SetChargeAsFullRoundAction {
-            get => Mod.Settings.toggleSetChargeAsFullRoundAction;
-            set {
-                if (Mod.Settings.toggleSetChargeAsFullRoundAction != value)
-                {
-                    Mod.Settings.toggleSetChargeAsFullRoundAction = value;
-                    Mod.Core.Blueprint.UpdateChargeAbility();
-                }
-            } 
-        }
-
-        public static bool SetVitalStrikeAsStandardAction {
-            get => Mod.Settings.toggleSetVitalStrikeAsStandardAction;
-            set {
-                if (Mod.Settings.toggleSetVitalStrikeAsStandardAction != value)
-                {
-                    Mod.Settings.toggleSetVitalStrikeAsStandardAction = value;
-                    Mod.Core.Blueprint.UpdateVitalStrikeAbility();
-                }
-            }
-        }
-
-        public static bool FixTheCostToStartBardicPerformance {
-            get => Mod.Settings.toggleFixTheCostToStartBardicPerformance;
-            set => Mod.Settings.toggleFixTheCostToStartBardicPerformance = value;
-        }
-
         public static bool FlankingCountAllOpponents {
             get => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange;
             set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange = value;
@@ -245,6 +218,11 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleShowAutoCastAbilityRange = value;
         }
 
+        public static bool CheckForObstaclesOnTargeting {
+            get => Mod.Settings.toggleCheckForObstaclesOnTargeting;
+            set => Mod.Settings.toggleCheckForObstaclesOnTargeting = value;
+        }
+
         public static bool ShowMovementIndicatorOfCurrentUnit {
             get => Mod.Settings.toggleShowMovementIndicatorOfCurrentUnit;
             set => Mod.Settings.toggleShowMovementIndicatorOfCurrentUnit = value;
@@ -324,8 +302,8 @@ namespace TurnBased.Utility
         }
 
         public static int CombatTrackerMaxUnits {
-            get => Mod.Settings.CombatTrackerMaxUnits;
-            set => Mod.Settings.CombatTrackerMaxUnits = value;
+            get => Mod.Settings.combatTrackerMaxUnits;
+            set => Mod.Settings.combatTrackerMaxUnits = value;
         }
 
         #endregion
@@ -369,8 +347,44 @@ namespace TurnBased.Utility
 
         #endregion
 
-        #region Pause
+        #region Bugfix
 
+        public static BugfixOption FixNeverInCombatWithoutMC => Mod.Settings.toggleFixNeverInCombatWithoutMC;
+
+        public static BugfixOption FixActionTypeOfBardicPerformance => Mod.Settings.toggleFixActionTypeOfBardicPerformance;
+
+        public static BugfixOption FixActionTypeOfCharge => Mod.Settings.toggleFixActionTypeOfCharge;
+
+        public static BugfixOption FixActionTypeOfOverrun => Mod.Settings.toggleFixActionTypeOfOverrun;
+
+        public static BugfixOption FixActionTypeOfVitalStrike => Mod.Settings.toggleFixActionTypeOfVitalStrike;
+
+        public static BugfixOption FixActionTypeOfAngelicForm => Mod.Settings.toggleFixActionTypeOfAngelicForm;
+
+        public static BugfixOption FixActionTypeOfKineticBlade => Mod.Settings.toggleFixActionTypeOfKineticBlade;
+
+        public static BugfixOption FixKineticistWontStopPriorCommand => Mod.Settings.toggleFixKineticistWontStopPriorCommand;
+
+        public static BugfixOption FixSpellstrikeOnNeutralUnit => Mod.Settings.toggleFixSpellstrikeOnNeutralUnit;
+
+        public static BugfixOption FixSpellstrikeWithMetamagicReach => Mod.Settings.toggleFixSpellstrikeWithMetamagicReach;
+
+        public static BugfixOption FixAbilityNotAutoDeactivateIfCombatEnded => Mod.Settings.toggleFixAbilityNotAutoDeactivateIfCombatEnded;
+        
+        public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
+
+        public static BugfixOption FixAbilityCircleRadius => Mod.Settings.toggleFixAbilityCircleRadius;
+
+        public static BugfixOption FixAbilityCircleNotAppear => Mod.Settings.toggleFixAbilityCircleNotAppear;
+
+        #endregion
+
+        #region Pause
+        public static bool DoNotPauseOnCombatStart {
+            get => Mod.Settings.toggleDoNotPauseOnCombatStart;
+            set => Mod.Settings.toggleDoNotPauseOnCombatStart = value;
+        }
+        
         public static bool PauseOnPlayerTurnStart {
             get => Mod.Settings.togglePauseOnPlayerTurnStart;
             set => Mod.Settings.togglePauseOnPlayerTurnStart = value;

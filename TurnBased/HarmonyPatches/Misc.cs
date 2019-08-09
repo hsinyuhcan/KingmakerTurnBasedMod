@@ -1,5 +1,4 @@
-﻿using DG.Tweening;
-using Harmony12;
+﻿using Harmony12;
 using Kingmaker;
 using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers;
@@ -8,12 +7,9 @@ using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
+using Kingmaker.UI.SettingsUI;
 using Kingmaker.UnitLogic;
-using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
-using Kingmaker.UnitLogic.Commands.Base;
-using Kingmaker.Visual.Decals;
-using System.Linq;
 using TurnBased.Controllers;
 using TurnBased.Utility;
 using static TurnBased.Main;
@@ -24,22 +20,6 @@ namespace TurnBased.HarmonyPatches
 {
     static class Misc
     {
-        // fix when main character is not in the party, the game will never consider the player is in combat
-        [HarmonyPatch(typeof(Player), nameof(Player.IsInCombat), MethodType.Getter)]
-        static class Player_get_IsInCombat_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(Player __instance, ref bool __result)
-            {
-                if (IsEnabled())
-                {
-                    __result = __instance.PartyCharacters.FirstOrDefault().Value?.Group.IsInCombat ?? false;
-                    return false;
-                }
-                return true;
-            }
-        }
-
         // delay one round for summoned units after casting a summon spell
         [HarmonyPatch(typeof(RuleSummonUnit), nameof(RuleSummonUnit.OnTrigger), typeof(RulebookEventContext))]
         static class RuleSummonUnit_OnTrigger_Patch
@@ -47,21 +27,25 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPostfix]
             static void Postfix(RuleSummonUnit __instance)
             {
-                if (IsEnabled())
+                if (IsEnabled() && __instance.SummonedUnit is UnitEntityData summonedUnit)
                 {
-                    // remove the freezing time when the unit is summoned from a trap
-                    if (__instance.Initiator.Faction?.AssetGuid == "d75c5993785785d468211d9a1a3c87a6")
+                    // don't change RangedLegerdemainUnit
+                    if (summonedUnit.Blueprint.AssetGuid == "661093277286dd5459cd825e0205f908")
                     {
-                        __instance.SummonedUnit?.Descriptor.RemoveFact
-                            (BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff);
                         return;
                     }
 
-                    // exclude RangedLegerdemainUnit
-                    if (__instance.SummonedUnit?.Blueprint.AssetGuid != "661093277286dd5459cd825e0205f908")
+                    // remove the freezing time when it's not summoned by a full round spell or it's summoned by a trap
+                    if ((__instance.Context.SourceAbility?.IsFullRoundAction ?? false) == false ||
+                        __instance.Initiator.Faction?.AssetGuid == "d75c5993785785d468211d9a1a3c87a6")
                     {
-                        __instance.SummonedUnit?.Descriptor.AddBuff
-                            (BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff, __instance.Context, 6.Seconds());
+                        summonedUnit.Descriptor.RemoveFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff);
+                    }
+                    // add a round of freezing time to the units that summoned using a full-round spell
+                    else
+                    {
+                        summonedUnit.AddBuffDuration(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff, 6f);
+                        summonedUnit.SetBuffDuration(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff, 6f);
                     }
                 }
             }
@@ -101,6 +85,30 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // suppress auto pause on combat start
+        [HarmonyPatch(typeof(AutoPauseController), nameof(AutoPauseController.HandlePartyCombatStateChanged), typeof(bool))]
+        static class AutoPauseController_HandlePartyCombatStateChanged_Patch
+        {
+            [HarmonyPrefix]
+            static void Prefix(UnitCombatState __instance, bool inCombat, ref bool? __state)
+            {
+                if (IsEnabled() && DoNotPauseOnCombatStart && inCombat)
+                {
+                    __state = SettingsRoot.Instance.PauseOnEngagement.CurrentValue;
+                    SettingsRoot.Instance.PauseOnEngagement.CurrentValue = false;
+                }
+            }
+
+            [HarmonyPostfix]
+            static void Postfix(UnitCombatState __instance, ref bool? __state)
+            {
+                if (__state.HasValue)
+                {
+                    SettingsRoot.Instance.PauseOnEngagement.CurrentValue = __state.Value;
+                }
+            }
+        }
+
         // ** fix stealth check
         [HarmonyPatch(typeof(UnitStealthController), "TickUnit", typeof(UnitEntityData))]
         static class UnitStealthController_TickUnit_Patch
@@ -135,51 +143,6 @@ namespace TurnBased.HarmonyPatches
                 {
                     Game.Instance.TimeController.SetGameDeltaTime(__state.Value);
                 }
-            }
-        }
-
-        // fix Kineticist won't remove the previous command if you command it to attack with Kinetic Blade before the combat
-        [HarmonyPatch(typeof(KineticistController), "TryRunKineticBladeActivationAction")]
-        static class KineticistController_TryRunKineticBladeActivationAction_Patch
-        {
-            [HarmonyPostfix]
-            static void Postfix(UnitCommand cmd, ref UnitCommands.CustomHandlerData? customHandler)
-            {
-                if (IsEnabled() && customHandler.HasValue && (customHandler.Value.ExecuteBefore ?? cmd) != cmd)
-                {
-                    UnitCommands commands = cmd.Executor.Commands;
-
-                    // remove conflicting command
-                    UnitCommand prior = commands.Raw[(int)cmd.Type] ?? commands.GetPaired(cmd);
-                    if (Game.Instance.IsPaused && commands.PreviousCommand == null && prior != null && prior.IsRunning)
-                    {
-                        commands.PreviousCommand = prior;
-                        commands.PreviousCommand.SuppressAnimation();
-                        commands.Raw[(int)commands.PreviousCommand.Type] = null;
-                    }
-                    else
-                    {
-                        commands.InterruptAndRemoveCommand(cmd.Type);
-                    }
-
-                    // update target
-                    if (cmd.Type == UnitCommand.CommandType.Standard || commands.Standard == null)
-                    {
-                        commands.UpdateCombatTarget(cmd);
-                    }
-                }
-            }
-        }
-
-        // fix the ability circle will not show up properly when you first time select an ability on an unit via hotkey  
-        [HarmonyPatch(typeof(GUIDecal), "InitAnimator")]
-        static class GUIDecal_InitAnimator_Patch
-        {
-            [HarmonyPostfix]
-            static void Postfix(Tweener ___m_AppearAnimation, Tweener ___m_DisappearAnimation)
-            {
-                ___m_AppearAnimation.Pause();
-                ___m_DisappearAnimation.Pause();
             }
         }
     }

@@ -33,14 +33,12 @@ namespace TurnBased.UI
             Mod.Debug(MethodBase.GetCurrentMethod());
 
             EventBus.Subscribe(this);
-
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
         }
 
         void OnDestroy()
         {
             EventBus.Unsubscribe(this);
-
             HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
 
             if (!_range.IsNullOrDestroyed())

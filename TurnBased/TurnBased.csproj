@@ -95,6 +95,7 @@
   <ItemGroup>
     <Compile Include="Controllers\BlueprintController.cs" />
     <Compile Include="HarmonyPatches\AttackOfOpportunity.cs" />
+    <Compile Include="HarmonyPatches\Bugfixes.cs" />
     <Compile Include="HarmonyPatches\ChargeAbility.cs" />
     <Compile Include="HarmonyPatches\CollisionDetection.cs" />
     <Compile Include="HarmonyPatches\ConfusionCondition.cs" />
@@ -102,8 +103,10 @@
     <Compile Include="HarmonyPatches\UI.cs" />
     <Compile Include="HarmonyPatches\MagusAbilities.cs" />
     <Compile Include="HarmonyPatches\SurpriseRound.cs" />
+    <Compile Include="Menus\BugfixOptions.cs" />
     <Compile Include="Utility\MiscExtensions.cs" />
     <Compile Include="Utility\NonPublicAccessExtensions.cs" />
+    <Compile Include="Utility\BugfixOption.cs" />
     <Compile Include="Utility\UnitCommandExtensions.cs" />
     <Compile Include="HarmonyPatches\TimeFlow.cs" />
     <Compile Include="HarmonyPatches\Misc.cs" />

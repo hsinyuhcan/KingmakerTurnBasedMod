@@ -26,11 +26,12 @@ namespace TurnBased.UI
         private ButtonPF _button;
         private TextMeshProUGUI _label;
         private TextMeshProUGUI _activeLabel;
+        private Color[] _colors;
         private Image _colorMask;
         private Image _activeColorMask;
         private GameObject _canNotPerformActionIcon;
         private GameObject _isWaitingInitiativeIcon;
-        private GameObject _isFlatFooted;
+        private GameObject _isFlatFootedIcon;
         private GameObject _standardActionIcon;
         private GameObject _moveActionIcon;
         private GameObject _swiftActionIcon;
@@ -60,12 +61,20 @@ namespace TurnBased.UI
             _label = gameObject.transform.Find("HeaderInActive").gameObject.GetComponent<TextMeshProUGUI>();
             _activeLabel = gameObject.transform.Find("HeaderActive").gameObject.GetComponent<TextMeshProUGUI>();
 
+            _colors = new Color[]
+            {
+                UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.None).AddendumColor.linear,
+                UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Completed).AddendumColor.linear,
+                UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Failed).AddendumColor.linear,
+                UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Started).AddendumColor.linear
+            };
+
             _colorMask = gameObject.transform.Find("BackgroundInActive/Highlight").gameObject.GetComponent<Image>();
             _activeColorMask = gameObject.transform.Find("BackgroundActiveHighlight").gameObject.GetComponent<Image>();
         
             _canNotPerformActionIcon = gameObject.transform.Find("CanNotPerformAction").gameObject;
             _isWaitingInitiativeIcon = gameObject.transform.Find("IsWaitingInitiative").gameObject;
-            _isFlatFooted = gameObject.transform.Find("IsFlatFooted").gameObject;
+            _isFlatFootedIcon = gameObject.transform.Find("IsFlatFooted").gameObject;
             _standardActionIcon = gameObject.transform.Find("StandardAction").gameObject;
             _moveActionIcon = gameObject.transform.Find("MoveAction").gameObject;
             _swiftActionIcon = gameObject.transform.Find("SwiftAction").gameObject;
@@ -316,7 +325,7 @@ namespace TurnBased.UI
         private void UpdateIsFlatFooted()
         {
             UnitEntityData currentUnit = Mod.Core.Combat.CurrentTurn?.Unit;
-            _isFlatFooted.SetActive((ShowIsFlatFootedIconOnUI || (_isMouseOver && ShowIsFlatFootedIconOnHoverUI)) &&
+            _isFlatFootedIcon.SetActive((ShowIsFlatFootedIconOnUI || (_isMouseOver && ShowIsFlatFootedIconOnHoverUI)) &&
                 !_isCurrent && Unit != null && currentUnit != null &&
                 Rulebook.Trigger(new RuleCheckTargetFlatFooted(currentUnit, Unit)).IsFlatFooted);
         }
@@ -324,13 +333,13 @@ namespace TurnBased.UI
         private void UpdateColorMask()
         {
             if (Unit == null)
-                _colorMask.color = UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.None).AddendumColor;
+                _colorMask.color = _colors[0];
             else if (Game.Instance.Player.ControllableCharacters.Contains(Unit))
-                _colorMask.color = UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Completed).AddendumColor;
+                _colorMask.color = _colors[1];
             else if (Unit.Group.IsEnemy(Game.Instance.Player.Group))
-                _colorMask.color = UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Failed).AddendumColor;
+                _colorMask.color = _colors[2];
             else
-                _colorMask.color = UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.None).AddendumColor;
+                _colorMask.color = _colors[3];
         }
 
         private void UpdateText(bool froceUpdate = false)

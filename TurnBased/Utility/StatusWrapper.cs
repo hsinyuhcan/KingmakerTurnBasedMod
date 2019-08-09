@@ -9,7 +9,7 @@ namespace TurnBased.Utility
     {
         public static bool IsEnabled()
         {
-            return Mod.Enabled && Mod.Core.Combat.Enabled;
+            return Mod.Enabled && Mod.Core.Enabled;
         }
 
         public static bool IsInCombat()

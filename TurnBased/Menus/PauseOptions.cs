@@ -2,6 +2,7 @@
 using ModMaker.Utility;
 using UnityEngine;
 using UnityModManagerNet;
+using static ModMaker.Utility.RichTextExtensions;
 using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 
@@ -13,7 +14,7 @@ namespace TurnBased.Menus
 
         public string Name => "Pause";
 
-        public int Priority => 500;
+        public int Priority => 800;
 
         public void OnGUI(UnityModManager.ModEntry modEntry)
         {
@@ -30,6 +31,11 @@ namespace TurnBased.Menus
 
         void OnGUIPause()
         {
+            DoNotPauseOnCombatStart =
+                GUIHelper.ToggleButton(DoNotPauseOnCombatStart,
+                "DO NOT Auto Pause On Combat Start" +
+                " (Ignore the game setting)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+            
             PauseOnPlayerTurnStart =
                 GUIHelper.ToggleButton(PauseOnPlayerTurnStart,
                 "Pause On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));

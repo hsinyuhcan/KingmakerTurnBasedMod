@@ -36,7 +36,6 @@ namespace TurnBased.Controllers
         IUnitHandler,
         IUnitInitiativeHandler
     {
-        private bool _enabled = true;
         private TimeScaleRegulator _timeScale = new TimeScaleRegulator();
         private TimeSpan _combatStartTime;
         private float _combatTimeSinceStart;
@@ -47,19 +46,6 @@ namespace TurnBased.Controllers
 
         internal readonly HashSet<RayView> TickedRayView = new HashSet<RayView>();
 
-        public bool Enabled {
-            get => _enabled;
-            set {
-                if (_enabled != value)
-                {
-                    Mod.Debug(MethodBase.GetCurrentMethod(), value);
-
-                    _enabled = value;
-                    Reset(value);
-                }
-            }
-        }
-
         public bool CombatInitialized { get; private set; }
 
         public TurnController CurrentTurn { get; private set; }
@@ -68,7 +54,7 @@ namespace TurnBased.Controllers
 
         internal void Tick()
         {
-            // fix when the combat end by a cutscene, HandlePartyCombatStateChanged will not be triggered
+            // fix if combat is ended by a cutscene, HandlePartyCombatStateChanged will not be triggered
             if (_units.Count == 0)
             {
                 foreach (UnitEntityData allCharacter in Game.Instance.Player.AllCharacters)
@@ -181,8 +167,10 @@ namespace TurnBased.Controllers
             }
         }
 
-        private void Reset(bool tryToInitialize, bool isPartyCombatStateChanged = false)
+        public void Reset(bool tryToInitialize, bool isPartyCombatStateChanged = false)
         {
+            Mod.Debug(MethodBase.GetCurrentMethod(), tryToInitialize, isPartyCombatStateChanged);
+
             _timeScale.Reset();
             _combatStartTime = Game.Instance.Player.GameTime;
             _combatTimeSinceStart = 0f;
@@ -209,12 +197,13 @@ namespace TurnBased.Controllers
             }
 
             // initializing
-            if (tryToInitialize && Enabled && Game.Instance.Player.IsInCombat)
+            if (tryToInitialize && Mod.Core.Enabled && Game.Instance.Player.IsInCombat)
             {
                 _units.AddRange(Game.Instance.State.Units.Where(unit => unit.IsInCombat));
 
                 if (isPartyCombatStateChanged)
                 {
+                    int notAppearUnitsCount = 0;
                     foreach (UnitEntityData unit in _units)
                     {
                         if (unit.IsPlayersEnemy ?
@@ -224,11 +213,20 @@ namespace TurnBased.Controllers
                         {
                             _unitsInSupriseRound.Add(unit);
                         }
+                        else if (unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
+                        {
+                            notAppearUnitsCount++;
+                        }
+                        else if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) is Buff summonedUnitBuff &&
+                            summonedUnitBuff.Context.MaybeCaster is UnitEntityData caster && _unitsInSupriseRound.Contains(caster))
+                        {
+                            _unitsInSupriseRound.Add(unit);
+                        }
                     }
 
                     if (_unitsInSupriseRound.Count > 0)
                     {
-                        if (_unitsInSupriseRound.Count < _units.Count)
+                        if (_unitsInSupriseRound.Count < _units.Count - notAppearUnitsCount)
                             IsSurpriseRound = true;
                         else
                             _unitsInSupriseRound.Clear();
@@ -241,9 +239,6 @@ namespace TurnBased.Controllers
             {
                 CombatInitialized = false;
             }
-
-            // update ability modifications
-            Mod.Core.Blueprint.Update();
         }
 
         #region Event Handlers
@@ -281,8 +276,8 @@ namespace TurnBased.Controllers
 
             EventBus.Unsubscribe(this);
 
-            Reset(false);
             Mod.Core.Combat = null;
+            Reset(false);
         }
 
         public void OnAreaBeginUnloading() { }
@@ -327,36 +322,58 @@ namespace TurnBased.Controllers
             UnitCombatState.Cooldowns cooldown = unit.CombatState.Cooldown;
             if (_combatTimeSinceStart == 0f)
             {
-                if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) is Buff summonedUnitAppearBuff)
+                if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) is Buff summonedUnitBuff &&
+                    summonedUnitBuff.Context.MaybeCaster is UnitEntityData caster && caster != unit && _units.Contains(caster))
                 {
-                    // units that summoned before the combat (surprise) will act in the first round right after the caster 
-                    unit.Descriptor.AddBuff
-                        (BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff, summonedUnitAppearBuff.Context,
-                        (6f - Game.Instance.TimeController.GameDeltaTime + 
-                        summonedUnitAppearBuff.Context.MaybeCaster?.CombatState.Cooldown.StandardAction ?? 0f).Seconds());
-                    cooldown.Initiative = 0f;
+                    // it's a unit that summoned before the combat
+                    float timeToCasterRound = caster.CombatState.Cooldown.Initiative;
+                    unit.AddBuffDuration(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff, timeToCasterRound);
+
+                    if (unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
+                    {
+                        // a unit that summoned using full round action will act in the next round right after the caster 
+                        unit.SetBuffDuration(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff, 
+                            timeToCasterRound + 6f - Game.Instance.TimeController.GameDeltaTime);
+                        cooldown.Initiative = 0f;
+                    }
+                    else
+                    {
+                        // a unit that summoned instantly will act in the frist round right after the caster
+                        cooldown.Initiative = timeToCasterRound;
+                    }
                 }
                 else
                 {
-                    // the surprised units will be flat-footed in the surprise round
-                    // if there is no surprise round or the unit is surprising, the unit won't be flat-footed in the 0th round
+                    // a unit will be flat-footed while it is waiting Initiative
+                    // if there is no surprise round or the unit is surprising, the unit can avoid getting flat-footed for one more round
                     cooldown.Initiative += !IsSurpriseRound || IsSurprising(unit) ? 0f : 6f;
                 }
             }
             else
             {
-                // if a unit joins the combat in the middle of the combat, it has to wait for exact one round (6s) to act
-                // summoned units has a buff forcing them to wait for 6s, so they don't need the action cooldown
-                if (IsSurpriseRound)
+                // if a unit joins the combat in the middle of the combat, it has to wait for extra one round (6s) to act
+                // summoned units has a buff forcing them to wait for 6s / or act instantly, so they don't need the cooldown
+                if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) is Buff summonedUnitBuff &&
+                    summonedUnitBuff.Context.MaybeCaster is UnitEntityData caster && caster != unit && _units.Contains(caster))
                 {
-                    cooldown.Initiative =
-                        unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) ? 0f : 6f;
+                    cooldown.Initiative = 0f;
+                    if (IsSurpriseRound && !unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
+                    {
+                        // it's summoned instantly during surprise round
+                        _unitsInSupriseRound.Add(unit);
+                    }
                 }
                 else
                 {
-                    cooldown.Initiative = 0f;
-                    cooldown.StandardAction =
-                        unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) ? 0f : 6f;
+                    if (IsSurpriseRound)
+                    {
+                        cooldown.Initiative = 6f;
+                    }
+                    else
+                    {
+                        cooldown.Initiative = 0f;
+                        cooldown.StandardAction = 6f;
+                    }
                 }
             }
         }
@@ -391,7 +408,7 @@ namespace TurnBased.Controllers
             }
         }
 
-        // fix units stays in-combat state while their in-game state changes (caused Call Forth Kanerah/Kalikke glitch)
+        // fix units will never leave combat if they become inactive (cause Call Forth Kanerah / Kalikke glitch)
         public void HandleObjectInGameChaged(EntityDataBase entityData)
         {
             if (entityData is UnitEntityData unit)
@@ -411,18 +428,30 @@ namespace TurnBased.Controllers
             if (IsInCombat() && command.Executor.IsCurrentUnit() && (command.IsFreeTouch() || command.IsSpellstrikeAttack()))
             {
                 UnitPartTouch unitPartTouch = command.Executor.Get<UnitPartTouch>();
-                unitPartTouch.SetAppearTime(unitPartTouch.AppearTime - TimeSpan.FromSeconds(6d));
+                unitPartTouch?.SetAppearTime(unitPartTouch.AppearTime - TimeSpan.FromSeconds(6d));
             }
         }
 
         // ** return the move action if current unit attacked only once during a full attack
+        // restore the movement speed to normal after a charge
         public void HandleUnitCommandDidEnd(UnitCommand command)
         {
-            if (IsInCombat() && command.Executor.IsCurrentUnit() && 
-                command.IsActed && !command.IsIgnoreCooldown &&
-                command is UnitAttack unitAttack && unitAttack.IsFullAttack && unitAttack.GetAttackIndex() == 1)
+            if (IsInCombat() && command is UnitAttack unitAttack)
             {
-                CurrentTurn.Cooldown.MoveAction -= TIME_MOVE_ACTION;
+                if (unitAttack.IsCharge)
+                {
+                    command.Executor.View.AgentASP.MaxSpeedOverride = null;
+                    foreach (UnitCommand duplicatedCommand in 
+                        command.Executor.GetAllCommands().Where(cmd => cmd != null && cmd is UnitAttack atk && atk.IsCharge))
+                    {
+                        duplicatedCommand.Interrupt();
+                    }
+                }
+                else if(command.Executor.IsCurrentUnit() &&
+                    command.IsActed && !command.IsIgnoreCooldown && unitAttack.IsFullAttack && unitAttack.GetAttackIndex() == 1)
+                {
+                    CurrentTurn.Cooldown.MoveAction -= TIME_MOVE_ACTION;
+                }
             }
         }
 

@@ -112,12 +112,14 @@ namespace TurnBased.HarmonyPatches
                     // the unit is about to attack
                     if (unit.HasOffensiveCommand(command =>
                     {
-                        UnitState state = command.TargetUnit.Descriptor.State;
-                        return !state.IsDead && !state.IsIgnoredByCombat;
+                        UnitEntityData target;
+                        UnitState state;
+                        return (target = command.TargetUnit).IsInGame && 
+                            !(state = target.Descriptor.State).IsDead && !state.IsIgnoredByCombat;
                     }))
                         return true;
 
-                    // the unit is about to be attacked
+                    // the unit is about to be attacked &&
                     foreach (UnitCommand command in Game.Instance.State.AwakeUnits.SelectMany(enemy => enemy.GetAllCommands()))
                     {
                         if (command.IsOffensiveCommand() && command.TargetUnit == unit)
@@ -138,7 +140,11 @@ namespace TurnBased.HarmonyPatches
                             {
                                 unit.AttackFactions.Add(attacker.Descriptor.Faction);
                             }
-                            return true;
+
+                            if (unit.IsEnemy(attacker))
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
