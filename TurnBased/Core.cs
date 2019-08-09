@@ -15,9 +15,11 @@ namespace TurnBased
         IModEventHandler,
         ISceneHandler
     {
+        private bool _enabled = true;
+
         internal Dictionary<AbilityExecutionProcess, TimeSpan> LastTickTimeOfAbilityExecutionProcess = new Dictionary<AbilityExecutionProcess, TimeSpan>();
 
-        public BlueprintController Blueprint { get; private set; }
+        public BlueprintController Blueprint { get; } = new BlueprintController();
 
         public CombatController Combat { get; internal set; }
 
@@ -25,9 +27,23 @@ namespace TurnBased
 
         public UIController UI { get; internal set; }
 
+        public bool Enabled {
+            get => _enabled;
+            set {
+                if (_enabled != value)
+                {
+                    Mod.Debug(MethodBase.GetCurrentMethod(), value);
+
+                    _enabled = value;
+                    Combat.Reset(value);
+                }
+            }
+        }
+
         private void HandleToggleTurnBasedMode()
         {
-            Combat.Enabled = !Combat.Enabled;
+            Enabled = !Enabled;
+            Mod.Core.Blueprint.Update();
         }
 
         public void HandleModEnable()
@@ -37,7 +53,7 @@ namespace TurnBased
             EventBus.Subscribe(this);
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
 
-            Blueprint = new BlueprintController();
+            Mod.Core.Blueprint.Update();
         }
 
         public void HandleModDisable()
@@ -47,8 +63,7 @@ namespace TurnBased
             EventBus.Unsubscribe(this);
             HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
 
-            Blueprint.Dispose();
-            Blueprint = null;
+            Mod.Core.Blueprint.Update(false);
         }
 
         public void OnAreaBeginUnloading() { }
@@ -57,6 +72,7 @@ namespace TurnBased
         {
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
 
+            Mod.Core.Blueprint.Update();
             Mod.Core.LastTickTimeOfAbilityExecutionProcess.Clear();
         }
     }

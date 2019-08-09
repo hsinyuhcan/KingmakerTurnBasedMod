@@ -350,7 +350,11 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixActionTypeOfCharge => Mod.Settings.toggleFixActionTypeOfCharge;
 
+        public static BugfixOption FixActionTypeOfOverrun => Mod.Settings.toggleFixActionTypeOfOverrun;
+
         public static BugfixOption FixActionTypeOfVitalStrike => Mod.Settings.toggleFixActionTypeOfVitalStrike;
+
+        public static BugfixOption FixActionTypeOfAngelicForm => Mod.Settings.toggleFixActionTypeOfAngelicForm;
 
         public static BugfixOption FixActionTypeOfKineticBlade => Mod.Settings.toggleFixActionTypeOfKineticBlade;
 
@@ -358,6 +362,8 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixSpellstrikeOnNeutralUnit => Mod.Settings.toggleFixSpellstrikeOnNeutralUnit;
 
+        public static BugfixOption FixAbilityNotAutoDeactivateIfCombatEnded => Mod.Settings.toggleFixAbilityNotAutoDeactivateIfCombatEnded;
+        
         public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
 
         public static BugfixOption FixAbilityCircleRadius => Mod.Settings.toggleFixAbilityCircleRadius;

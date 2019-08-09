@@ -36,7 +36,6 @@ namespace TurnBased.Controllers
         IUnitHandler,
         IUnitInitiativeHandler
     {
-        private bool _enabled = true;
         private TimeScaleRegulator _timeScale = new TimeScaleRegulator();
         private TimeSpan _combatStartTime;
         private float _combatTimeSinceStart;
@@ -46,19 +45,6 @@ namespace TurnBased.Controllers
         private bool _unitsSorted;
 
         internal readonly HashSet<RayView> TickedRayView = new HashSet<RayView>();
-
-        public bool Enabled {
-            get => _enabled;
-            set {
-                if (_enabled != value)
-                {
-                    Mod.Debug(MethodBase.GetCurrentMethod(), value);
-
-                    _enabled = value;
-                    Reset(value);
-                }
-            }
-        }
 
         public bool CombatInitialized { get; private set; }
 
@@ -181,7 +167,7 @@ namespace TurnBased.Controllers
             }
         }
 
-        private void Reset(bool tryToInitialize, bool isPartyCombatStateChanged = false)
+        public void Reset(bool tryToInitialize, bool isPartyCombatStateChanged = false)
         {
             Mod.Debug(MethodBase.GetCurrentMethod(), tryToInitialize, isPartyCombatStateChanged);
 
@@ -211,7 +197,7 @@ namespace TurnBased.Controllers
             }
 
             // initializing
-            if (tryToInitialize && Enabled && Game.Instance.Player.IsInCombat)
+            if (tryToInitialize && Mod.Core.Enabled && Game.Instance.Player.IsInCombat)
             {
                 _units.AddRange(Game.Instance.State.Units.Where(unit => unit.IsInCombat));
 
@@ -253,9 +239,6 @@ namespace TurnBased.Controllers
             {
                 CombatInitialized = false;
             }
-
-            // update ability modifications
-            Mod.Core.Blueprint.Update();
         }
 
         #region Event Handlers

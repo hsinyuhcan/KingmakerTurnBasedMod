@@ -26,8 +26,8 @@ namespace TurnBased.Menus
                 _buttonStyle = new GUIStyle(GUI.skin.button) { alignment = TextAnchor.MiddleLeft };
             }
 
-            Mod.Core.Combat.Enabled =
-                GUIHelper.ToggleButton(Mod.Core.Combat.Enabled,
+            Mod.Core.Enabled =
+                GUIHelper.ToggleButton(Mod.Core.Enabled,
                 "Turn-Based Mode", _buttonStyle, GUILayout.ExpandWidth(false));
 
             GUILayout.Space(10f);

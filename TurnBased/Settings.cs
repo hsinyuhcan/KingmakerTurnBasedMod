@@ -79,10 +79,13 @@ namespace TurnBased
         public BugfixOption toggleFixNeverInCombatWithoutMC = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfBardicPerformance = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfCharge = new BugfixOption(true, false);
+        public BugfixOption toggleFixActionTypeOfOverrun = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfVitalStrike = new BugfixOption(true, false);
+        public BugfixOption toggleFixActionTypeOfAngelicForm = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfKineticBlade = new BugfixOption(true, false);
         public BugfixOption toggleFixKineticistWontStopPriorCommand = new BugfixOption(true, false);
         public BugfixOption toggleFixSpellstrikeOnNeutralUnit = new BugfixOption(true, false);
+        public BugfixOption toggleFixAbilityNotAutoDeactivateIfCombatEnded = new BugfixOption(true, false);
         public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleRadius = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);

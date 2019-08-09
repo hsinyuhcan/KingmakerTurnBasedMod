@@ -49,11 +49,19 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixActionTypeOfCharge,
                 "Fix the action type of Charge (Standard Action => Full Round Action)", true, true,
-                () => Mod.Core.Blueprint.UpdateChargeAbility());
+                () => Mod.Core.Blueprint.ActionTypeOfCharge.Update());
+
+            BugfixToggle(FixActionTypeOfOverrun,
+                "Fix the action type of Overrun (Standard Action => Full Round Action)", true, true,
+                () => Mod.Core.Blueprint.ActionTypeOfOverrun.Update());
 
             BugfixToggle(FixActionTypeOfVitalStrike,
                 "Fix the action type of Vital Strike (Full Round Action => Standard Action)", true, true,
-                () => Mod.Core.Blueprint.UpdateVitalStrikeAbility());
+                () => Mod.Core.Blueprint.ActionTypeOfVitalStrike.Update());
+
+            BugfixToggle(FixActionTypeOfAngelicForm,
+                "Fix the action type of Angelic Form (Standard Action => Move Action)", true, true,
+                () => Mod.Core.Blueprint.ActionTypeOfAngelicForm.Update());
 
             BugfixToggle(FixActionTypeOfKineticBlade,
                 "Fix activating Kinetic Blade is regarded as drawing weapon and costs an additional standard action", true, true);
@@ -64,6 +72,10 @@ namespace TurnBased.Menus
             BugfixToggle(FixSpellstrikeOnNeutralUnit,
                 "Fix Spellstrike does not take effect when attacking a neutral target", true, true);
 
+            BugfixToggle(FixAbilityNotAutoDeactivateIfCombatEnded,
+                "Fix some abilities will not be auto deactivated after combat (Inspire Greatness, Inspire Heroics)", true, true,
+                () => Mod.Core.Blueprint.AbilityDeactivateIfCombatEnded.Update());
+
             BugfixToggle(FixHasMotionThisTick,
                 "Fix sometimes the game does not regard a unit that is forced to move as a unit that is moved (cause AoO inconsistent)", true, true);
 
@@ -71,7 +83,7 @@ namespace TurnBased.Menus
                 "Fix the visual circle of certain abilities is inconsistent with the real range", false, true);
 
             BugfixToggle(FixAbilityCircleNotAppear,
-                "Fix the ability circle does not appear properly when you first time select any ability of the unit using the hotkey", true, true);
+                "Fix the ability circle does not appear properly when you first time select any ability of the unit using a hotkey", true, true);
         }
 
         private void BugfixToggle(BugfixOption option, string text, bool canToggleTB, bool canToggleRT, Action onToggle = null)

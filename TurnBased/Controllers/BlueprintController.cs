@@ -1,5 +1,7 @@
 ﻿using Kingmaker.Blueprints;
 using Kingmaker.UnitLogic.Abilities.Blueprints;
+using Kingmaker.UnitLogic.ActivatableAbilities;
+using Kingmaker.UnitLogic.Commands.Base;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -10,74 +12,96 @@ using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased.Controllers
 {
-    public class BlueprintController : IDisposable
+    public class BlueprintController
     {
-        public LibraryScriptableObject LibraryObject 
-            => typeof(ResourcesLibrary).GetFieldValue<LibraryScriptableObject>("s_LibraryObject");
+        // ChargeAbility
+        // SwiftBlowImprovedChargeAbility
+        public BlueprintModifier<bool> ActionTypeOfCharge = new BlueprintModifier<bool>(
+            FixActionTypeOfCharge,
+            new string[] { "c78506dd0e14f7c45a599990e4e65038", "d4b4757660cb66e4fbf376a43f1ffb13" },
+            true,
+            (lib, guid) => lib.Get<BlueprintAbility>(guid).IsFullRoundAction,
+            (lib, guid, value) => lib.Get<BlueprintAbility>(guid).SetIsFullRoundAction(value));
 
-        public void Dispose()
-        {
-            Mod.Debug(MethodBase.GetCurrentMethod());
+        // OverrunAbility
+        // ChargeAbilityLanternKingStar
+        // FlyTrampleTest
+        public BlueprintModifier<bool> ActionTypeOfOverrun = new BlueprintModifier<bool>(
+            FixActionTypeOfOverrun,
+            new string[] { "1a3b471ecea51f7439a946b23577fd70", "49b8bf9a35ecbd24482ee416cd7557b8", "f0b622ab2d18ef7439feb8aa5680d6e5" },
+            true,
+            (lib, guid) => lib.Get<BlueprintAbility>(guid).IsFullRoundAction,
+            (lib, guid, value) => lib.Get<BlueprintAbility>(guid).SetIsFullRoundAction(value));
 
-            Update(false);
-        }
+        // VitalStrikeAbility
+        // VitalStrikeAbilityImproved
+        // VitalStrikeAbilityGreater
+        public BlueprintModifier<bool> ActionTypeOfVitalStrike = new BlueprintModifier<bool>(
+            FixActionTypeOfVitalStrike,
+            new string[] { "efc60c91b8e64f244b95c66b270dbd7c", "c714cd636700ac24a91ca3df43326b00", "11f971b6453f74d4594c538e3c88d499" },
+            false,
+            (lib, guid) => lib.Get<BlueprintAbility>(guid).IsFullRoundAction,
+            (lib, guid, value) => lib.Get<BlueprintAbility>(guid).SetIsFullRoundAction(value));
+
+        // TristianAngelAbility
+        public BlueprintModifier<UnitCommand.CommandType> ActionTypeOfAngelicForm = new BlueprintModifier<UnitCommand.CommandType>(
+            FixActionTypeOfAngelicForm,
+            new string[] { "83e91b42102fdf04a98e86a0d515cd60" },
+            UnitCommand.CommandType.Move,
+            (lib, guid) => lib.Get<BlueprintActivatableAbility>(guid).ActivateWithUnitCommandType,
+            (lib, guid, value) => lib.Get<BlueprintActivatableAbility>(guid).SetActivateWithUnitCommand(value));
+
+        // InspireGreatnessToggleAbility
+        // InspireHeroicsToggleAbility
+        public BlueprintModifier<bool> AbilityDeactivateIfCombatEnded = new BlueprintModifier<bool>(
+            FixAbilityNotAutoDeactivateIfCombatEnded,
+            new string[] { "be36959e44ac33641ba9e0204f3d227b", "a4ce06371f09f504fa86fcf6d0e021e4" },
+            true,
+            (lib, guid) => lib.Get<BlueprintActivatableAbility>(guid).DeactivateIfCombatEnded,
+            (lib, guid, value) => lib.Get<BlueprintActivatableAbility>(guid).DeactivateIfCombatEnded = value);
 
         public void Update(bool modify = true)
         {
             Mod.Debug(MethodBase.GetCurrentMethod(), modify);
 
-            UpdateChargeAbility(modify);
-            UpdateVitalStrikeAbility(modify);
+            ActionTypeOfCharge.Update(modify);
+            ActionTypeOfOverrun.Update(modify);
+            ActionTypeOfVitalStrike.Update(modify);
+            ActionTypeOfAngelicForm.Update(modify);
+            AbilityDeactivateIfCombatEnded.Update(modify);
         }
 
-        #region Charge
-
-        private bool? _backupChargeIsFullRoundAction;
-
-        public void UpdateChargeAbility(bool modify = true)
+        public class BlueprintModifier<TValue>
         {
-            LibraryScriptableObject library = LibraryObject;
-            if (library != null && library.GetInitialized())
+            private readonly BugfixOption _option;
+            private readonly string[] _assetGuid;
+            private readonly TValue _value;
+            private readonly Func<LibraryScriptableObject, string, TValue> _getter;
+            private readonly Action<LibraryScriptableObject, string, TValue> _setter;
+            private TValue[] _backup;
+
+            public BlueprintModifier(BugfixOption option, string[] assetGuid, TValue value, 
+                Func<LibraryScriptableObject, string, TValue> getter, Action<LibraryScriptableObject, string, TValue> setter)
             {
-                Mod.Debug(MethodBase.GetCurrentMethod(), modify && FixActionTypeOfCharge);
+                _option = option;
+                _assetGuid = assetGuid;
+                _value = value;
+                _getter = getter;
+                _setter = setter;
+            }
 
-                if (!_backupChargeIsFullRoundAction.HasValue)
-                    _backupChargeIsFullRoundAction =
-                        library.Get<BlueprintAbility>("c78506dd0e14f7c45a599990e4e65038").IsFullRoundAction;
+            public void Update(bool modify = true)
+            {
+                LibraryScriptableObject library = typeof(ResourcesLibrary).GetFieldValue<LibraryScriptableObject>("s_LibraryObject");
+                if (library != null && library.GetInitialized())
+                {
+                    if (_backup == null)
+                        _backup = _assetGuid.Select(guid => _getter(library, guid)).ToArray();
 
-                library.Get<BlueprintAbility>("c78506dd0e14f7c45a599990e4e65038").SetIsFullRoundAction
-                    ((modify && FixActionTypeOfCharge) ? true : _backupChargeIsFullRoundAction.Value);
+                    for (int i = 0; i < _assetGuid.Length; i++)
+                        _setter(library, _assetGuid[i], (modify && _option) ? _value : _backup[i]);
+                } 
             }
         }
-
-        #endregion
-
-        #region Vital Strike
-
-        private readonly string[] _vitalStrikeAssetGuid = new string[] {
-            "efc60c91b8e64f244b95c66b270dbd7c", "c714cd636700ac24a91ca3df43326b00", "11f971b6453f74d4594c538e3c88d499"
-        };
-
-        private bool[] _backupVitalStrikeIsFullRoundAction;
-
-        public void UpdateVitalStrikeAbility(bool modify = true)
-        {
-            LibraryScriptableObject library = LibraryObject;
-            if (library != null && library.GetInitialized())
-            {
-                Mod.Debug(MethodBase.GetCurrentMethod(), modify && FixActionTypeOfVitalStrike);
-
-                if (_backupVitalStrikeIsFullRoundAction == null)
-                    _backupVitalStrikeIsFullRoundAction = _vitalStrikeAssetGuid
-                        .Select(guid => library.Get<BlueprintAbility>(guid).IsFullRoundAction)
-                        .ToArray();
-
-                for (int i = 0; i < _vitalStrikeAssetGuid.Length; i++)
-                    library.Get<BlueprintAbility>(_vitalStrikeAssetGuid[i]).SetIsFullRoundAction
-                        ((modify && FixActionTypeOfVitalStrike) ? false : _backupVitalStrikeIsFullRoundAction[i]);
-            }
-        }
-
-        #endregion
     }
 }
