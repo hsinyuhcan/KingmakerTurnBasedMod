@@ -44,6 +44,7 @@ namespace TurnBased
         public bool toggleShowAttackIndicatorOfNonPlayer;
         public bool toggleShowAttackIndicatorOnHoverUI = true;
         public bool toggleShowAutoCastAbilityRange = true;
+        public bool toggleCheckForObstaclesOnTargeting = true;
 
         public bool toggleShowMovementIndicatorOfCurrentUnit = true;
         public bool toggleShowMovementIndicatorOfPlayer = true;

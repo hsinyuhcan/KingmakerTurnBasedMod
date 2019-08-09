@@ -14,6 +14,7 @@ using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using Kingmaker.Visual;
+using Kingmaker.Visual.FogOfWar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,7 +132,8 @@ namespace TurnBased.Utility
         {
             radius += target.View.Corpulence;
             return target != null && radius != 0f && unit.DistanceTo(target) < radius && 
-                (unit.CanAttack(target) ? canTargetEnemies : canTargetFriends);
+                (unit.CanAttack(target) ? canTargetEnemies : canTargetFriends) &&
+                (!CheckForObstaclesOnTargeting || !LineOfSightGeometry.Instance.HasObstacle(unit.EyePosition, target.Position, 0));
         }
 
         public static float GetAttackApproachRadius(this UnitEntityData unit, UnitEntityData target)

@@ -89,6 +89,10 @@ namespace TurnBased.Menus
                 GUIHelper.ToggleButton(ShowAutoCastAbilityRange,
                 "Show Ability Range Instead Of Attack Range When Using Auto Cast", _buttonStyle, GUILayout.ExpandWidth(false));
 
+            CheckForObstaclesOnTargeting =
+                GUIHelper.ToggleButton(CheckForObstaclesOnTargeting,
+                "Check For Obstacles When Determining Whether The Enemy Is Within Range", _buttonStyle, GUILayout.ExpandWidth(false));
+
             GUILayout.Space(10f);
 
             ShowMovementIndicatorOfCurrentUnit =

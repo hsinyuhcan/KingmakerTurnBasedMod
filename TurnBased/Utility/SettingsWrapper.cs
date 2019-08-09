@@ -218,6 +218,11 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleShowAutoCastAbilityRange = value;
         }
 
+        public static bool CheckForObstaclesOnTargeting {
+            get => Mod.Settings.toggleCheckForObstaclesOnTargeting;
+            set => Mod.Settings.toggleCheckForObstaclesOnTargeting = value;
+        }
+
         public static bool ShowMovementIndicatorOfCurrentUnit {
             get => Mod.Settings.toggleShowMovementIndicatorOfCurrentUnit;
             set => Mod.Settings.toggleShowMovementIndicatorOfCurrentUnit = value;
