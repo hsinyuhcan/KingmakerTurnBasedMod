@@ -1,7 +1,6 @@
 ﻿using Harmony12;
 using Kingmaker;
 using Kingmaker.Blueprints.Root;
-using Kingmaker.Controllers;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
@@ -26,21 +25,25 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPostfix]
             static void Postfix(RuleSummonUnit __instance)
             {
-                if (IsEnabled())
+                if (IsEnabled() && __instance.SummonedUnit is UnitEntityData summonedUnit)
                 {
-                    // remove the freezing time when the unit is summoned from a trap
-                    if (__instance.Initiator.Faction?.AssetGuid == "d75c5993785785d468211d9a1a3c87a6")
+                    // don't change RangedLegerdemainUnit
+                    if (summonedUnit.Blueprint.AssetGuid == "661093277286dd5459cd825e0205f908")
                     {
-                        __instance.SummonedUnit?.Descriptor.RemoveFact
-                            (BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff);
                         return;
                     }
 
-                    // exclude RangedLegerdemainUnit
-                    if (__instance.SummonedUnit?.Blueprint.AssetGuid != "661093277286dd5459cd825e0205f908")
+                    // remove the freezing time when it's not summoned by a full round spell or it's summoned by a trap
+                    if ((__instance.Context.SourceAbility?.IsFullRoundAction ?? false) == false ||
+                        __instance.Initiator.Faction?.AssetGuid == "d75c5993785785d468211d9a1a3c87a6")
                     {
-                        __instance.SummonedUnit?.Descriptor.AddBuff
-                            (BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff, __instance.Context, 6.Seconds());
+                        summonedUnit.Descriptor.RemoveFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff);
+                    }
+                    // add a round of freezing time to the units that summoned using a full-round spell
+                    else
+                    {
+                        summonedUnit.AddBuffDuration(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff, 6f);
+                        summonedUnit.SetBuffDuration(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff, 6f);
                     }
                 }
             }

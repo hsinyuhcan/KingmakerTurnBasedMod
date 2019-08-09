@@ -217,6 +217,7 @@ namespace TurnBased.Controllers
 
                 if (isPartyCombatStateChanged)
                 {
+                    int notAppearUnitsCount = 0;
                     foreach (UnitEntityData unit in _units)
                     {
                         if (unit.IsPlayersEnemy ?
@@ -226,11 +227,20 @@ namespace TurnBased.Controllers
                         {
                             _unitsInSupriseRound.Add(unit);
                         }
+                        else if (unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
+                        {
+                            notAppearUnitsCount++;
+                        }
+                        else if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) is Buff summonedUnitBuff &&
+                            summonedUnitBuff.Context.MaybeCaster is UnitEntityData caster && _unitsInSupriseRound.Contains(caster))
+                        {
+                            _unitsInSupriseRound.Add(unit);
+                        }
                     }
 
                     if (_unitsInSupriseRound.Count > 0)
                     {
-                        if (_unitsInSupriseRound.Count < _units.Count)
+                        if (_unitsInSupriseRound.Count < _units.Count - notAppearUnitsCount)
                             IsSurpriseRound = true;
                         else
                             _unitsInSupriseRound.Clear();
@@ -329,36 +339,58 @@ namespace TurnBased.Controllers
             UnitCombatState.Cooldowns cooldown = unit.CombatState.Cooldown;
             if (_combatTimeSinceStart == 0f)
             {
-                if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) is Buff summonedUnitAppearBuff)
+                if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) is Buff summonedUnitBuff &&
+                    summonedUnitBuff.Context.MaybeCaster is UnitEntityData caster && caster != unit && _units.Contains(caster))
                 {
-                    // units that summoned before the combat (surprise) will act in the first round right after the caster 
-                    unit.Descriptor.AddBuff
-                        (BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff, summonedUnitAppearBuff.Context,
-                        (6f - Game.Instance.TimeController.GameDeltaTime + 
-                        summonedUnitAppearBuff.Context.MaybeCaster?.CombatState.Cooldown.StandardAction ?? 0f).Seconds());
-                    cooldown.Initiative = 0f;
+                    // it's a unit that summoned before the combat
+                    float timeToCasterRound = caster.CombatState.Cooldown.Initiative;
+                    unit.AddBuffDuration(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff, timeToCasterRound);
+
+                    if (unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
+                    {
+                        // a unit that summoned using full round action will act in the next round right after the caster 
+                        unit.SetBuffDuration(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff, 
+                            timeToCasterRound + 6f - Game.Instance.TimeController.GameDeltaTime);
+                        cooldown.Initiative = 0f;
+                    }
+                    else
+                    {
+                        // a unit that summoned instantly will act in the frist round right after the caster
+                        cooldown.Initiative = timeToCasterRound;
+                    }
                 }
                 else
                 {
-                    // the surprised units will be flat-footed in the surprise round
-                    // if there is no surprise round or the unit is surprising, the unit won't be flat-footed in the 0th round
+                    // a unit will be flat-footed while it is waiting Initiative
+                    // if there is no surprise round or the unit is surprising, the unit can avoid getting flat-footed for one more round
                     cooldown.Initiative += !IsSurpriseRound || IsSurprising(unit) ? 0f : 6f;
                 }
             }
             else
             {
-                // if a unit joins the combat in the middle of the combat, it has to wait for exact one round (6s) to act
-                // summoned units has a buff forcing them to wait for 6s, so they don't need the action cooldown
-                if (IsSurpriseRound)
+                // if a unit joins the combat in the middle of the combat, it has to wait for extra one round (6s) to act
+                // summoned units has a buff forcing them to wait for 6s / or act instantly, so they don't need the cooldown
+                if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) is Buff summonedUnitBuff &&
+                    summonedUnitBuff.Context.MaybeCaster is UnitEntityData caster && caster != unit && _units.Contains(caster))
                 {
-                    cooldown.Initiative =
-                        unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) ? 0f : 6f;
+                    cooldown.Initiative = 0f;
+                    if (IsSurpriseRound && !unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
+                    {
+                        // it's summoned instantly during surprise round
+                        _unitsInSupriseRound.Add(unit);
+                    }
                 }
                 else
                 {
-                    cooldown.Initiative = 0f;
-                    cooldown.StandardAction =
-                        unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff) ? 0f : 6f;
+                    if (IsSurpriseRound)
+                    {
+                        cooldown.Initiative = 6f;
+                    }
+                    else
+                    {
+                        cooldown.Initiative = 0f;
+                        cooldown.StandardAction = 6f;
+                    }
                 }
             }
         }

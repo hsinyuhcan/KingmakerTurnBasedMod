@@ -8,6 +8,8 @@ using Kingmaker.PubSubSystem;
 using Kingmaker.UI;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
+using Kingmaker.UnitLogic.Buffs;
+using Kingmaker.UnitLogic.Buffs.Blueprints;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
@@ -23,6 +25,24 @@ namespace TurnBased.Utility
 {
     internal static class UnitEntityDataExtensions
     {
+        public static void AddBuffDuration(this UnitEntityData unit, BlueprintBuff blueprint, float duration)
+        {
+            if (unit.Descriptor.GetFact(blueprint) is Buff buff)
+            {
+                buff.EndTime += TimeSpan.FromSeconds(duration);
+                unit.Descriptor.Buffs.UpdateNextEvent();
+            }
+        }
+
+        public static void SetBuffDuration(this UnitEntityData unit, BlueprintBuff blueprint, float duration)
+        {
+            if (unit.Descriptor.GetFact(blueprint) is Buff buff)
+            {
+                buff.EndTime = Game.Instance.TimeController.GameTime + TimeSpan.FromSeconds(duration);
+                unit.Descriptor.Buffs.UpdateNextEvent();
+            }
+        }
+
         public static void TryCancelCommands(this UnitEntityData unit)
         {
             if (!unit.Commands.IsRunning())

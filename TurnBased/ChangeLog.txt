@@ -1,6 +1,9 @@
 ﻿Version 0.9.36
 	Separated all bugfixes to a new settings tab and make them toggleable
 	Changed the background color of the combat tracker, now it has better contrast
+	Changed summoned units can act in surprise round if the summon is finished and their caster can act in surprise round
+	Changed summoned units that is not summoned using a full round action can act immediately after their caster's turn
+	Fixed the duration of the summon spells is one-round less than what it should be
 	Fixed using 5-foot step after charging is accidentally allowed by the previous update
 	Fixed combat will start when using any ability on non-enemy objects
 
