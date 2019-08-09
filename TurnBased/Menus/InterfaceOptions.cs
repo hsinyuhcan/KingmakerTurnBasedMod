@@ -36,12 +36,12 @@ namespace TurnBased.Menus
 
             DoNotMarkInvisibleUnit =
                 GUIHelper.ToggleButton(DoNotMarkInvisibleUnit,
-                "Do Not Mark Invisible Units" +
+                "DO NOT Mark Invisible Units" +
                 " (Disable highlight, camera, indicators... etc)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             DoNotShowInvisibleUnitOnCombatTracker =
                 GUIHelper.ToggleButton(DoNotShowInvisibleUnitOnCombatTracker,
-                "Do Not Show Invisible Units On The Combat Tracker", _buttonStyle, GUILayout.ExpandWidth(false));
+                "DO NOT Show Invisible Units On The Combat Tracker", _buttonStyle, GUILayout.ExpandWidth(false));
 
             GUILayout.Space(10f);
 

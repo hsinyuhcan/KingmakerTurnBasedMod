@@ -375,7 +375,11 @@ namespace TurnBased.Utility
         #endregion
 
         #region Pause
-
+        public static bool DoNotPauseOnCombatStart {
+            get => Mod.Settings.toggleDoNotPauseOnCombatStart;
+            set => Mod.Settings.toggleDoNotPauseOnCombatStart = value;
+        }
+        
         public static bool PauseOnPlayerTurnStart {
             get => Mod.Settings.togglePauseOnPlayerTurnStart;
             set => Mod.Settings.togglePauseOnPlayerTurnStart = value;

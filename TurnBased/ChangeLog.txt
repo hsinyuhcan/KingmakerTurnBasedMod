@@ -1,6 +1,7 @@
 ﻿Version 0.9.36
 	Separated all bugfixes to a new settings tab and make them toggleable
 	Added a notification that will be shown when switching between the combat modes
+	Added an option to ignore the "Pause On Combat Start" setting when the turn-based mode is enabled
 	Added an option to set Overrun ability as a full round action
 	Added an option to set Angelic Form ability as a move action
 	Added an optoin to auto deactivated certain abilities after combat (Inspire Greatness, Inspire Heroics)

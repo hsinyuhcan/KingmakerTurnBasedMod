@@ -1,11 +1,13 @@
 ﻿using Harmony12;
 using Kingmaker;
 using Kingmaker.Blueprints.Root;
+using Kingmaker.Controllers;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
+using Kingmaker.UI.SettingsUI;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Commands;
 using TurnBased.Controllers;
@@ -80,6 +82,30 @@ namespace TurnBased.HarmonyPatches
                     return false;
                 }
                 return true;
+            }
+        }
+
+        // suppress auto pause on combat start
+        [HarmonyPatch(typeof(AutoPauseController), nameof(AutoPauseController.HandlePartyCombatStateChanged), typeof(bool))]
+        static class AutoPauseController_HandlePartyCombatStateChanged_Patch
+        {
+            [HarmonyPrefix]
+            static void Prefix(UnitCombatState __instance, bool inCombat, ref bool? __state)
+            {
+                if (IsEnabled() && DoNotPauseOnCombatStart && inCombat)
+                {
+                    __state = SettingsRoot.Instance.PauseOnEngagement.CurrentValue;
+                    SettingsRoot.Instance.PauseOnEngagement.CurrentValue = false;
+                }
+            }
+
+            [HarmonyPostfix]
+            static void Postfix(UnitCombatState __instance, ref bool? __state)
+            {
+                if (__state.HasValue)
+                {
+                    SettingsRoot.Instance.PauseOnEngagement.CurrentValue = __state.Value;
+                }
             }
         }
 

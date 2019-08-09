@@ -92,6 +92,7 @@ namespace TurnBased
         public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);
 
         // pause
+        public bool toggleDoNotPauseOnCombatStart = true;
         public bool togglePauseOnPlayerTurnStart;
         public bool togglePauseOnPlayerTurnEnd;
         public bool togglePauseOnNonPlayerTurnStart;
