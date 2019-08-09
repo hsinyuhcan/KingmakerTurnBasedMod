@@ -12,6 +12,7 @@
 	Fixed the duration of the summon spells is one-round less than what it should be
 	Fixed using 5-foot step after a charge is accidentally allowed by the previous update
 	Fixed sometimes the movement speed become twice after a charge
+	Fixed clicking an enemy during charging causes the unit attack twice
 	Fixed combat will start when using any ability on non-enemy objects
 
 Version 0.9.35
