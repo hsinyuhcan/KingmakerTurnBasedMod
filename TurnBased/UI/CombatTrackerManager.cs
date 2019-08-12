@@ -409,6 +409,7 @@ namespace TurnBased.UI
 
         private void UpdateUnits(IEnumerable<UnitEntityData> units)
         {
+            UnitEntityData currentUnit = Mod.Core.Combat.CurrentTurn?.Unit;
             bool isDirty = false;
             List<UnitButtonManager> newUnits = new List<UnitButtonManager>();
 
@@ -423,7 +424,7 @@ namespace TurnBased.UI
                     break;
                 }
 
-                if (!DoNotShowInvisibleUnitOnCombatTracker || unit.IsVisibleForPlayer)
+                if (!DoNotShowInvisibleUnitOnCombatTracker || unit.IsVisibleForPlayer || unit == currentUnit)
                 {
                     newUnits.Add(EnsureUnit(unit, newCount, ref isDirty));
                     newCount++;
