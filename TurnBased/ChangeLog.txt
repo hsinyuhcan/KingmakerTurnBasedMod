@@ -1,10 +1,13 @@
-﻿Version 0.9.36
+﻿Version 0.9.37
+	Fixed summoned units will exist one more round when they should be "dismembered"
+
+Version 0.9.36
 	Separated all bugfixes to a new settings tab and make them toggleable
 	Added a notification that will be shown when switching between the combat modes
 	Added an option to ignore the "Pause On Combat Start" setting when the turn-based mode is enabled
 	Added an option to set Overrun ability as a full round action
 	Added an option to set Angelic Form ability as a move action
-	Added an optoin to auto deactivated certain abilities after combat (Inspire Greatness, Inspire Heroics)
+	Added an option to auto deactivated certain abilities after combat (Inspire Greatness, Inspire Heroics)
 	Added an option to fix Spellstrike does not take effect when using Metamagic (Reach) on a touch spell
 	Changed the background color of the combat tracker, now it has better contrast
 	Changed the disabled color of the special action buttons

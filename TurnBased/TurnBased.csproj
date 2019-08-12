@@ -100,6 +100,7 @@
     <Compile Include="HarmonyPatches\CollisionDetection.cs" />
     <Compile Include="HarmonyPatches\ConfusionCondition.cs" />
     <Compile Include="HarmonyPatches\ActionCooldowns.cs" />
+    <Compile Include="HarmonyPatches\Summon.cs" />
     <Compile Include="HarmonyPatches\UI.cs" />
     <Compile Include="HarmonyPatches\MagusAbilities.cs" />
     <Compile Include="HarmonyPatches\SurpriseRound.cs" />

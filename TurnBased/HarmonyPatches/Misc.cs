@@ -1,14 +1,10 @@
 ﻿using Harmony12;
 using Kingmaker;
-using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
-using Kingmaker.RuleSystem;
-using Kingmaker.RuleSystem.Rules;
 using Kingmaker.UI.SettingsUI;
-using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Commands;
 using TurnBased.Controllers;
 using TurnBased.Utility;
@@ -20,37 +16,6 @@ namespace TurnBased.HarmonyPatches
 {
     static class Misc
     {
-        // delay one round for summoned units after casting a summon spell
-        [HarmonyPatch(typeof(RuleSummonUnit), nameof(RuleSummonUnit.OnTrigger), typeof(RulebookEventContext))]
-        static class RuleSummonUnit_OnTrigger_Patch
-        {
-            [HarmonyPostfix]
-            static void Postfix(RuleSummonUnit __instance)
-            {
-                if (IsEnabled() && __instance.SummonedUnit is UnitEntityData summonedUnit)
-                {
-                    // don't change RangedLegerdemainUnit
-                    if (summonedUnit.Blueprint.AssetGuid == "661093277286dd5459cd825e0205f908")
-                    {
-                        return;
-                    }
-
-                    // remove the freezing time when it's not summoned by a full round spell or it's summoned by a trap
-                    if ((__instance.Context.SourceAbility?.IsFullRoundAction ?? false) == false ||
-                        __instance.Initiator.Faction?.AssetGuid == "d75c5993785785d468211d9a1a3c87a6")
-                    {
-                        summonedUnit.Descriptor.RemoveFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff);
-                    }
-                    // add a round of freezing time to the units that summoned using a full-round spell
-                    else
-                    {
-                        summonedUnit.AddBuffDuration(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff, 6f);
-                        summonedUnit.SetBuffDuration(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff, 6f);
-                    }
-                }
-            }
-        }
-
         // speed up casting
         [HarmonyPatch(typeof(UnitUseAbility), nameof(UnitUseAbility.Init), typeof(UnitEntityData))]
         static class UnitUseAbility_Init_Patch
