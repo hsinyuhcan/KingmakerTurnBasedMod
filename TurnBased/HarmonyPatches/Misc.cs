@@ -1,6 +1,7 @@
 ﻿using Harmony12;
 using Kingmaker;
 using Kingmaker.Controllers;
+using Kingmaker.Controllers.Clicks.Handlers;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
@@ -8,6 +9,7 @@ using Kingmaker.UI.SettingsUI;
 using Kingmaker.UnitLogic.Commands;
 using TurnBased.Controllers;
 using TurnBased.Utility;
+using UnityEngine;
 using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
@@ -16,6 +18,22 @@ namespace TurnBased.HarmonyPatches
 {
     static class Misc
     {
+        // toggle 5-foot step when right click on the ground
+        [HarmonyPatch(typeof(ClickGroundHandler), nameof(ClickGroundHandler.OnClick), typeof(GameObject), typeof(Vector3), typeof(int))]
+        static class ClickGroundHandler_OnClick_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(int button)
+            {
+                if (IsInCombat() && ToggleFiveFootStepOnRightClickGround && button == 1)
+                {
+                    Mod.Core.Combat.CurrentTurn?.CommandToggleFiveFootStep();
+                    return false;
+                }
+                return true;
+            }
+        }
+
         // speed up casting
         [HarmonyPatch(typeof(UnitUseAbility), nameof(UnitUseAbility.Init), typeof(UnitEntityData))]
         static class UnitUseAbility_Init_Patch
@@ -41,7 +59,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(UnitCombatState __instance, ref bool __result)
             {
-                if (IsInCombat() && __instance.Unit.IsInCombat && FlankingCountAllOpponents)
+                if (IsEnabled() && __instance.Unit.IsInCombat && FlankingCountAllOpponents)
                 {
                     __result = __instance.EngagedBy.Count > 1 && !__instance.Unit.Descriptor.State.Features.CannotBeFlanked;
                     return false;

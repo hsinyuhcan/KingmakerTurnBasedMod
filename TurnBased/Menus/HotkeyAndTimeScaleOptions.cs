@@ -125,6 +125,12 @@ namespace TurnBased.Menus
 
                 GUILayout.FlexibleSpace();
             }
+
+            GUILayout.Space(10f);
+
+            ToggleFiveFootStepOnRightClickGround =
+                GUIHelper.ToggleButton(ToggleFiveFootStepOnRightClickGround,
+                "Toggle 5-foot Step When Right Click On The Ground", _buttonStyle, GUILayout.ExpandWidth(false));
         }
 
         void OnGUITimeScale()

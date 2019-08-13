@@ -313,6 +313,15 @@ namespace TurnBased.Utility
 
         #endregion
 
+        #region Hotkey
+
+        public static bool ToggleFiveFootStepOnRightClickGround {
+            get => Mod.Settings.hotkeyToggleFiveFootStepOnRightClickGround;
+            set => Mod.Settings.hotkeyToggleFiveFootStepOnRightClickGround = value;
+        }
+
+        #endregion
+
         #region Time Scale
 
         public static float MinimumFPS {

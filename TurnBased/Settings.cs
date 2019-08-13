@@ -67,6 +67,7 @@ namespace TurnBased
 
         // hotkeys
         public SerializableDictionary<string, BindingKeysData> hotkeys = new SerializableDictionary<string, BindingKeysData>();
+        public bool hotkeyToggleFiveFootStepOnRightClickGround;
 
         // time scale
         public float minimumFPS = 12f;
