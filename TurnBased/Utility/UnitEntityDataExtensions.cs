@@ -88,8 +88,8 @@ namespace TurnBased.Utility
         public static bool CanMoveThrough(this UnitEntityData unit, UnitEntityData target)
         {
             return unit != null && target != null && unit != target &&
-                (!MovingThroughOnlyAffectPlayer || unit.IsPlayerFaction) &&
-                (!MovingThroughOnlyAffectNonEnemies || !unit.IsPlayersEnemy) &&
+                (!MovingThroughOnlyAffectPlayer || Game.Instance.Player.ControllableCharacters.Contains(unit)) &&
+                (!MovingThroughOnlyAffectNonEnemies || !unit.Group.IsEnemy(Game.Instance.Player.Group)) &&
                 ((MovingThroughNonEnemies && !unit.IsEnemy(target)) || (MovingThroughFriends && unit.IsAlly(target))) &&
                 (!AvoidOverlapping || !unit.JustOverlapping(target));
         }
@@ -114,7 +114,7 @@ namespace TurnBased.Utility
 
             // if the unit doesn't have enough movement to go through the target, forbid it from going through
             if (unit.IsCurrentUnit() && !agentASP.GetIsInForceMode())
-                return Mod.Core.Combat.CurrentTurn.GetRemainingMovementRange(true) < 
+                return Mod.Core.Combat.CurrentTurn.GetRemainingMovementRange(true) <
                     Math.Min(unit.DistanceTo(target) + minDistance, unit.DistanceTo(destination.Value));
 
             return false;
@@ -130,7 +130,7 @@ namespace TurnBased.Utility
             bool canTargetEnemies, bool canTargetFriends)
         {
             radius += target.View.Corpulence;
-            return target != null && radius != 0f && unit.DistanceTo(target) < radius && 
+            return target != null && radius != 0f && unit.DistanceTo(target) < radius &&
                 (unit.CanAttack(target) ? canTargetEnemies : canTargetFriends) &&
                 (!CheckForObstaclesOnTargeting || !LineOfSightGeometry.Instance.HasObstacle(unit.EyePosition, target.Position, 0));
         }
@@ -217,11 +217,6 @@ namespace TurnBased.Utility
             return unit.Commands.Raw.Concat(unit.Commands.Queue);
         }
 
-        public static bool HasCombatCommand(this UnitEntityData unit, Predicate<UnitCommand> pred = null)
-        {
-            return unit.GetAllCommands().Any(command => command.IsCombatCommand() && (pred == null || pred(command)));
-        }
-
         public static bool HasOffensiveCommand(this UnitEntityData unit, Predicate<UnitCommand> pred = null)
         {
             return unit.GetAllCommands().Any(command => command.IsOffensiveCommand() && (pred == null || pred(command)));
@@ -235,6 +230,11 @@ namespace TurnBased.Utility
         public static bool IsSurprising(this UnitEntityData unit)
         {
             return Mod.Core.Combat.IsSurprising(unit);
+        }
+
+        public static bool IsUnseen(this UnitEntityData unit)
+        {
+            return !Game.Instance.UnitGroups.Any(group => group.IsEnemy(unit) && group.Memory.ContainsVisible(unit));
         }
 
         public static bool IsMoving(this UnitEntityData unit)
@@ -283,7 +283,7 @@ namespace TurnBased.Utility
                     uiRoot.AllyHighlightColor :
                     unit.Group.IsEnemy(player.Group) ?
                     uiRoot.EnemyHighlightColor :
-                    uiRoot.NaturalHighlightColor;
+                    uiRoot.NeutralHighlightColor;
             }
         }
 

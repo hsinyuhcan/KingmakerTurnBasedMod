@@ -204,21 +204,29 @@ namespace TurnBased.Controllers
                 if (isPartyCombatStateChanged)
                 {
                     int notAppearUnitsCount = 0;
+                    HashSet<UnitEntityData> playUnits = new HashSet<UnitEntityData>(Game.Instance.Player.ControllableCharacters);
+                    bool isInitiatedByPlayer = _units.Any(unit => playUnits.Contains(unit) && unit.HasOffensiveCommand());
                     foreach (UnitEntityData unit in _units)
                     {
-                        if (unit.IsPlayersEnemy ?
-                            !unit.IsVisibleForPlayer || unit.HasCombatCommand(command => command.TargetUnit.IsPlayerFaction) :
-                            unit.HasCombatCommand() &&
-                            !Game.Instance.UnitGroups.Any(group => group.IsEnemy(unit) && group.Memory.ContainsVisible(unit)))
-                        {
-                            _unitsInSupriseRound.Add(unit);
-                        }
-                        else if (unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
+                        if (unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
                         {
                             notAppearUnitsCount++;
                         }
                         else if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) is Buff summonedUnitBuff &&
                             summonedUnitBuff.Context.MaybeCaster is UnitEntityData caster && _unitsInSupriseRound.Contains(caster))
+                        {
+                            _unitsInSupriseRound.Add(unit);
+                        }
+                        else if(
+                            // player
+                            playUnits.Contains(unit) ?
+                            isInitiatedByPlayer && unit.IsUnseen() :
+                            // enemy
+                            unit.Group.IsEnemy(Game.Instance.Player.Group) ?
+                            unit.HasOffensiveCommand(command => playUnits.Contains(command.TargetUnit)) ||
+                            (unit.IsUnseen() && !unit.IsVisibleForPlayer) :
+                            // neutral
+                            unit.IsUnseen())
                         {
                             _unitsInSupriseRound.Add(unit);
                         }
