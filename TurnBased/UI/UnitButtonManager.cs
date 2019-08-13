@@ -2,11 +2,13 @@
 using Kingmaker.AreaLogic.QuestSystem;
 using Kingmaker.Blueprints.Root;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.PubSubSystem;
 using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
 using Kingmaker.UI.Constructor;
 using Kingmaker.UI.Journal;
 using Kingmaker.UI.Overtip;
+using Kingmaker.View;
 using ModMaker.Utility;
 using System;
 using System.Linq;
@@ -21,7 +23,9 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.UI
 {
-    public class UnitButtonManager : MonoBehaviour
+    public class UnitButtonManager : 
+        MonoBehaviour,
+        IUnitDirectHoverUIHandler
     {
         private ButtonPF _button;
         private TextMeshProUGUI _label;
@@ -92,10 +96,14 @@ namespace TurnBased.UI
                 gameObject.transform.Find("HeaderActive").gameObject,
                 _activeColorMask.gameObject,
             };
+
+            EventBus.Subscribe(this);
         }
 
         void OnDestroy()
         {
+            EventBus.Unsubscribe(this);
+
             _isCurrent = false;
             _isMouseOver = false;
             UpdateUnitHighlight();
@@ -222,6 +230,17 @@ namespace TurnBased.UI
             UpdateState(true);
             UpdateText();
             UpdateColorMask();
+        }
+
+        public void HandleHoverChange(UnitEntityView unitEntityView, bool isHover)
+        {
+            if (unitEntityView.EntityData == Unit)
+            {
+                if (isHover)
+                    _button.OnSelect(null);
+                else
+                    _button.OnDeselect(null);
+            }
         }
 
         private void OnClickHandler()

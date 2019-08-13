@@ -1,5 +1,6 @@
 ﻿Version 0.9.37
 	Changed when a hidden unit is acting, it will be shown as "Unknown" on combat tracker
+	Changed when the mouse hover on a unit's view, highlight the unit on the combat tracker
 	Fixed charging units can sometimes get infinite movement and attacks after it's stuck
 	Fixed charging units will circle around and never end turn when there is no valid path to its target
 	Fixed summoned units will exist one more round when they should be "dismembered"
