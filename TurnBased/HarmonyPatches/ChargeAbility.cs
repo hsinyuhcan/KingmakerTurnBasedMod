@@ -1,8 +1,15 @@
 ﻿using Harmony12;
+using Kingmaker;
+using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.Abilities;
+using Kingmaker.UnitLogic.Abilities.Components;
+using Kingmaker.UnitLogic.Abilities.Components.Base;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
+using Kingmaker.Utility;
 using Kingmaker.View;
 using ModMaker.Utility;
 using Pathfinding;
@@ -28,86 +35,105 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPostfix]
             static void Postfix(UnitMovementAgent __instance)
             {
-                if (IsInCombat())
+                if (IsEnabled())
                 {
                     __instance.SetChargeAvoidanceFinishTime(TimeSpan.Zero);
                 }
             }
         }
 
-        // fix Charge ability could be interrupted due to an unexpected obstacle
-        [HarmonyPatch(typeof(ObstacleAnalyzer), nameof(ObstacleAnalyzer.TraceAlongNavmesh), typeof(Vector3), typeof(Vector3))]
-        static class ObstacleAnalyzer_TraceAlongNavmesh_Patch
+        // fix Charge ability could be interrupted (because of many reasons)
+        [HarmonyPatch(typeof(AbilityCustomCharge), nameof(AbilityCustomCharge.Deliver), typeof(AbilityExecutionContext), typeof(TargetWrapper))]
+        static class AbilityCustomCharge_Deliver_Patch
         {
             [HarmonyPrefix]
-            static bool Prefix(Vector3 end, ref Vector3 __result)
+            static bool Prefix(AbilityExecutionContext context, TargetWrapper targetWrapper, ref IEnumerator<AbilityDeliveryTarget> __result)
             {
-                if (IsInCombat() && (Mod.Core.Combat.CurrentTurn?.Unit.View.AgentASP?.IsCharging ?? false))
+                if (IsEnabled())
                 {
-                    __result = end;
+                    __result = Deliver(context, targetWrapper);
                     return false;
                 }
                 return true;
             }
-        }
 
-        // fix Charge ability could be interrupted (due to many reasons)
-        [HarmonyPatch(typeof(UnitAttack), nameof(UnitAttack.Init), typeof(UnitEntityData))]
-        static class UnitAttack_Init_Patch
-        {
-            [HarmonyPostfix]
-            static void Postfix(UnitAttack __instance, UnitEntityData executor)
+            public static IEnumerator<AbilityDeliveryTarget> Deliver(AbilityExecutionContext context, TargetWrapper targetWrapper)
             {
-                if (IsInCombat() && (executor.View?.AgentASP?.IsCharging ?? false))
+                Mod.Debug("Charge: start");
+
+                UnitEntityData target = targetWrapper.Unit;
+                if (target == null)
                 {
-                    __instance.IgnoreCooldown(null);
-                    __instance.IsCharge = true;
+                    UberDebug.LogError("Target unit is missing");
+                    yield break;
                 }
-            }
-        }
 
-        // fix Charge ability could be interrupted (due to many reasons)
-        [HarmonyPatch(typeof(UnitEntityView), nameof(UnitEntityView.MoveTo),
-            typeof(UnitCommand), typeof(Vector3), typeof(float), typeof(float), typeof(UnitEntityView))]
-        static class UnitEntityView_MoveTo_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitEntityView __instance, UnitCommand command)
-            {
-                if (IsInCombat() && command is UnitAttack unitAttack && unitAttack.IsCharge)
+                UnitEntityData caster = context.Caster;
+                if (caster.GetThreatHand() == null)
                 {
-                    UnitMovementAgent agentASP = __instance.AgentASP;
-                    if (agentASP)
-                    {
-                        bool isCharging = agentASP.IsCharging;
-                        agentASP.IsCharging = true;
-                        agentASP.ForcePath(new ForcedPath(new List<Vector3>
-                        {
-                            unitAttack.Executor.Position,
-                            unitAttack.TargetUnit.Position
-                        }));
-                        agentASP.IsCharging = isCharging;
+                    UberDebug.LogError("Invalid caster's weapon");
+                    yield break;
+                }
 
-                        if (agentASP.IsReallyMoving)
+                caster.View.StopMoving();
+                caster.View.AgentASP.IsCharging = true;
+                caster.Descriptor.State.IsCharging = true;
+                caster.View.AgentASP.ForcePath(new ForcedPath(new List<Vector3> { caster.Position, target.Position }));
+                caster.Descriptor.AddBuff(BlueprintRoot.Instance.SystemMechanics.ChargeBuff, context, 1.Rounds().Seconds);
+                UnitAttack unitAttack = new UnitAttack(target);
+                unitAttack.Init(caster);
+
+                float timeSinceStart = 0f;
+                while (unitAttack.ShouldUnitApproach)
+                {
+                    timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
+                    if (caster.GetThreatHand() == null)
+                    {
+                        UberDebug.Log("Charge: caster.GetThreatHand() == null");
+                        yield break;
+                    }
+                    else if (timeSinceStart > 6f)
+                    {
+                        UberDebug.Log("Charge: timeSinceStart > 6f");
+                        yield break;
+                    }
+                    else if (!caster.Descriptor.State.CanMove)
+                    {
+                        UberDebug.Log("Charge: !caster.Descriptor.State.CanMove");
+                        yield break;
+                    }
+                    else if (caster.View.AgentASP.IsReallyMoving)
+                    {
+                        caster.View.AgentASP.MaxSpeedOverride =
+                            Math.Max(caster.View.AgentASP.MaxSpeedOverride ?? 0f, caster.CombatSpeedMps * 2f);
+                    }
+                    else
+                    {
+                        caster.View.AgentASP.ForcePath(new ForcedPath(new List<Vector3> { caster.Position, target.Position }));
+                        if (!caster.View.AgentASP.IsReallyMoving)
                         {
-                            agentASP.MaxSpeedOverride =
-                                Math.Max(agentASP.MaxSpeedOverride ?? 0f, unitAttack.Executor.CombatSpeedMps * 2f);
+                            UberDebug.Log("Charge: !caster.View.AgentASP.IsReallyMoving");
+                            yield break;
                         }
                     }
-                    return false;
+                    yield return null;
                 }
-                return true;
+
+                caster.View.StopMoving();
+                unitAttack.IgnoreCooldown(null);
+                unitAttack.IsCharge = true;
+                caster.Commands.AddToQueueFirst(unitAttack);
             }
         }
 
-        // don't ignore all obstacles when charging
+        // don't ignore obstacles when charging
         [HarmonyPatch(typeof(UnitMovementAgent), "ChargingAvoidance", MethodType.Getter)]
         static class UnitMovementAgent_ChargingAvoidance_Patch
         {
             [HarmonyPrefix]
             static bool Prefix(ref bool __result)
             {
-                if (IsInCombat() && AvoidOverlappingOnCharge)
+                if (IsEnabled() && AvoidOverlappingOnCharge)
                 {
                     __result = false;
                     return false;
@@ -158,7 +184,7 @@ namespace TurnBased.HarmonyPatches
 
             static bool IgnoreMoveActionCheck(UnitAttack command)
             {
-                return IsInCombat() && command.IsCharge && !command.Executor.IsMoveActionRestricted();
+                return IsEnabled() && command.IsCharge && !command.Executor.IsMoveActionRestricted();
             }
         }
     }

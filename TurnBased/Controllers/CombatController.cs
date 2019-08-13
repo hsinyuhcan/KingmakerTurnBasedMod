@@ -438,17 +438,9 @@ namespace TurnBased.Controllers
         {
             if (IsInCombat() && command is UnitAttack unitAttack)
             {
-                if (unitAttack.IsCharge)
-                {
-                    command.Executor.View.AgentASP.MaxSpeedOverride = null;
-                    foreach (UnitCommand duplicatedCommand in 
-                        command.Executor.GetAllCommands().Where(cmd => cmd != null && cmd is UnitAttack atk && atk.IsCharge))
-                    {
-                        duplicatedCommand.Interrupt();
-                    }
-                }
-                else if(command.Executor.IsCurrentUnit() &&
-                    command.IsActed && !command.IsIgnoreCooldown && unitAttack.IsFullAttack && unitAttack.GetAttackIndex() == 1)
+                if(command.Executor.IsCurrentUnit() &&
+                    command.IsActed && !command.IsIgnoreCooldown && 
+                    !unitAttack.IsCharge && unitAttack.IsFullAttack && unitAttack.GetAttackIndex() == 1)
                 {
                     CurrentTurn.Cooldown.MoveAction -= TIME_MOVE_ACTION;
                 }

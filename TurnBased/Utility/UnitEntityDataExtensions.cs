@@ -102,19 +102,18 @@ namespace TurnBased.Utility
             if (!destination.HasValue)
                 return false;
 
-            bool isCharging = agentASP.IsCharging || agentASP.GetIsInForceMode();
             float minDistance = agentASP.Corpulence + target.View.AgentASP.Corpulence;
 
             // the destination is not where the unit is intended to stop at, so we have to step back
             destination = destination.Value - (destination.Value - unit.Position).normalized *
-                (isCharging ? unit.GetAttackApproachRadius(target) : agentASP.ApproachRadius);
+                (agentASP.IsCharging ? unit.GetAttackApproachRadius(target) : agentASP.ApproachRadius);
 
             // if the destination is going to overlap with target, forbid this behavior
             if (target.DistanceTo(destination.Value) < minDistance)
                 return true;
 
             // if the unit doesn't have enough movement to go through the target, forbid it from going through
-            if (unit.IsCurrentUnit() && !isCharging)
+            if (unit.IsCurrentUnit() && !agentASP.GetIsInForceMode())
                 return Mod.Core.Combat.CurrentTurn.GetRemainingMovementRange(true) < 
                     Math.Min(unit.DistanceTo(target) + minDistance, unit.DistanceTo(destination.Value));
 
