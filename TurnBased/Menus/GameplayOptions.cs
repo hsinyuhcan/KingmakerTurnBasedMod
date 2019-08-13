@@ -41,6 +41,11 @@ namespace TurnBased.Menus
 
         void OnGUIMechanic()
         {
+            SurpriseRound =
+                GUIHelper.ToggleButton(SurpriseRound,
+                "Surprise Round" +
+                " (All unseen units get a surprise round before regular rounds)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+
             FlankingCountAllOpponents =
                 GUIHelper.ToggleButton(FlankingCountAllOpponents,
                 "Flanking Count All Opponents Within Threaten Range" +

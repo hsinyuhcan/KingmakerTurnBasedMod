@@ -1,9 +1,10 @@
 ﻿Version 0.9.37
 	Added an option to scale the size of the combat tracker
 	Added an option to toggle 5-foot step when right click on the ground
+	Added an option to toggle "Surprise Round" feature
+	Changed the conditions for acting in the surprise round
 	Changed when a hidden unit is acting, it will be shown as "Unknown" on combat tracker
 	Changed when the mouse hover on a unit's view, highlight the unit on the combat tracker
-	Changed the conditions for acting in the surprise round
 	Fixed charging units can sometimes get infinite movement and attacks after it's stuck
 	Fixed charging units will circle around and never end turn when there is no valid path to its target
 	Fixed summoned units will exist one more round when they should be "dismembered"

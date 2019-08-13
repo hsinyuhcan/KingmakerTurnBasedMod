@@ -201,7 +201,7 @@ namespace TurnBased.Controllers
             {
                 _units.AddRange(Game.Instance.State.Units.Where(unit => unit.IsInCombat));
 
-                if (isPartyCombatStateChanged)
+                if (SurpriseRound && isPartyCombatStateChanged)
                 {
                     int notAppearUnitsCount = 0;
                     HashSet<UnitEntityData> playUnits = new HashSet<UnitEntityData>(Game.Instance.Player.ControllableCharacters);

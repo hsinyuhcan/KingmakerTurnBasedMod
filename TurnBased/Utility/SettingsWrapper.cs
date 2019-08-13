@@ -27,6 +27,11 @@ namespace TurnBased.Utility
         #endregion
 
         #region Gameplay
+        
+        public static bool SurpriseRound {
+            get => Mod.Settings.toggleSurpriseRound;
+            set => Mod.Settings.toggleSurpriseRound = value;
+        }
 
         public static bool FlankingCountAllOpponents {
             get => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange;

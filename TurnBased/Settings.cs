@@ -8,6 +8,7 @@ namespace TurnBased
     public class Settings : UnityModManager.ModSettings
     {
         // gameplay
+        public bool toggleSurpriseRound = true;
         public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
         public float distanceOfFiveFootStep = 1.5f;
 
