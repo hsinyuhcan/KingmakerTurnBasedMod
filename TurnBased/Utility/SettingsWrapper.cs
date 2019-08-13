@@ -295,7 +295,12 @@ namespace TurnBased.Utility
             get => Mod.Settings.toggleDoNotShowInvisibleUnitOnCombatTracker;
             set => Mod.Settings.toggleDoNotShowInvisibleUnitOnCombatTracker = value;
         }
-        
+
+        public static float CombatTrackerScale {
+            get => Mod.Settings.combatTrackerScale;
+            set => Mod.Settings.combatTrackerScale = value;
+        }
+
         public static float CombatTrackerWidth {
             get => Mod.Settings.combatTrackerWidth;
             set => Mod.Settings.combatTrackerWidth = value;

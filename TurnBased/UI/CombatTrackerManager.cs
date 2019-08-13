@@ -37,6 +37,7 @@ namespace TurnBased.UI
         private UnitButtonManager _unitButtonTemplate;
 
         private bool _enabled;
+        private float _scale;
         private float _width;
 
         private bool _toggledFiveFoorStep;
@@ -106,11 +107,8 @@ namespace TurnBased.UI
                 UpdateUnits(roundController.GetSortedUnits());
                 UpdateButtons(roundController.CurrentTurn);
 
-                if (_width != CombatTrackerWidth)
-                {
-                    _width = CombatTrackerWidth;
-                    Resize(_width);
-                }
+                ResizeScale(CombatTrackerScale);
+                ResizeWidth(CombatTrackerWidth);
 
                 if (!_enabled)
                 {
@@ -434,7 +432,7 @@ namespace TurnBased.UI
             if (newCount != oldCount)
             {
                 // window size should have changed
-                Resize(newCount);
+                ResizeUnits(newCount);
                 isDirty = true;
             }
 
@@ -503,17 +501,30 @@ namespace TurnBased.UI
             Destroy(unitButton.gameObject);
         }
 
-        private void Resize(float width)
+        private void ResizeScale(float scale)
         {
-            _buttonBlock.sizeDelta = new Vector2(width, _buttonBlock.sizeDelta.y);
-            SetPadding(
-                (int)(width * DEFAULT_BLOCK_PADDING.x / DEFAULT_BLOCK_SIZE.x / 2f), 
-                _buttonBlockLayoutGroup.padding.top);
+            if (_scale != scale)
+            {
+                _scale = scale;
+                _buttonBlock.localScale = new Vector3(scale, scale, scale);
+            }
         }
 
-        private void Resize(int unitCount)
+        private void ResizeWidth(float width)
         {
-            float height = (UNIT_BUTTON_HEIGHT + UNIT_BUTTON_SPACE) * unitCount - UNIT_BUTTON_SPACE;
+            if (_width != width)
+            {
+                _width = width;
+                _buttonBlock.sizeDelta = new Vector2(width, _buttonBlock.sizeDelta.y);
+                SetPadding(
+                    (int)(width * DEFAULT_BLOCK_PADDING.x / DEFAULT_BLOCK_SIZE.x / 2f),
+                    _buttonBlockLayoutGroup.padding.top);
+            }
+        }
+
+        private void ResizeUnits(int unitsCount)
+        {
+            float height = (UNIT_BUTTON_HEIGHT + UNIT_BUTTON_SPACE) * unitsCount - UNIT_BUTTON_SPACE;
             _unitButtonBlock.sizeDelta = new Vector2(_unitButtonBlock.sizeDelta.x, height);
             SetPadding(
                 _buttonBlockLayoutGroup.padding.right, 

@@ -1,4 +1,5 @@
 ﻿Version 0.9.37
+	Added an option to scale the size of the combat tracker
 	Changed when a hidden unit is acting, it will be shown as "Unknown" on combat tracker
 	Changed when the mouse hover on a unit's view, highlight the unit on the combat tracker
 	Fixed charging units can sometimes get infinite movement and attacks after it's stuck

@@ -61,8 +61,9 @@ namespace TurnBased
         public bool toggleDoNotMarkInvisibleUnit = true;
         public bool toggleDoNotShowInvisibleUnitOnCombatTracker = true;
 
+        public float combatTrackerScale = 0.9f;
+        public float combatTrackerWidth = 350f;
         public int combatTrackerMaxUnits = 15;
-        public float combatTrackerWidth = 375f;
 
         // hotkeys
         public SerializableDictionary<string, BindingKeysData> hotkeys = new SerializableDictionary<string, BindingKeysData>();
