@@ -210,11 +210,13 @@ namespace TurnBased.Controllers
                     {
                         if (unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
                         {
+                            // this unit is just summoned by a full round spell and it does technically not exist yet
                             notAppearUnitsCount++;
                         }
                         else if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) is Buff summonedUnitBuff &&
                             summonedUnitBuff.Context.MaybeCaster is UnitEntityData caster && _unitsInSupriseRound.Contains(caster))
                         {
+                            // this summoned unit will act after its caster's turn
                             _unitsInSupriseRound.Add(unit);
                         }
                         else if(
