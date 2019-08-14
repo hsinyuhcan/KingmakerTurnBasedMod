@@ -26,9 +26,19 @@ namespace TurnBased.Menus
                 _buttonStyle = new GUIStyle(GUI.skin.button) { alignment = TextAnchor.MiddleLeft };
             }
 
-            Mod.Core.Enabled =
+            using (new GUILayout.HorizontalScope())
+            {
+                Mod.Core.Enabled =
                 GUIHelper.ToggleButton(Mod.Core.Enabled,
                 "Turn-Based Mode", _buttonStyle, GUILayout.ExpandWidth(false));
+
+                if (GUILayout.Button($"Reset Settings", _buttonStyle, GUILayout.ExpandWidth(false)))
+                {
+                    Mod.ResetSettings();
+                    Mod.Core.Blueprint.Update();
+                    Mod.Core.Hotkeys.Reset();
+                }
+            }
 
             GUILayout.Space(10f);
 

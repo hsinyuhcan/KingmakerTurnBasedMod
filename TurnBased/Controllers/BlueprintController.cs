@@ -17,7 +17,7 @@ namespace TurnBased.Controllers
         // ChargeAbility
         // SwiftBlowImprovedChargeAbility
         public BlueprintModifier<bool> ActionTypeOfCharge = new BlueprintModifier<bool>(
-            FixActionTypeOfCharge,
+            () => FixActionTypeOfCharge,
             new string[] { "c78506dd0e14f7c45a599990e4e65038", "d4b4757660cb66e4fbf376a43f1ffb13" },
             true,
             (lib, guid) => lib.Get<BlueprintAbility>(guid).IsFullRoundAction,
@@ -27,7 +27,7 @@ namespace TurnBased.Controllers
         // ChargeAbilityLanternKingStar
         // FlyTrampleTest
         public BlueprintModifier<bool> ActionTypeOfOverrun = new BlueprintModifier<bool>(
-            FixActionTypeOfOverrun,
+            () => FixActionTypeOfOverrun,
             new string[] { "1a3b471ecea51f7439a946b23577fd70", "49b8bf9a35ecbd24482ee416cd7557b8", "f0b622ab2d18ef7439feb8aa5680d6e5" },
             true,
             (lib, guid) => lib.Get<BlueprintAbility>(guid).IsFullRoundAction,
@@ -37,7 +37,7 @@ namespace TurnBased.Controllers
         // VitalStrikeAbilityImproved
         // VitalStrikeAbilityGreater
         public BlueprintModifier<bool> ActionTypeOfVitalStrike = new BlueprintModifier<bool>(
-            FixActionTypeOfVitalStrike,
+            () => FixActionTypeOfVitalStrike,
             new string[] { "efc60c91b8e64f244b95c66b270dbd7c", "c714cd636700ac24a91ca3df43326b00", "11f971b6453f74d4594c538e3c88d499" },
             false,
             (lib, guid) => lib.Get<BlueprintAbility>(guid).IsFullRoundAction,
@@ -45,7 +45,7 @@ namespace TurnBased.Controllers
 
         // TristianAngelAbility
         public BlueprintModifier<UnitCommand.CommandType> ActionTypeOfAngelicForm = new BlueprintModifier<UnitCommand.CommandType>(
-            FixActionTypeOfAngelicForm,
+            () => FixActionTypeOfAngelicForm,
             new string[] { "83e91b42102fdf04a98e86a0d515cd60" },
             UnitCommand.CommandType.Move,
             (lib, guid) => lib.Get<BlueprintActivatableAbility>(guid).ActivateWithUnitCommandType,
@@ -54,7 +54,7 @@ namespace TurnBased.Controllers
         // InspireGreatnessToggleAbility
         // InspireHeroicsToggleAbility
         public BlueprintModifier<bool> AbilityDeactivateIfCombatEnded = new BlueprintModifier<bool>(
-            FixAbilityNotAutoDeactivateIfCombatEnded,
+            () => FixAbilityNotAutoDeactivateIfCombatEnded,
             new string[] { "be36959e44ac33641ba9e0204f3d227b", "a4ce06371f09f504fa86fcf6d0e021e4" },
             true,
             (lib, guid) => lib.Get<BlueprintActivatableAbility>(guid).DeactivateIfCombatEnded,
@@ -73,14 +73,14 @@ namespace TurnBased.Controllers
 
         public class BlueprintModifier<TValue>
         {
-            private readonly BugfixOption _option;
+            private readonly Func<bool> _option;
             private readonly string[] _assetGuid;
             private readonly TValue _value;
             private readonly Func<LibraryScriptableObject, string, TValue> _getter;
             private readonly Action<LibraryScriptableObject, string, TValue> _setter;
             private TValue[] _backup;
 
-            public BlueprintModifier(BugfixOption option, string[] assetGuid, TValue value, 
+            public BlueprintModifier(Func<bool> option, string[] assetGuid, TValue value, 
                 Func<LibraryScriptableObject, string, TValue> getter, Action<LibraryScriptableObject, string, TValue> setter)
             {
                 _option = option;
@@ -99,7 +99,7 @@ namespace TurnBased.Controllers
                         _backup = _assetGuid.Select(guid => _getter(library, guid)).ToArray();
 
                     for (int i = 0; i < _assetGuid.Length; i++)
-                        _setter(library, _assetGuid[i], (modify && _option) ? _value : _backup[i]);
+                        _setter(library, _assetGuid[i], (modify && _option()) ? _value : _backup[i]);
                 } 
             }
         }

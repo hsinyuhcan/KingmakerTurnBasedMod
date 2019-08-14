@@ -1,4 +1,5 @@
 ﻿Version 0.9.37
+	Added an option to reset settings
 	Added an option to scale the size of the combat tracker
 	Added an option to toggle 5-foot step when right click on the ground
 	Added an option to toggle "Surprise Round" feature
@@ -8,6 +9,7 @@
 	Fixed charging units can sometimes get infinite movement and attacks after it's stuck
 	Fixed charging units will circle around and never end turn when there is no valid path to its target
 	Fixed summoned units will exist one more round when they should be "dismembered"
+	Fixed an error happens when clear a hotkey
 
 Version 0.9.36
 	Separated all bugfixes to a new settings tab and make them toggleable

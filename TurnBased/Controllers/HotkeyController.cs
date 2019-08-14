@@ -18,8 +18,18 @@ namespace TurnBased.Controllers
     {
         public IDictionary<string, BindingKeysData> BindingKeys => Mod.Settings.hotkeys;
 
-        private void Initialize(Dictionary<string, BindingKeysData> hotkeys)
+        private void Initialize()
         {
+            Dictionary<string, BindingKeysData> hotkeys = new Dictionary<string, BindingKeysData>()
+            {
+                {HOTKEY_FOR_TOGGLE_MODE, new BindingKeysData() { IsAltDown = true, Key = KeyCode.T } },
+                {HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, new BindingKeysData() { IsAltDown = true, Key = KeyCode.R }},
+                {HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, new BindingKeysData() { IsAltDown = true, Key = KeyCode.R }},
+                {HOTKEY_FOR_FIVE_FOOT_STEP, new BindingKeysData() { IsAltDown = true, Key = KeyCode.F } },
+                {HOTKEY_FOR_DELAY, new BindingKeysData() { IsAltDown = true, Key = KeyCode.D }},
+                {HOTKEY_FOR_END_TURN, new BindingKeysData() { IsAltDown = true, Key = KeyCode.E } },
+            };
+
             foreach (string name in BindingKeys.Keys.ToList())
                 if (!hotkeys.ContainsKey(name))
                     BindingKeys.Remove(name);
@@ -29,10 +39,30 @@ namespace TurnBased.Controllers
                     BindingKeys.Add(item.Key, item.Value);
         }
 
+        public void Reset()
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod());
+
+            Initialize();
+            RegisterAll();
+        }
+
         public void SetHotkey(string name, BindingKeysData value)
         {
             BindingKeys[name] = value;
             TryRegisterHotkey(name, value);
+        }
+
+        private void RegisterAll()
+        {
+            foreach (KeyValuePair<string, BindingKeysData> item in BindingKeys)
+                TryRegisterHotkey(item.Key, item.Value);
+        }
+
+        private void UnregisterAll()
+        {
+            foreach (string name in BindingKeys.Keys)
+                TryRegisterHotkey(name, null);
         }
 
         private void TryRegisterHotkey(string name, BindingKeysData value)
@@ -56,17 +86,8 @@ namespace TurnBased.Controllers
             EventBus.Subscribe(this);
 
             Mod.Core.Hotkeys = this;
-            Initialize(new Dictionary<string, BindingKeysData>()
-            {
-                {HOTKEY_FOR_TOGGLE_MODE, new BindingKeysData() { IsAltDown = true, Key = KeyCode.T } },
-                {HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, new BindingKeysData() { IsAltDown = true, Key = KeyCode.R }},
-                {HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, new BindingKeysData() { IsAltDown = true, Key = KeyCode.R }},
-                {HOTKEY_FOR_FIVE_FOOT_STEP, new BindingKeysData() { IsAltDown = true, Key = KeyCode.F } },
-                {HOTKEY_FOR_DELAY, new BindingKeysData() { IsAltDown = true, Key = KeyCode.D }},
-                {HOTKEY_FOR_END_TURN, new BindingKeysData() { IsAltDown = true, Key = KeyCode.E } },
-            });
-            foreach (KeyValuePair<string, BindingKeysData> item in BindingKeys)
-                TryRegisterHotkey(item.Key, item.Value);
+            Initialize();
+            RegisterAll();
         }
 
         public void HandleModDisable()
@@ -76,8 +97,7 @@ namespace TurnBased.Controllers
             EventBus.Unsubscribe(this);
 
             Mod.Core.Hotkeys = null;
-            foreach (string name in BindingKeys.Keys)
-                TryRegisterHotkey(name, null);
+            UnregisterAll();
         }
 
         public void OnAreaBeginUnloading() { }
@@ -86,8 +106,7 @@ namespace TurnBased.Controllers
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            foreach (KeyValuePair<string, BindingKeysData> item in BindingKeys)
-                TryRegisterHotkey(item.Key, item.Value);
+            RegisterAll();
         }
     }
 }

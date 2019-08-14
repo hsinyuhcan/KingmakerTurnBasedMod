@@ -96,16 +96,19 @@ namespace TurnBased.Menus
 
                 using (new GUILayout.VerticalScope())
                 {
+                    string hotkeyToClear = default;
                     foreach (string name in hotkeys.Keys)
                     {
                         if (GUILayout.Button($"Clear", _buttonStyle))
                         {
-                            Mod.Core.Hotkeys.SetHotkey(name, null);
+                            hotkeyToClear = name;
 
                             if (_waitingHotkeyName == name)
                                 _waitingHotkeyName = null;
                         }
                     }
+                    if (!string.IsNullOrEmpty(hotkeyToClear))
+                        Mod.Core.Hotkeys.SetHotkey(hotkeyToClear, null);
                 }
 
                 using (new GUILayout.VerticalScope())
