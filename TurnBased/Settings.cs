@@ -8,6 +8,7 @@ namespace TurnBased
     public class Settings : UnityModManager.ModSettings
     {
         // gameplay
+        public bool toggleSurpriseRound = true;
         public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
         public float distanceOfFiveFootStep = 1.5f;
 
@@ -61,11 +62,13 @@ namespace TurnBased
         public bool toggleDoNotMarkInvisibleUnit = true;
         public bool toggleDoNotShowInvisibleUnitOnCombatTracker = true;
 
+        public float combatTrackerScale = 0.9f;
+        public float combatTrackerWidth = 350f;
         public int combatTrackerMaxUnits = 15;
-        public float combatTrackerWidth = 375f;
 
         // hotkeys
         public SerializableDictionary<string, BindingKeysData> hotkeys = new SerializableDictionary<string, BindingKeysData>();
+        public bool hotkeyToggleFiveFootStepOnRightClickGround;
 
         // time scale
         public float minimumFPS = 12f;

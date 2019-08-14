@@ -1,10 +1,23 @@
-﻿Version 0.9.36
+﻿Version 0.9.37
+	Added an option to reset settings
+	Added an option to scale the size of the combat tracker
+	Added an option to toggle 5-foot step when right click on the ground
+	Added an option to toggle "Surprise Round" feature
+	Changed the conditions for acting in the surprise round
+	Changed when a hidden unit is acting, it will be shown as "Unknown" on the combat tracker
+	Changed when the mouse hover on a unit's view, the unit will be highlighted on the combat tracker
+	Fixed charging units can sometimes get infinite movement and attacks after it's stuck
+	Fixed charging units will circle around and never end turn when there is no valid path to its target
+	Fixed summoned units will exist one more round when they should be "dismembered"
+	Fixed an error happens when clear a hotkey
+
+Version 0.9.36
 	Separated all bugfixes to a new settings tab and make them toggleable
 	Added a notification that will be shown when switching between the combat modes
 	Added an option to ignore the "Pause On Combat Start" setting when the turn-based mode is enabled
 	Added an option to set Overrun ability as a full round action
 	Added an option to set Angelic Form ability as a move action
-	Added an optoin to auto deactivated certain abilities after combat (Inspire Greatness, Inspire Heroics)
+	Added an option to auto deactivated certain abilities after combat (Inspire Greatness, Inspire Heroics)
 	Added an option to fix Spellstrike does not take effect when using Metamagic (Reach) on a touch spell
 	Changed the background color of the combat tracker, now it has better contrast
 	Changed the disabled color of the special action buttons

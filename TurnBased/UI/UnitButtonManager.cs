@@ -2,11 +2,13 @@
 using Kingmaker.AreaLogic.QuestSystem;
 using Kingmaker.Blueprints.Root;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.PubSubSystem;
 using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
 using Kingmaker.UI.Constructor;
 using Kingmaker.UI.Journal;
 using Kingmaker.UI.Overtip;
+using Kingmaker.View;
 using ModMaker.Utility;
 using System;
 using System.Linq;
@@ -21,7 +23,9 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.UI
 {
-    public class UnitButtonManager : MonoBehaviour
+    public class UnitButtonManager : 
+        MonoBehaviour,
+        IUnitDirectHoverUIHandler
     {
         private ButtonPF _button;
         private TextMeshProUGUI _label;
@@ -30,7 +34,7 @@ namespace TurnBased.UI
         private Image _colorMask;
         private Image _activeColorMask;
         private GameObject _canNotPerformActionIcon;
-        private GameObject _isWaitingInitiativeIcon;
+        private GameObject _isSurprisingIcon;
         private GameObject _isFlatFootedIcon;
         private GameObject _standardActionIcon;
         private GameObject _moveActionIcon;
@@ -40,6 +44,7 @@ namespace TurnBased.UI
 
         private bool _isCurrent;
         private bool _isMouseOver;
+        private string _previousText;
         private float _width;
 
         public event Func<UnitEntityData, bool> OnClick;
@@ -73,11 +78,17 @@ namespace TurnBased.UI
             _activeColorMask = gameObject.transform.Find("BackgroundActiveHighlight").gameObject.GetComponent<Image>();
         
             _canNotPerformActionIcon = gameObject.transform.Find("CanNotPerformAction").gameObject;
-            _isWaitingInitiativeIcon = gameObject.transform.Find("IsWaitingInitiative").gameObject;
+            _isSurprisingIcon = gameObject.transform.Find("IsSurprising").gameObject;
             _isFlatFootedIcon = gameObject.transform.Find("IsFlatFooted").gameObject;
             _standardActionIcon = gameObject.transform.Find("StandardAction").gameObject;
             _moveActionIcon = gameObject.transform.Find("MoveAction").gameObject;
             _swiftActionIcon = gameObject.transform.Find("SwiftAction").gameObject;
+
+            _objects = new GameObject[]
+            {
+                gameObject.transform.Find("BackgroundInActive").gameObject,
+                gameObject.transform.Find("HeaderInActive").gameObject,
+            };
 
             _activeObjects = new GameObject[]
             {
@@ -86,15 +97,13 @@ namespace TurnBased.UI
                 _activeColorMask.gameObject,
             };
 
-            _objects = new GameObject[]
-            {
-                gameObject.transform.Find("BackgroundInActive").gameObject,
-                gameObject.transform.Find("HeaderInActive").gameObject,
-            };
+            EventBus.Subscribe(this);
         }
 
         void OnDestroy()
         {
+            EventBus.Unsubscribe(this);
+
             _isCurrent = false;
             _isMouseOver = false;
             UpdateUnitHighlight();
@@ -155,12 +164,12 @@ namespace TurnBased.UI
             canNotPerformAction.name = "CanNotPerformAction";
             ((RectTransform)canNotPerformAction.transform).sizeDelta = iconSize;
 
-            GameObject isWaitingInitiative = tbUnitButton.transform.Find("NeedToAttention").gameObject;
-            isWaitingInitiative.name = "IsWaitingInitiative";
-            isWaitingInitiative.transform.localPosition = canNotPerformAction.transform.localPosition;
-            RectTransform rectIsWaitingInitiative = (RectTransform)isWaitingInitiative.transform;
-            rectIsWaitingInitiative.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT, 0.4f);
-            rectIsWaitingInitiative.sizeDelta = new Vector2(UNIT_BUTTON_HEIGHT, 0f);
+            GameObject isSurprising = tbUnitButton.transform.Find("NeedToAttention").gameObject;
+            isSurprising.name = "IsSurprising";
+            isSurprising.transform.localPosition = canNotPerformAction.transform.localPosition;
+            RectTransform rectIsSurprising = (RectTransform)isSurprising.transform;
+            rectIsSurprising.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT, 0.4f);
+            rectIsSurprising.sizeDelta = new Vector2(UNIT_BUTTON_HEIGHT, 0f);
 
             GameObject isFlatFooted = tbUnitButton.transform.Find("New").gameObject;
             isFlatFooted.name = "IsFlatFooted";
@@ -185,7 +194,7 @@ namespace TurnBased.UI
             swiftAction.transform.Find("Icon").gameObject.GetComponent<Image>().sprite = overtip.InteractSprite;
             ((RectTransform)swiftAction.transform).sizeDelta = iconSize;
 
-            isWaitingInitiative.transform.SetAsLastSibling();
+            isSurprising.transform.SetAsLastSibling();
             isFlatFooted.transform.SetAsLastSibling();
             canNotPerformAction.transform.SetAsLastSibling();
 
@@ -219,8 +228,19 @@ namespace TurnBased.UI
             Unit = unit;
 
             UpdateState(true);
-            UpdateText(true);
+            UpdateText();
             UpdateColorMask();
+        }
+
+        public void HandleHoverChange(UnitEntityView unitEntityView, bool isHover)
+        {
+            if (unitEntityView.EntityData == Unit)
+            {
+                if (isHover)
+                    _button.OnSelect(null);
+                else
+                    _button.OnDeselect(null);
+            }
         }
 
         private void OnClickHandler()
@@ -314,19 +334,19 @@ namespace TurnBased.UI
 
         private void UpdateCanNotPerformActionIcon()
         {
-            _canNotPerformActionIcon.SetActive(!_isCurrent && Unit != null && !Unit.CanPerformAction());
+            _canNotPerformActionIcon.SetActive(Unit != null && !_isCurrent && !Unit.CanPerformAction());
         }
 
         private void UpdateIsSurprisingIcon()
         {
-            _isWaitingInitiativeIcon.SetActive(!_isCurrent && Unit != null && Unit.IsSurprising());
+            _isSurprisingIcon.SetActive(Unit != null && !_isCurrent && Unit.IsSurprising());
         }
 
         private void UpdateIsFlatFooted()
         {
             UnitEntityData currentUnit = Mod.Core.Combat.CurrentTurn?.Unit;
             _isFlatFootedIcon.SetActive((ShowIsFlatFootedIconOnUI || (_isMouseOver && ShowIsFlatFootedIconOnHoverUI)) &&
-                !_isCurrent && Unit != null && currentUnit != null &&
+               Unit != null && !_isCurrent && currentUnit != null &&
                 Rulebook.Trigger(new RuleCheckTargetFlatFooted(currentUnit, Unit)).IsFlatFooted);
         }
 
@@ -342,26 +362,23 @@ namespace TurnBased.UI
                 _colorMask.color = _colors[3];
         }
 
-        private void UpdateText(bool froceUpdate = false)
+        private void UpdateText()
         {
             TextMeshProUGUI label = _isCurrent ? _activeLabel : _label;
-            if (froceUpdate || _width != label.rectTransform.rect.width)
-            {
-                _width = label.rectTransform.rect.width;
+            string text = Unit == null ? string.Empty : 
+                (!DoNotShowInvisibleUnitOnCombatTracker || Unit.IsVisibleForPlayer) ? Unit.CharacterName : "Unknown";
 
-                string text = Unit?.CharacterName;
+            if (text != _previousText || _width != label.rectTransform.rect.width)
+            {
+                _previousText = text;
+                _width = label.rectTransform.rect.width;
 
                 label.text = text;
                 label.ForceMeshUpdate();
 
-                while (label.textBounds.size.x > _width)
+                for (int i = text.Length - 1; i >= 0 && label.textBounds.size.x > _width; i--)
                 {
-                    if (text.Length > 0)
-                        text = text.Substring(0, text.Length - 1);
-                    else
-                        break;
-
-                    label.text = text + "...";
+                    label.text = text.Substring(0, i) + "...";
                     label.ForceMeshUpdate();
                 }
 

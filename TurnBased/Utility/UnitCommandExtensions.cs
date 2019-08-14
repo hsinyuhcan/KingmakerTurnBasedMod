@@ -75,11 +75,6 @@ namespace TurnBased.Utility
             return command.IsActed && !command.IsFinished;
         }
 
-        public static bool IsCombatCommand(this UnitCommand command)
-        {
-            return command != null && !command.IsFinished && (command is UnitAttack || command is UnitUseAbility);
-        }
-
         public static bool IsOffensiveCommand(this UnitCommand command)
         {
             UnitEntityData executor;

@@ -140,6 +140,14 @@ namespace TurnBased.Menus
         {
             using (new GUILayout.HorizontalScope())
             {
+                GUILayout.Label($"Combat Tracker Scale: {CombatTrackerScale:f2}", GUILayout.ExpandWidth(false));
+                GUILayout.Space(5f);
+                CombatTrackerScale =
+                    GUIHelper.RoundedHorizontalSlider(CombatTrackerScale, 2, 0.8f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+            }
+
+            using (new GUILayout.HorizontalScope())
+            {
                 GUILayout.Label($"Combat Tracker Width: {(int)CombatTrackerWidth:d3}", GUILayout.ExpandWidth(false));
                 GUILayout.Space(5f);
                 CombatTrackerWidth =

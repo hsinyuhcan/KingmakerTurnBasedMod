@@ -201,24 +201,34 @@ namespace TurnBased.Controllers
             {
                 _units.AddRange(Game.Instance.State.Units.Where(unit => unit.IsInCombat));
 
-                if (isPartyCombatStateChanged)
+                if (SurpriseRound && isPartyCombatStateChanged)
                 {
                     int notAppearUnitsCount = 0;
+                    HashSet<UnitEntityData> playUnits = new HashSet<UnitEntityData>(Game.Instance.Player.ControllableCharacters);
+                    bool isInitiatedByPlayer = _units.Any(unit => playUnits.Contains(unit) && unit.HasOffensiveCommand());
                     foreach (UnitEntityData unit in _units)
                     {
-                        if (unit.IsPlayersEnemy ?
-                            !unit.IsVisibleForPlayer || unit.HasCombatCommand(command => command.TargetUnit.IsPlayerFaction) :
-                            unit.HasCombatCommand() &&
-                            !Game.Instance.UnitGroups.Any(group => group.IsEnemy(unit) && group.Memory.ContainsVisible(unit)))
+                        if (unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
                         {
-                            _unitsInSupriseRound.Add(unit);
-                        }
-                        else if (unit.Descriptor.HasFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff))
-                        {
+                            // this unit is just summoned by a full round spell and it does technically not exist yet
                             notAppearUnitsCount++;
                         }
                         else if (unit.Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) is Buff summonedUnitBuff &&
                             summonedUnitBuff.Context.MaybeCaster is UnitEntityData caster && _unitsInSupriseRound.Contains(caster))
+                        {
+                            // this summoned unit will act after its caster's turn
+                            _unitsInSupriseRound.Add(unit);
+                        }
+                        else if(
+                            // player
+                            playUnits.Contains(unit) ?
+                            isInitiatedByPlayer && unit.IsUnseen() :
+                            // enemy
+                            unit.Group.IsEnemy(Game.Instance.Player.Group) ?
+                            unit.HasOffensiveCommand(command => playUnits.Contains(command.TargetUnit)) ||
+                            (unit.IsUnseen() && !unit.IsVisibleForPlayer) :
+                            // neutral
+                            unit.IsUnseen())
                         {
                             _unitsInSupriseRound.Add(unit);
                         }
@@ -438,17 +448,9 @@ namespace TurnBased.Controllers
         {
             if (IsInCombat() && command is UnitAttack unitAttack)
             {
-                if (unitAttack.IsCharge)
-                {
-                    command.Executor.View.AgentASP.MaxSpeedOverride = null;
-                    foreach (UnitCommand duplicatedCommand in 
-                        command.Executor.GetAllCommands().Where(cmd => cmd != null && cmd is UnitAttack atk && atk.IsCharge))
-                    {
-                        duplicatedCommand.Interrupt();
-                    }
-                }
-                else if(command.Executor.IsCurrentUnit() &&
-                    command.IsActed && !command.IsIgnoreCooldown && unitAttack.IsFullAttack && unitAttack.GetAttackIndex() == 1)
+                if(command.Executor.IsCurrentUnit() &&
+                    command.IsActed && !command.IsIgnoreCooldown && 
+                    !unitAttack.IsCharge && unitAttack.IsFullAttack && unitAttack.GetAttackIndex() == 1)
                 {
                     CurrentTurn.Cooldown.MoveAction -= TIME_MOVE_ACTION;
                 }

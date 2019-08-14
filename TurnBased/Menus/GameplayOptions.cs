@@ -26,9 +26,19 @@ namespace TurnBased.Menus
                 _buttonStyle = new GUIStyle(GUI.skin.button) { alignment = TextAnchor.MiddleLeft };
             }
 
-            Mod.Core.Enabled =
+            using (new GUILayout.HorizontalScope())
+            {
+                Mod.Core.Enabled =
                 GUIHelper.ToggleButton(Mod.Core.Enabled,
                 "Turn-Based Mode", _buttonStyle, GUILayout.ExpandWidth(false));
+
+                if (GUILayout.Button($"Reset Settings", _buttonStyle, GUILayout.ExpandWidth(false)))
+                {
+                    Mod.ResetSettings();
+                    Mod.Core.Blueprint.Update();
+                    Mod.Core.Hotkeys.Reset();
+                }
+            }
 
             GUILayout.Space(10f);
 
@@ -41,6 +51,11 @@ namespace TurnBased.Menus
 
         void OnGUIMechanic()
         {
+            SurpriseRound =
+                GUIHelper.ToggleButton(SurpriseRound,
+                "Surprise Round" +
+                " (All unseen units get a surprise round before regular rounds)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+
             FlankingCountAllOpponents =
                 GUIHelper.ToggleButton(FlankingCountAllOpponents,
                 "Flanking Count All Opponents Within Threaten Range" +

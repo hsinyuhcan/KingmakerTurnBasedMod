@@ -27,6 +27,11 @@ namespace TurnBased.Utility
         #endregion
 
         #region Gameplay
+        
+        public static bool SurpriseRound {
+            get => Mod.Settings.toggleSurpriseRound;
+            set => Mod.Settings.toggleSurpriseRound = value;
+        }
 
         public static bool FlankingCountAllOpponents {
             get => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange;
@@ -295,7 +300,12 @@ namespace TurnBased.Utility
             get => Mod.Settings.toggleDoNotShowInvisibleUnitOnCombatTracker;
             set => Mod.Settings.toggleDoNotShowInvisibleUnitOnCombatTracker = value;
         }
-        
+
+        public static float CombatTrackerScale {
+            get => Mod.Settings.combatTrackerScale;
+            set => Mod.Settings.combatTrackerScale = value;
+        }
+
         public static float CombatTrackerWidth {
             get => Mod.Settings.combatTrackerWidth;
             set => Mod.Settings.combatTrackerWidth = value;
@@ -304,6 +314,15 @@ namespace TurnBased.Utility
         public static int CombatTrackerMaxUnits {
             get => Mod.Settings.combatTrackerMaxUnits;
             set => Mod.Settings.combatTrackerMaxUnits = value;
+        }
+
+        #endregion
+
+        #region Hotkey
+
+        public static bool ToggleFiveFootStepOnRightClickGround {
+            get => Mod.Settings.hotkeyToggleFiveFootStepOnRightClickGround;
+            set => Mod.Settings.hotkeyToggleFiveFootStepOnRightClickGround = value;
         }
 
         #endregion
