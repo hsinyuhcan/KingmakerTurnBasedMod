@@ -327,14 +327,15 @@ namespace TurnBased.UI
 
         private void UpdateActionIcons()
         {
-            _standardActionIcon.SetActive(_isCurrent && Unit.HasStandardAction());
-            _moveActionIcon.SetActive(_isCurrent && !Unit.UsedOneMoveAction());
-            _swiftActionIcon.SetActive(_isCurrent && Unit.CombatState.Cooldown.SwiftAction == 0f);
+            bool canActive = _isCurrent && Unit.CanPerformAction();
+            _standardActionIcon.SetActive(canActive && Unit.HasStandardAction());
+            _moveActionIcon.SetActive(canActive && !Unit.UsedOneMoveAction());
+            _swiftActionIcon.SetActive(canActive && Unit.CombatState.Cooldown.SwiftAction == 0f);
         }
 
         private void UpdateCanNotPerformActionIcon()
         {
-            _canNotPerformActionIcon.SetActive(Unit != null && !_isCurrent && !Unit.CanPerformAction());
+            _canNotPerformActionIcon.SetActive(Unit != null && !Unit.CanPerformAction());
         }
 
         private void UpdateIsSurprisingIcon()

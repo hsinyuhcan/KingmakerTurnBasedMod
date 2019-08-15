@@ -134,7 +134,7 @@ namespace TurnBased.Utility
                 animationManager.SetExclusiveState(0);
             }
 
-            bool result = state.CanAct || state.CanMove;
+            bool result = (state.CanAct || state.CanMove) && !state.HasCondition(UnitCondition.Prone);
 
             state.Prone.Active = isProne;
             if (exclusiveState == 1 || exclusiveState == 2)

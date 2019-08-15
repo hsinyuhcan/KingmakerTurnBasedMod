@@ -39,6 +39,7 @@ namespace TurnBased.Controllers
         private TimeScaleRegulator _timeScale = new TimeScaleRegulator();
         private TimeSpan _combatStartTime;
         private float _combatTimeSinceStart;
+        private TurnController _currentTurn;
         private List<UnitEntityData> _units = new List<UnitEntityData>();
         private HashSet<UnitEntityData> _unitsInSupriseRound = new HashSet<UnitEntityData>();
         private readonly UnitsOrderComaprer _unitsOrderComaprer = new UnitsOrderComaprer();
@@ -48,7 +49,16 @@ namespace TurnBased.Controllers
 
         public bool CombatInitialized { get; private set; }
 
-        public TurnController CurrentTurn { get; private set; }
+        public TurnController CurrentTurn {
+            get => _currentTurn;
+            private set {
+                if (_currentTurn != value)
+                {
+                    _currentTurn?.Dispose();
+                    _currentTurn = value;
+                }
+            }
+        }
 
         public bool IsSurpriseRound { get; private set; }
 
@@ -85,7 +95,7 @@ namespace TurnBased.Controllers
 
                 // pick the next unit
                 UnitEntityData nextUnit = GetSortedUnits().First();
-                if (nextUnit.GetTimeToNextTurn() <= 0f && nextUnit.CanPerformAction())
+                if (nextUnit.GetTimeToNextTurn() <= 0f)
                 {
                     InitTurn(nextUnit);
                     _unitsSorted = false;
@@ -157,7 +167,6 @@ namespace TurnBased.Controllers
         {
             if (CurrentTurn != null && CurrentTurn.Unit == unit)
             {
-                CurrentTurn.Dispose();
                 CurrentTurn = null;
             }
 
@@ -179,7 +188,6 @@ namespace TurnBased.Controllers
             _unitsInSupriseRound.Clear();
             _unitsSorted = false;
             TickedRayView.Clear();
-            CurrentTurn?.Dispose();
             CurrentTurn = null;
             IsSurpriseRound = false;
 
@@ -506,16 +514,6 @@ namespace TurnBased.Controllers
                     return -1;
                 else if (y.IsCurrentUnit())
                     return 1;
-
-                bool xCanAct = x.CanPerformAction();
-                bool yCanAct = y.CanPerformAction();
-                if (xCanAct ^ yCanAct)
-                {
-                    if (xCanAct)
-                        return -1;
-                    else
-                        return 1;
-                }
 
                 float xTime = x.GetTimeToNextTurn();
                 float yTime = y.GetTimeToNextTurn();

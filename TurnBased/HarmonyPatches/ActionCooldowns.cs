@@ -125,7 +125,7 @@ namespace TurnBased.HarmonyPatches
                 {
                     if (unit.IsInCombat)
                     {
-                        if (IsPassing() && unit.CanPerformAction())
+                        if (IsPassing())
                         {
                             UnitCombatState combatState = unit.CombatState;
                             UnitCombatState.Cooldowns cooldown = combatState.Cooldown;

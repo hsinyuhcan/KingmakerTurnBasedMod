@@ -1,5 +1,6 @@
 ﻿Version 0.9.38
 	Implemented proper "Stand Up" action (standing up from prone will cost a move action)
+	Changed an unactable unit will lose one turn instead of being frozen
 
 Version 0.9.37
 	Added an option to reset settings

@@ -15,7 +15,6 @@ namespace TurnBased.Controllers
 {
     public class TurnController :
         IDisposable,
-        IUnitFallProneHandler,
         IUnitGetUpHandler
     {
         private bool _aiUsedFiveFootStep;
@@ -95,7 +94,7 @@ namespace TurnBased.Controllers
                 Status = TurnStatus.Acting;
             }
 
-            if ((Status == TurnStatus.Preparing || Status == TurnStatus.Acting) && !ContinueActing())
+            if (Status == TurnStatus.Acting && !ContinueActing())
             {
                 ToEnd();
             }
@@ -379,7 +378,7 @@ namespace TurnBased.Controllers
 
         public void CommandDelay(UnitEntityData targetUnit)
         {
-            if (CanDelay() && targetUnit != Unit && targetUnit.CanPerformAction())
+            if (CanDelay() && targetUnit != Unit)
             {
                 ToDealy(targetUnit);
             }
@@ -509,14 +508,6 @@ namespace TurnBased.Controllers
         #endregion
 
         #region Event Handlers
-
-        public void HandleUnitFallProne(UnitEntityData unit)
-        {
-            if (unit == Unit)
-            {
-                ForceToEnd();
-            }
-        }
 
         public void HandleUnitWillGetUp(UnitEntityData unit)
         {
