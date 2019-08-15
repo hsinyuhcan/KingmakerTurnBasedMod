@@ -1,4 +1,7 @@
-﻿Version 0.9.37
+﻿Version 0.9.38
+	Implemented proper "Stand Up" action (standing up from prone will cost a move action)
+
+Version 0.9.37
 	Added an option to reset settings
 	Added an option to scale the size of the combat tracker
 	Added an option to toggle 5-foot step when right click on the ground

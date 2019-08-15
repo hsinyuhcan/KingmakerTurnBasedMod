@@ -14,6 +14,7 @@ using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using Kingmaker.Visual;
+using Kingmaker.Visual.Animation.Kingmaker;
 using Kingmaker.Visual.FogOfWar;
 using System;
 using System.Collections.Generic;
@@ -123,7 +124,25 @@ namespace TurnBased.Utility
         public static bool CanPerformAction(this UnitEntityData unit)
         {
             UnitState state = unit.Descriptor.State;
-            return (state.CanAct || state.CanMove) && unit.View != null && !unit.View.IsGetUp;
+            UnitAnimationManager animationManager = unit.View?.AnimationManager;
+            bool isProne = state.Prone.Active;
+            int exclusiveState = 0;
+
+            state.Prone.Active = false;
+            if (animationManager && ((exclusiveState = animationManager.GetExclusiveState()) == 1 || exclusiveState == 2))
+            {
+                animationManager.SetExclusiveState(0);
+            }
+
+            bool result = state.CanAct || state.CanMove;
+
+            state.Prone.Active = isProne;
+            if (exclusiveState == 1 || exclusiveState == 2)
+            {
+                animationManager.SetExclusiveState(exclusiveState);
+            }
+
+            return result;
         }
 
         public static bool CanTarget(this UnitEntityData unit, UnitEntityData target, float radius,

@@ -12,7 +12,9 @@ using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using Kingmaker.Visual;
+using Kingmaker.Visual.Animation.Kingmaker;
 using System;
+using System.Reflection;
 using UnityEngine;
 using static ModMaker.Utility.ReflectionCache;
 
@@ -54,6 +56,18 @@ namespace TurnBased.Utility
         {
             GetMethod<UIDecalBase, Action<UIDecalBase, bool>>("SetHoverVisibility")
                 (uiDecalBase, state);
+        }
+
+        public static int GetExclusiveState(this UnitAnimationManager unitAnimationManager)
+        {
+            return (int)typeof(UnitAnimationManager)
+                .GetField("m_ExclusiveState", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(unitAnimationManager);
+        }
+
+        public static void SetExclusiveState(this UnitAnimationManager unitAnimationManager, int value)
+        {
+            typeof(UnitAnimationManager)
+                .GetField("m_ExclusiveState", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(unitAnimationManager, value);
         }
 
         public static void TickOnUnit(this UnitConfusionController unitConfusionController, UnitEntityData unit)

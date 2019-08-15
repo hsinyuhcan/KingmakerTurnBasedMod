@@ -389,6 +389,66 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // fix prone (units can only stand up in their turn)
+        [HarmonyPatch(typeof(UnitProneController), nameof(UnitProneController.Tick), typeof(UnitEntityData))]
+        static class UnitProneController_Tick_Patch
+        {
+            [HarmonyPrefix]
+            static void Prefix(UnitEntityData unit)
+            {
+                if (IsInCombat())
+                {
+                    ProneState proneState = unit.Descriptor.State.Prone;
+                    if (proneState.Active)
+                    {
+                        if (IsPassing())
+                        {
+                            if (unit.IsInCombat)
+                            {
+                                proneState.Duration = 3f.Seconds() - unit.GetTimeToNextTurn().Seconds() - new TimeSpan(1L);
+                                if (proneState.Duration < TimeSpan.Zero)
+                                {
+                                    proneState.Duration = TimeSpan.Zero;
+                                }
+                                proneState.Duration -= Game.Instance.TimeController.DeltaTime.Seconds();
+                            }
+                        }
+                        else
+                        {
+                            if (unit.IsCurrentUnit())
+                            {
+                                if (IsActing() && unit.HasMoveAction())
+                                {
+                                    proneState.Duration = 3f.Seconds();
+                                }
+                                else
+                                {
+                                    proneState.Duration = TimeSpan.Zero;
+                                }
+                            }
+                            proneState.Duration -= Game.Instance.TimeController.DeltaTime.Seconds();
+                        }
+                    }
+                }
+            }
+        }
+
+        // fix prone (remove the delay after standing up)
+        [HarmonyPatch(typeof(UnitEntityView), nameof(UnitEntityView.IsGetUp), MethodType.Getter)]
+        static class UnitEntityView_get_IsGetUp_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityView __instance, ref bool __result)
+            {
+                if (IsInCombat())
+                {
+                    __result = __instance.AnimationManager?.IsStandUp ?? false;
+                    return false;
+                }
+                return true;
+            }
+        }
+
         // stop ticking during units' turn (do not leave combat instantly) if there are still enemies
         [HarmonyPatch(typeof(UnitCombatLeaveController), "Tick")]
         static class UnitCombatLeaveController_Tick_Patch
@@ -456,7 +516,7 @@ namespace TurnBased.HarmonyPatches
             static IEnumerable<MethodBase> TargetMethods(HarmonyInstance instance)
             {
                 yield return GetTargetMethod(typeof(UnitInPitController));
-                yield return GetTargetMethod(typeof(UnitProneController));
+                //yield return GetTargetMethod(typeof(UnitProneController));
             }
 
 

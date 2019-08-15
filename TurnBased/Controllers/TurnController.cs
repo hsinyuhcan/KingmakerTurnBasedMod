@@ -13,7 +13,10 @@ using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased.Controllers
 {
-    public class TurnController
+    public class TurnController :
+        IDisposable,
+        IUnitFallProneHandler,
+        IUnitGetUpHandler
     {
         private bool _aiUsedFiveFootStep;
         private bool _enabledFiveFootStep;
@@ -74,6 +77,13 @@ namespace TurnBased.Controllers
             WantEnterStealth = unit.Stealth.WantEnterStealth;
 
             Start();
+
+            EventBus.Subscribe(this);
+        }
+
+        public void Dispose()
+        {
+            EventBus.Unsubscribe(this);
         }
 
         #region Tick
@@ -184,18 +194,18 @@ namespace TurnBased.Controllers
                 }
             }
 
-            bool hasCommandRunning = Commands.IsRunning();
+            bool hasRunningAction = Commands.IsRunning() || (Unit.View?.IsGetUp ?? false);
 
             // check if the current unit can't do anything more in current turn
             if (!Unit.IsInCombat || !Unit.CanPerformAction() ||
-                (!hasCommandRunning && GetRemainingTime() <= 0 && !HasExtraAction()))
+                (!hasRunningAction && GetRemainingTime() <= 0 && !HasExtraAction()))
             {
                 return false;
             }
             // check if AI is idle and timeout
             else if (!Unit.IsDirectlyControllable || AutoEndTurn)
             {
-                if (!hasCommandRunning && !Unit.HasMotionThisTick)
+                if (!hasRunningAction && !Unit.HasMotionThisTick)
                 {
                     // delay after timeout
                     TimeWaitedForIdleAI += Game.Instance.TimeController.GameDeltaTime;
@@ -216,7 +226,7 @@ namespace TurnBased.Controllers
         private bool ContinueWaiting()
         {
             // wait for the current action finish
-            if (!Commands.IsRunning())
+            if (!Commands.IsRunning() || (Unit.View?.IsGetUp ?? false))
             {
                 // delay after finish
                 TimeWaitedToEndTurn += Game.Instance.TimeController.GameDeltaTime;
@@ -493,6 +503,27 @@ namespace TurnBased.Controllers
                     if (AutoCancelActionsOnPlayerFinishFirstMove)
                         Unit.TryCancelCommands();
                 }
+            }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        public void HandleUnitFallProne(UnitEntityData unit)
+        {
+            if (unit == Unit)
+            {
+                ForceToEnd();
+            }
+        }
+
+        public void HandleUnitWillGetUp(UnitEntityData unit)
+        {
+            if (unit == Unit)
+            {
+                Cooldown.MoveAction += TIME_MOVE_ACTION;
+                Unit.TryCancelCommands();
             }
         }
 

@@ -157,6 +157,7 @@ namespace TurnBased.Controllers
         {
             if (CurrentTurn != null && CurrentTurn.Unit == unit)
             {
+                CurrentTurn.Dispose();
                 CurrentTurn = null;
             }
 
@@ -178,6 +179,7 @@ namespace TurnBased.Controllers
             _unitsInSupriseRound.Clear();
             _unitsSorted = false;
             TickedRayView.Clear();
+            CurrentTurn?.Dispose();
             CurrentTurn = null;
             IsSurpriseRound = false;
 
