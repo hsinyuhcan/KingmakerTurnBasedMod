@@ -20,7 +20,6 @@ using System.Reflection.Emit;
 using TurnBased.Utility;
 using UnityEngine;
 using static ModMaker.Utility.ReflectionCache;
-using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -59,8 +58,6 @@ namespace TurnBased.HarmonyPatches
 
             public static IEnumerator<AbilityDeliveryTarget> Deliver(AbilityExecutionContext context, TargetWrapper targetWrapper)
             {
-                Mod.Debug("Charge: start");
-
                 UnitEntityData target = targetWrapper.Unit;
                 if (target == null)
                 {
@@ -75,10 +72,12 @@ namespace TurnBased.HarmonyPatches
                     yield break;
                 }
 
+                UnitMovementAgent agentASP = caster.View.AgentASP;
+
                 caster.View.StopMoving();
-                caster.View.AgentASP.IsCharging = true;
+                agentASP.IsCharging = true;
+                agentASP.ForcePath(new ForcedPath(new List<Vector3> { caster.Position, target.Position }));
                 caster.Descriptor.State.IsCharging = true;
-                caster.View.AgentASP.ForcePath(new ForcedPath(new List<Vector3> { caster.Position, target.Position }));
                 caster.Descriptor.AddBuff(BlueprintRoot.Instance.SystemMechanics.ChargeBuff, context, 1.Rounds().Seconds);
                 UnitAttack unitAttack = new UnitAttack(target);
                 unitAttack.Init(caster);
@@ -87,14 +86,14 @@ namespace TurnBased.HarmonyPatches
                 while (unitAttack.ShouldUnitApproach)
                 {
                     timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
-                    if (caster.GetThreatHand() == null)
-                    {
-                        UberDebug.Log("Charge: caster.GetThreatHand() == null");
-                        yield break;
-                    }
-                    else if (timeSinceStart > 6f)
+                    if (timeSinceStart > 6f)
                     {
                         UberDebug.Log("Charge: timeSinceStart > 6f");
+                        yield break;
+                    }
+                    else if (caster.GetThreatHand() == null)
+                    {
+                        UberDebug.Log("Charge: caster.GetThreatHand() == null");
                         yield break;
                     }
                     else if (!caster.Descriptor.State.CanMove)
@@ -102,20 +101,22 @@ namespace TurnBased.HarmonyPatches
                         UberDebug.Log("Charge: !caster.Descriptor.State.CanMove");
                         yield break;
                     }
-                    else if (caster.View.AgentASP.IsReallyMoving)
+                    else if (!(bool)agentASP)
                     {
-                        caster.View.AgentASP.MaxSpeedOverride =
-                            Math.Max(caster.View.AgentASP.MaxSpeedOverride ?? 0f, caster.CombatSpeedMps * 2f);
+                        UberDebug.Log("Charge: !(bool)caster.View.AgentASP");
+                        yield break;
                     }
-                    else
+                    else if (!agentASP.IsReallyMoving)
                     {
-                        caster.View.AgentASP.ForcePath(new ForcedPath(new List<Vector3> { caster.Position, target.Position }));
-                        if (!caster.View.AgentASP.IsReallyMoving)
+                        agentASP.ForcePath(new ForcedPath(new List<Vector3> { caster.Position, target.Position }));
+                        if (!agentASP.IsReallyMoving)
                         {
                             UberDebug.Log("Charge: !caster.View.AgentASP.IsReallyMoving");
                             yield break;
                         }
                     }
+
+                    agentASP.MaxSpeedOverride = Math.Max(agentASP.MaxSpeedOverride ?? 0f, caster.CombatSpeedMps * 2f);
                     yield return null;
                 }
 
@@ -133,7 +134,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(ref bool __result)
             {
-                if (IsEnabled() && AvoidOverlappingOnCharge)
+                if (IsInCombat() && AvoidOverlappingOnCharge)
                 {
                     __result = false;
                     return false;
@@ -184,7 +185,7 @@ namespace TurnBased.HarmonyPatches
 
             static bool IgnoreMoveActionCheck(UnitAttack command)
             {
-                return IsEnabled() && command.IsCharge && !command.Executor.IsMoveActionRestricted();
+                return IsInCombat() && command.IsCharge && !command.Executor.IsMoveActionRestricted();
             }
         }
     }

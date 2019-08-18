@@ -22,17 +22,17 @@ namespace TurnBased.Controllers
 
         public void Attach()
         {
-            if (CombatTracker.IsNullOrDestroyed())
+            if (!CombatTracker)
             {
                 CombatTracker = CombatTrackerManager.CreateObject();
             }
 
-            if (AttackIndicator.IsNullOrDestroyed())
+            if (!AttackIndicator)
             {
                 AttackIndicator = AttackIndicatorManager.CreateObject();
             }
 
-            if (MovementIndicator.IsNullOrDestroyed())
+            if (!MovementIndicator)
             {
                 MovementIndicator = MovementIndicatorManager.CreateObject();
             }
@@ -40,37 +40,24 @@ namespace TurnBased.Controllers
 
         public void Detach()
         {
-            if (!CombatTracker.IsNullOrDestroyed())
-            {
-                CombatTracker.transform.SetParent(null, false);
-                UnityEngine.Object.DestroyImmediate(CombatTracker.gameObject);
-            }
+            CombatTracker.SafeDestroy();
             CombatTracker = null;
 
-            if (!AttackIndicator.IsNullOrDestroyed())
-            {
-                AttackIndicator.transform.SetParent(null, false);
-                UnityEngine.Object.DestroyImmediate(AttackIndicator.gameObject);
-            }
+            AttackIndicator.SafeDestroy();
             AttackIndicator = null;
 
-            if (!MovementIndicator.IsNullOrDestroyed())
-            {
-                MovementIndicator.transform.SetParent(null, false);
-                UnityEngine.Object.DestroyImmediate(MovementIndicator.gameObject);
-            }
+            MovementIndicator.SafeDestroy();
             MovementIndicator = null;
         }
 
 #if DEBUG
-        public static void Clear()
+        public void Clear()
         {
             while (true)
             {
                 Transform combatTracker = Game.Instance.UI.Common.transform.Find("HUDLayout/TurnBasedCombatTracker");
-                if (!combatTracker.IsNullOrDestroyed())
+                if (combatTracker)
                 {
-                    combatTracker.SetParent(null, false);
                     UnityEngine.Object.DestroyImmediate(combatTracker.gameObject);
                 }
                 else
@@ -78,14 +65,13 @@ namespace TurnBased.Controllers
                     break;
                 }
             }
-            Mod.Core.UI.CombatTracker = null;
+            CombatTracker = null;
 
             while (true)
             {
                 Transform attackIndicator = Game.Instance.UI.Common.transform.Find("AbilityTargetSelect/TurnBasedAttackIndicator");
-                if (!attackIndicator.IsNullOrDestroyed())
+                if (attackIndicator)
                 {
-                    attackIndicator.SetParent(null, false);
                     UnityEngine.Object.DestroyImmediate(attackIndicator.gameObject);
                 }
                 else
@@ -93,14 +79,13 @@ namespace TurnBased.Controllers
                     break;
                 }
             }
-            Mod.Core.UI.AttackIndicator = null;
+            AttackIndicator = null;
 
             while (true)
             {
                 Transform movementIndicator = Game.Instance.UI.Common.transform.Find("AbilityTargetSelect/TurnBasedMovementIndicator");
-                if (!movementIndicator.IsNullOrDestroyed())
+                if (movementIndicator)
                 {
-                    movementIndicator.SetParent(null, false);
                     UnityEngine.Object.DestroyImmediate(movementIndicator.gameObject);
                 }
                 else
@@ -108,7 +93,7 @@ namespace TurnBased.Controllers
                     break;
                 }
             }
-            Mod.Core.UI.MovementIndicator = null;
+            MovementIndicator = null;
         }
 #endif
 
@@ -118,10 +103,10 @@ namespace TurnBased.Controllers
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            EventBus.Subscribe(this);
-
             Mod.Core.UI = this;
             Attach();
+
+            EventBus.Subscribe(this);
         }
 
         public void HandleModDisable()
@@ -130,8 +115,8 @@ namespace TurnBased.Controllers
 
             EventBus.Unsubscribe(this);
 
-            Mod.Core.UI = null;
             Detach();
+            Mod.Core.UI = null;
         }
 
         public void OnAreaBeginUnloading() { }

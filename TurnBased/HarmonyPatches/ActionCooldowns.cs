@@ -6,7 +6,6 @@ using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic.Commands.Base;
 using System;
 using TurnBased.Utility;
-using static TurnBased.Main;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -64,7 +63,7 @@ namespace TurnBased.HarmonyPatches
 
             static bool ShouldRestrictCommand(UnitEntityData unit, UnitCommand command)
             {
-                return !Mod.Core.Combat.IsSurpriseRound && command.IsFullRoundAbility() && !unit.HasFullRoundAction();
+                return !unit.IsSurprising() && command.IsFullRoundAbility() && !unit.HasFullRoundAction();
             }
         }
 
@@ -125,13 +124,13 @@ namespace TurnBased.HarmonyPatches
                 {
                     if (unit.IsInCombat)
                     {
-                        if (IsPassing() && unit.CanPerformAction())
+                        if (IsPassing())
                         {
                             UnitCombatState combatState = unit.CombatState;
                             UnitCombatState.Cooldowns cooldown = combatState.Cooldown;
                             float gameDeltaTime = Game.Instance.TimeController.GameDeltaTime;
 
-                            if (combatState.IsWaitingInitiative)
+                            if (cooldown.Initiative > 0f)
                             {
                                 if (gameDeltaTime >= cooldown.Initiative)
                                 {

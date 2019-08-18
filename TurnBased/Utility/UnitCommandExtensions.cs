@@ -32,8 +32,7 @@ namespace TurnBased.Utility
 
         public static bool IsFullRoundAbility(this UnitCommand command)
         {
-            return command is UnitUseAbility unitUseAbility &&
-                unitUseAbility.Spell != null && unitUseAbility.Spell.RequireFullRoundAction;
+            return command is UnitUseAbility unitUseAbility && unitUseAbility.Spell.RequireFullRoundAction;
         }
 
         public static bool IsFullRoundAction(this UnitCommand command)
@@ -46,9 +45,7 @@ namespace TurnBased.Utility
             if (command is UnitUseAbility unitUseAbility)
             {
                 UnitPartTouch unitPartTouch = command.Executor.Get<UnitPartTouch>();
-                if (unitPartTouch != null &&
-                    unitPartTouch.IsCastedInThisRound &&
-                    unitUseAbility.Spell == unitPartTouch.Ability.Data)
+                if ((unitPartTouch?.IsCastedInThisRound ?? false) && unitUseAbility.Spell == unitPartTouch.Ability.Data)
                 {
                     return true;
                 }

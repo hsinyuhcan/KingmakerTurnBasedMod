@@ -29,18 +29,18 @@ namespace TurnBased.UI
     {
         private ButtonPF _button;
         private TextMeshProUGUI _label;
-        private TextMeshProUGUI _activeLabel;
+        private TextMeshProUGUI _labelActive;
         private Color[] _colors;
-        private Image _colorMask;
-        private Image _activeColorMask;
-        private GameObject _canNotPerformActionIcon;
-        private GameObject _isSurprisingIcon;
-        private GameObject _isFlatFootedIcon;
-        private GameObject _standardActionIcon;
-        private GameObject _moveActionIcon;
-        private GameObject _swiftActionIcon;
+        private Image _mask;
+        private Image _maskActive;
+        private GameObject _iconCanNotPerformAction;
+        private GameObject _iconIsSurprising;
+        private GameObject _iconIsFlatFooted;
+        private GameObject _iconStandardAction;
+        private GameObject _iconMoveAction;
+        private GameObject _iconSwiftAction;
         private GameObject[] _objects;
-        private GameObject[] _activeObjects;
+        private GameObject[] _objectsActive;
 
         private bool _isCurrent;
         private bool _isMouseOver;
@@ -53,18 +53,98 @@ namespace TurnBased.UI
 
         public int Index { get; set; }
 
-        public UnitEntityData Unit { get; private set; }
+        public UnitEntityData Unit { get; set; }
+
+        public static UnitButtonManager CreateObject()
+        {
+            GameObject sourceObject = Game.Instance.UI.Common?.transform
+                .Find("ServiceWindow/Journal").GetComponent<JournalQuestLog>().Chapter.QuestNaviElement.gameObject;
+            OvertipController overtip = Game.Instance.UI.BarkManager?.Overtip;
+
+            if (!sourceObject || !overtip)
+                return null;
+
+            GameObject buttonUnit = Instantiate(sourceObject);
+            buttonUnit.name = "Button_Unit";
+            buttonUnit.GetComponent<ButtonPF>().onClick = new Button.ButtonClickedEvent();
+            DestroyImmediate(buttonUnit.GetComponent<JournalQuestNaviElement>());
+            buttonUnit.transform.Find("BackgroundInActive/Decal").SafeDestroy();
+            buttonUnit.transform.Find("Complied").SafeDestroy();
+
+            RectTransform rectButtonUnit = (RectTransform)buttonUnit.transform;
+            rectButtonUnit.anchorMin = new Vector2(0f, 1f);
+            rectButtonUnit.anchorMax = new Vector2(1f, 1f);
+            rectButtonUnit.pivot = new Vector2(1f, 1f);
+            rectButtonUnit.localPosition = new Vector3(0f, 0f, 0f);
+            rectButtonUnit.sizeDelta = new Vector2(0f, UNIT_BUTTON_HEIGHT);
+            rectButtonUnit.rotation = Quaternion.identity;
+
+            GameObject hightlight = buttonUnit.transform.Find("BackgroundInActive/Highlight").gameObject;
+            ((RectTransform)hightlight.transform).offsetMin = new Vector2(0f, 0f);
+
+            GameObject hightlightActive = Instantiate(hightlight, buttonUnit.transform.Find("BackgroundActive"));
+            hightlightActive.name = "Highlight";
+            hightlightActive.GetComponent<Image>().color = Color.white;
+
+            Vector2 iconSize = new Vector2(UNIT_BUTTON_HEIGHT, UNIT_BUTTON_HEIGHT);
+
+            GameObject canNotPerformAction = buttonUnit.transform.Find("Failed").gameObject;
+            canNotPerformAction.name = "CanNotPerformAction";
+            ((RectTransform)canNotPerformAction.transform).sizeDelta = iconSize;
+
+            GameObject isSurprising = buttonUnit.transform.Find("NeedToAttention").gameObject;
+            isSurprising.name = "IsSurprising";
+            isSurprising.transform.localPosition = canNotPerformAction.transform.localPosition;
+            RectTransform rectIsSurprising = (RectTransform)isSurprising.transform;
+            rectIsSurprising.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT, 0.4f);
+            rectIsSurprising.sizeDelta = new Vector2(UNIT_BUTTON_HEIGHT, 0f);
+
+            GameObject isFlatFooted = buttonUnit.transform.Find("New").gameObject;
+            isFlatFooted.name = "IsFlatFooted";
+            ((RectTransform)isFlatFooted.transform).sizeDelta = iconSize;
+
+            GameObject standardAction = Instantiate(canNotPerformAction, buttonUnit.transform);
+            standardAction.name = "StandardAction";
+            standardAction.transform.Find("Icon").gameObject.GetComponent<Image>().sprite = overtip.AttackSprite;
+            RectTransform rectStandardAction = (RectTransform)standardAction.transform;
+            rectStandardAction.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT * 2, 0.4f);
+            rectStandardAction.sizeDelta = iconSize;
+
+            GameObject moveAction = Instantiate(canNotPerformAction, buttonUnit.transform);
+            moveAction.name = "MoveAction";
+            moveAction.transform.Find("Icon").gameObject.GetComponent<Image>().sprite = overtip.WalkSprite;
+            RectTransform rectMoveAction = (RectTransform)moveAction.transform;
+            rectMoveAction.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT, 0.4f);
+            rectMoveAction.sizeDelta = iconSize;
+
+            GameObject swiftAction = Instantiate(canNotPerformAction, buttonUnit.transform);
+            swiftAction.name = "SwiftAction";
+            swiftAction.transform.Find("Icon").gameObject.GetComponent<Image>().sprite = overtip.InteractSprite;
+            ((RectTransform)swiftAction.transform).sizeDelta = iconSize;
+
+            isSurprising.transform.SetAsLastSibling();
+            isFlatFooted.transform.SetAsLastSibling();
+            canNotPerformAction.transform.SetAsLastSibling();
+
+            TextMeshProUGUI label = buttonUnit.transform.Find("HeaderInActive").gameObject.GetComponent<TextMeshProUGUI>();
+            label.enableWordWrapping = false;
+
+            TextMeshProUGUI labelActive = buttonUnit.transform.Find("HeaderActive").gameObject.GetComponent<TextMeshProUGUI>();
+            labelActive.enableWordWrapping = false;
+
+            return buttonUnit.AddComponent<UnitButtonManager>();
+        }
 
         void Awake()
         {
             _button = gameObject.GetComponent<ButtonPF>();
-            _button.onClick.AddListener(new UnityAction(OnClickHandler));
-            _button.OnRightClick.AddListener(new UnityAction(OnRightClickHandler));
-            _button.OnEnter.AddListener(new UnityAction(OnEnterHandler));
-            _button.OnExit.AddListener(new UnityAction(OnExitHandler));
+            _button.onClick.AddListener(new UnityAction(HandleOnClick));
+            _button.OnRightClick.AddListener(new UnityAction(HandleOnRightClick));
+            _button.OnEnter.AddListener(new UnityAction(HandleOnEnter));
+            _button.OnExit.AddListener(new UnityAction(HandleOnExit));
             
             _label = gameObject.transform.Find("HeaderInActive").gameObject.GetComponent<TextMeshProUGUI>();
-            _activeLabel = gameObject.transform.Find("HeaderActive").gameObject.GetComponent<TextMeshProUGUI>();
+            _labelActive = gameObject.transform.Find("HeaderActive").gameObject.GetComponent<TextMeshProUGUI>();
 
             _colors = new Color[]
             {
@@ -74,15 +154,15 @@ namespace TurnBased.UI
                 UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Started).AddendumColor.linear
             };
 
-            _colorMask = gameObject.transform.Find("BackgroundInActive/Highlight").gameObject.GetComponent<Image>();
-            _activeColorMask = gameObject.transform.Find("BackgroundActiveHighlight").gameObject.GetComponent<Image>();
+            _mask = gameObject.transform.Find("BackgroundInActive/Highlight").gameObject.GetComponent<Image>();
+            _maskActive = gameObject.transform.Find("BackgroundActive/Highlight").gameObject.GetComponent<Image>();
         
-            _canNotPerformActionIcon = gameObject.transform.Find("CanNotPerformAction").gameObject;
-            _isSurprisingIcon = gameObject.transform.Find("IsSurprising").gameObject;
-            _isFlatFootedIcon = gameObject.transform.Find("IsFlatFooted").gameObject;
-            _standardActionIcon = gameObject.transform.Find("StandardAction").gameObject;
-            _moveActionIcon = gameObject.transform.Find("MoveAction").gameObject;
-            _swiftActionIcon = gameObject.transform.Find("SwiftAction").gameObject;
+            _iconCanNotPerformAction = gameObject.transform.Find("CanNotPerformAction").gameObject;
+            _iconIsSurprising = gameObject.transform.Find("IsSurprising").gameObject;
+            _iconIsFlatFooted = gameObject.transform.Find("IsFlatFooted").gameObject;
+            _iconStandardAction = gameObject.transform.Find("StandardAction").gameObject;
+            _iconMoveAction = gameObject.transform.Find("MoveAction").gameObject;
+            _iconSwiftAction = gameObject.transform.Find("SwiftAction").gameObject;
 
             _objects = new GameObject[]
             {
@@ -90,29 +170,29 @@ namespace TurnBased.UI
                 gameObject.transform.Find("HeaderInActive").gameObject,
             };
 
-            _activeObjects = new GameObject[]
+            _objectsActive = new GameObject[]
             {
                 gameObject.transform.Find("BackgroundActive").gameObject,
                 gameObject.transform.Find("HeaderActive").gameObject,
-                _activeColorMask.gameObject,
             };
+        }
 
+        void OnEnable()
+        {
             EventBus.Subscribe(this);
         }
 
-        void OnDestroy()
+        void OnDisable()
         {
             EventBus.Unsubscribe(this);
 
-            _isCurrent = false;
-            _isMouseOver = false;
-            UpdateUnitHighlight();
+            Unit?.SetHighlight(false);
             Unit = null;
         }
 
         void Update()
         {
-            if (IsInCombat() && Unit != null)
+            if (IsInCombat())
             {
                 UpdateState();
                 UpdateText();
@@ -120,116 +200,6 @@ namespace TurnBased.UI
                 UpdateUnitHighlight();
                 UpdateCarama();
             }
-        }
-
-        public static UnitButtonManager CreateObject()
-        {
-            GameObject sourceObject = Game.Instance.UI.Common?.transform
-                .Find("ServiceWindow/Journal").GetComponent<JournalQuestLog>().Chapter.QuestNaviElement.gameObject;
-            OvertipController overtip = Game.Instance.UI.BarkManager.Overtip;
-
-            if (sourceObject.IsNullOrDestroyed() || overtip == null)
-                return null;
-
-            GameObject tbUnitButton = Instantiate(sourceObject);
-            tbUnitButton.name = "Btn_Unit";
-            tbUnitButton.GetComponent<ButtonPF>().onClick = new Button.ButtonClickedEvent();
-            DestroyImmediate(tbUnitButton.GetComponent<JournalQuestNaviElement>());
-            DestroyImmediate(tbUnitButton.transform.Find("BackgroundInActive/Decal").gameObject);
-            DestroyImmediate(tbUnitButton.transform.Find("Complied").gameObject);
-
-            RectTransform rectUnitButton = (RectTransform)tbUnitButton.transform;
-            rectUnitButton.anchorMin = new Vector2(0f, 1f);
-            rectUnitButton.anchorMax = new Vector2(1f, 1f);
-            rectUnitButton.pivot = new Vector2(1f, 1f);
-            rectUnitButton.localPosition = new Vector3(0f, 0f, 0f);
-            rectUnitButton.sizeDelta = new Vector2(0f, UNIT_BUTTON_HEIGHT);
-            rectUnitButton.rotation = Quaternion.identity;
-
-            GameObject hightlight = tbUnitButton.transform.Find("BackgroundInActive/Highlight").gameObject;
-            ((RectTransform)hightlight.transform).offsetMin = new Vector2(0f, 0f);
-
-            GameObject activeHightlight = Instantiate(hightlight, tbUnitButton.transform);
-            activeHightlight.name = "BackgroundActiveHighlight";
-            activeHightlight.transform.SetSiblingIndex(tbUnitButton.transform.Find("Highlight").GetSiblingIndex());
-            activeHightlight.GetComponent<Image>().color = Color.white;
-
-            Vector2 iconSize = new Vector2(UNIT_BUTTON_HEIGHT, UNIT_BUTTON_HEIGHT);
-
-            // Icons
-            // overtip.DefaultSprite
-            // overtip.EquipSprite
-
-            GameObject canNotPerformAction = tbUnitButton.transform.Find("Failed").gameObject;
-            canNotPerformAction.name = "CanNotPerformAction";
-            ((RectTransform)canNotPerformAction.transform).sizeDelta = iconSize;
-
-            GameObject isSurprising = tbUnitButton.transform.Find("NeedToAttention").gameObject;
-            isSurprising.name = "IsSurprising";
-            isSurprising.transform.localPosition = canNotPerformAction.transform.localPosition;
-            RectTransform rectIsSurprising = (RectTransform)isSurprising.transform;
-            rectIsSurprising.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT, 0.4f);
-            rectIsSurprising.sizeDelta = new Vector2(UNIT_BUTTON_HEIGHT, 0f);
-
-            GameObject isFlatFooted = tbUnitButton.transform.Find("New").gameObject;
-            isFlatFooted.name = "IsFlatFooted";
-            ((RectTransform)isFlatFooted.transform).sizeDelta = iconSize;
-
-            GameObject standardAction = Instantiate(canNotPerformAction, tbUnitButton.transform);
-            standardAction.name = "StandardAction";
-            standardAction.transform.Find("Icon").gameObject.GetComponent<Image>().sprite = overtip.AttackSprite;
-            RectTransform rectStandardAction = (RectTransform)standardAction.transform;
-            rectStandardAction.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT * 2, 0.4f);
-            rectStandardAction.sizeDelta = iconSize;
-
-            GameObject moveAction = Instantiate(canNotPerformAction, tbUnitButton.transform);
-            moveAction.name = "MoveAction";
-            moveAction.transform.Find("Icon").gameObject.GetComponent<Image>().sprite = overtip.WalkSprite;
-            RectTransform rectMoveAction = (RectTransform)moveAction.transform;
-            rectMoveAction.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT, 0.4f);
-            rectMoveAction.sizeDelta = iconSize;
-
-            GameObject swiftAction = Instantiate(canNotPerformAction, tbUnitButton.transform);
-            swiftAction.name = "SwiftAction";
-            swiftAction.transform.Find("Icon").gameObject.GetComponent<Image>().sprite = overtip.InteractSprite;
-            ((RectTransform)swiftAction.transform).sizeDelta = iconSize;
-
-            isSurprising.transform.SetAsLastSibling();
-            isFlatFooted.transform.SetAsLastSibling();
-            canNotPerformAction.transform.SetAsLastSibling();
-
-            TextMeshProUGUI label = tbUnitButton.transform.Find("HeaderInActive").gameObject.GetComponent<TextMeshProUGUI>();
-            label.enableWordWrapping = false;
-            //label.fontSize = 22f;
-            //label.fontSizeMax = 28f;
-            //label.fontSizeMin = 14f;
-
-            TextMeshProUGUI highlightLabel = tbUnitButton.transform.Find("HeaderActive").gameObject.GetComponent<TextMeshProUGUI>();
-            highlightLabel.enableWordWrapping = false;
-            //highlightLabel.fontSize = 22f;
-            //highlightLabel.fontSizeMax = 28f;
-            //highlightLabel.fontSizeMin = 14f;
-
-            return tbUnitButton.AddComponent<UnitButtonManager>();
-        }
-
-        public static UnitButtonManager CreateObject(UnitButtonManager unitEntry)
-        {
-            return Instantiate(unitEntry.gameObject).GetComponent<UnitButtonManager>();
-        }
-
-        public void SetOrder(int order)
-        {
-            gameObject.transform.SetSiblingIndex(order);
-        }
-
-        public void SetUnit(UnitEntityData unit)
-        {
-            Unit = unit;
-
-            UpdateState(true);
-            UpdateText();
-            UpdateColorMask();
         }
 
         public void HandleHoverChange(UnitEntityView unitEntityView, bool isHover)
@@ -243,7 +213,7 @@ namespace TurnBased.UI
             }
         }
 
-        private void OnClickHandler()
+        private void HandleOnClick()
         {
             if (OnClick(Unit))
             {
@@ -255,35 +225,35 @@ namespace TurnBased.UI
             }
         }
 
-        private void OnRightClickHandler()
+        private void HandleOnRightClick()
         {
             if (ShowUnitDescriptionOnRightClickUI)
                 Unit.Inspect();
         }
 
-        private void OnEnterHandler()
+        private void HandleOnEnter()
         {
             _isMouseOver = true;
             OnEnter(Unit);
         }
 
-        private void OnExitHandler()
+        private void HandleOnExit()
         {
             _isMouseOver = false;
             OnExit(Unit);
         }
 
-        private void UpdateState(bool forceUpdate = false)
+        private void UpdateState()
         {
             bool isCurrent = Unit != null && Unit.IsCurrentUnit();
 
-            if (forceUpdate || _isCurrent != isCurrent)
+            if (_isCurrent != isCurrent)
             {
                 _isCurrent = isCurrent;
 
-                for (int i = 0; i < _activeObjects.Length; i++)
+                for (int i = 0; i < _objectsActive.Length; i++)
                 {
-                    _activeObjects[i].SetActive(_isCurrent);
+                    _objectsActive[i].SetActive(_isCurrent);
                 }
 
                 for (int i = 0; i < _objects.Length; i++)
@@ -300,71 +270,61 @@ namespace TurnBased.UI
                 UpdateActionIcons();
             }
 
-            UpdateCanNotPerformActionIcon();
-            UpdateIsSurprisingIcon();
-            UpdateIsFlatFooted();
+            UpdateStateIcons();
         }
 
         private void UpdateCarama()
         {
-            if (!Game.Instance.IsPaused && 
-                _isCurrent && (Unit.IsDirectlyControllable ? CameraLockOnCurrentPlayerUnit : CameraLockOnCurrentNonPlayerUnit))
-            {
+            if (!Game.Instance.IsPaused && _isCurrent && 
+                (Unit.IsDirectlyControllable ? CameraLockOnCurrentPlayerUnit : CameraLockOnCurrentNonPlayerUnit))
                 Unit.ScrollTo();
-            }
         }
 
         private void UpdateUnitHighlight()
         {
-            Unit.SetHighlight(_isMouseOver || (_isCurrent && HighlightCurrentUnit));
+            if (Unit != null)
+                Unit.SetHighlight(_isMouseOver || (_isCurrent && HighlightCurrentUnit));
         }
 
         private void UpdateTimeBar()
         {
-            _activeColorMask.rectTransform.anchorMax = 
+            _maskActive.rectTransform.anchorMax = 
                 new Vector2(_isCurrent ? Mod.Core.Combat.CurrentTurn.GetRemainingTime() / 6f : 1f, 1f);
         }
 
         private void UpdateActionIcons()
         {
-            _standardActionIcon.SetActive(_isCurrent && Unit.HasStandardAction());
-            _moveActionIcon.SetActive(_isCurrent && !Unit.UsedOneMoveAction());
-            _swiftActionIcon.SetActive(_isCurrent && Unit.CombatState.Cooldown.SwiftAction == 0f);
+            bool canActive = _isCurrent && Unit.CanPerformAction();
+            _iconStandardAction.SetActive(canActive && Unit.HasStandardAction());
+            _iconMoveAction.SetActive(canActive && !Unit.UsedOneMoveAction());
+            _iconSwiftAction.SetActive(canActive && Unit.CombatState.Cooldown.SwiftAction == 0f);
         }
 
-        private void UpdateCanNotPerformActionIcon()
+        private void UpdateStateIcons()
         {
-            _canNotPerformActionIcon.SetActive(Unit != null && !_isCurrent && !Unit.CanPerformAction());
-        }
-
-        private void UpdateIsSurprisingIcon()
-        {
-            _isSurprisingIcon.SetActive(Unit != null && !_isCurrent && Unit.IsSurprising());
-        }
-
-        private void UpdateIsFlatFooted()
-        {
-            UnitEntityData currentUnit = Mod.Core.Combat.CurrentTurn?.Unit;
-            _isFlatFootedIcon.SetActive((ShowIsFlatFootedIconOnUI || (_isMouseOver && ShowIsFlatFootedIconOnHoverUI)) &&
-               Unit != null && !_isCurrent && currentUnit != null &&
+            UnitEntityData currentUnit;
+            _iconIsSurprising.SetActive(Unit != null && !_isCurrent && Unit.IsSurprising());
+            _iconIsFlatFooted.SetActive((ShowIsFlatFootedIconOnUI || (_isMouseOver && ShowIsFlatFootedIconOnHoverUI)) &&
+                Unit != null && !_isCurrent && (currentUnit = Mod.Core.Combat.CurrentTurn?.Unit) != null &&
                 Rulebook.Trigger(new RuleCheckTargetFlatFooted(currentUnit, Unit)).IsFlatFooted);
+            _iconCanNotPerformAction.SetActive(Unit != null && !Unit.CanPerformAction());
         }
 
         private void UpdateColorMask()
         {
             if (Unit == null)
-                _colorMask.color = _colors[0];
+                _mask.color = _colors[0];
             else if (Game.Instance.Player.ControllableCharacters.Contains(Unit))
-                _colorMask.color = _colors[1];
+                _mask.color = _colors[1];
             else if (Unit.Group.IsEnemy(Game.Instance.Player.Group))
-                _colorMask.color = _colors[2];
+                _mask.color = _colors[2];
             else
-                _colorMask.color = _colors[3];
+                _mask.color = _colors[3];
         }
 
         private void UpdateText()
         {
-            TextMeshProUGUI label = _isCurrent ? _activeLabel : _label;
+            TextMeshProUGUI label = _isCurrent ? _labelActive : _label;
             string text = Unit == null ? string.Empty : 
                 (!DoNotShowInvisibleUnitOnCombatTracker || Unit.IsVisibleForPlayer) ? Unit.CharacterName : "Unknown";
 
@@ -382,7 +342,7 @@ namespace TurnBased.UI
                     label.ForceMeshUpdate();
                 }
 
-                (_isCurrent ? _label : _activeLabel).text = label.text;
+                (_isCurrent ? _label : _labelActive).text = label.text;
             }
         }
     }

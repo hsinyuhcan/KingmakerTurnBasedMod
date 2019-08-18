@@ -53,10 +53,10 @@ namespace TurnBased
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            EventBus.Subscribe(this);
-            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
-
             Mod.Core.Blueprint.Update();
+
+            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
+            EventBus.Subscribe(this);
         }
 
         public void HandleModDisable()

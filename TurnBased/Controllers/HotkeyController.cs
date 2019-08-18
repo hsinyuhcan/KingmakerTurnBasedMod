@@ -30,16 +30,18 @@ namespace TurnBased.Controllers
                 {HOTKEY_FOR_END_TURN, new BindingKeysData() { IsAltDown = true, Key = KeyCode.E } },
             };
 
+            // remove invalid keys from the settings
             foreach (string name in BindingKeys.Keys.ToList())
                 if (!hotkeys.ContainsKey(name))
                     BindingKeys.Remove(name);
 
+            // add missing keys to the settings
             foreach (KeyValuePair<string, BindingKeysData> item in hotkeys)
                 if (!BindingKeys.ContainsKey(item.Key))
                     BindingKeys.Add(item.Key, item.Value);
         }
 
-        public void Reset()
+        public void Update()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
@@ -83,11 +85,11 @@ namespace TurnBased.Controllers
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            EventBus.Subscribe(this);
-
             Mod.Core.Hotkeys = this;
             Initialize();
             RegisterAll();
+
+            EventBus.Subscribe(this);
         }
 
         public void HandleModDisable()
@@ -96,8 +98,8 @@ namespace TurnBased.Controllers
 
             EventBus.Unsubscribe(this);
 
-            Mod.Core.Hotkeys = null;
             UnregisterAll();
+            Mod.Core.Hotkeys = null;
         }
 
         public void OnAreaBeginUnloading() { }

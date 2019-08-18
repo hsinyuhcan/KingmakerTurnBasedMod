@@ -1,13 +1,10 @@
 ﻿using Harmony12;
-using Kingmaker;
 using Kingmaker.Controllers;
 using Kingmaker.Controllers.Clicks.Handlers;
 using Kingmaker.Controllers.Combat;
-using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UI.SettingsUI;
 using Kingmaker.UnitLogic.Commands;
-using TurnBased.Controllers;
 using TurnBased.Utility;
 using UnityEngine;
 using static TurnBased.Main;
@@ -59,7 +56,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(UnitCombatState __instance, ref bool __result)
             {
-                if (IsEnabled() && __instance.Unit.IsInCombat && FlankingCountAllOpponents)
+                if (IsInCombat() && __instance.Unit.IsInCombat && FlankingCountAllOpponents)
                 {
                     __result = __instance.EngagedBy.Count > 1 && !__instance.Unit.Descriptor.State.Features.CannotBeFlanked;
                     return false;
@@ -88,43 +85,6 @@ namespace TurnBased.HarmonyPatches
                 if (__state.HasValue)
                 {
                     SettingsRoot.Instance.PauseOnEngagement.CurrentValue = __state.Value;
-                }
-            }
-        }
-
-        // ** fix stealth check
-        [HarmonyPatch(typeof(UnitStealthController), "TickUnit", typeof(UnitEntityData))]
-        static class UnitStealthController_TickUnit_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitEntityData unit, ref float? __state)
-            {
-                if (IsInCombat() && !IsPassing())
-                {
-                    __state = Game.Instance.TimeController.GameDeltaTime;
-                    Game.Instance.TimeController.SetGameDeltaTime(0f);
-
-                    TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
-                    if (unit.IsCurrentUnit() &&
-                        (currentTurn.WantEnterStealth != unit.Stealth.WantEnterStealth || currentTurn.NeedStealthCheck))
-                    {
-                        currentTurn.WantEnterStealth = unit.Stealth.WantEnterStealth;
-                        currentTurn.NeedStealthCheck = false;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            [HarmonyPostfix]
-            static void Postfix(ref float? __state)
-            {
-                if (__state.HasValue)
-                {
-                    Game.Instance.TimeController.SetGameDeltaTime(__state.Value);
                 }
             }
         }

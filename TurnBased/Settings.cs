@@ -21,18 +21,19 @@ namespace TurnBased
         public bool toggleDoNotMovingThroughNonAllies = true;
         public float radiusOfCollision = 0.9f;
 
-        public bool toggleAutoTurnOffPlayerAI = true;
-        public bool toggleAutoTurnOnPlayerAI = true;
-        public bool toggleAutoSelectCurrentUnit = true;
-        public bool toggleAutoSelectEntireParty = true;
-        public bool toggleAutoCancelActionsOnPlayerTurnStart = true;
+        public bool toggleAutoTurnOffAIOnTurnStart = true;
+        public bool toggleAutoTurnOnAIOnCombatEnd = true;
+        public bool toggleAutoSelectUnitOnTurnStart = true;
+        public bool toggleAutoSelectEntirePartyOnCombatEnd = true;
+        public bool toggleAutoCancelActionsOnTurnStart = true;
         public bool toggleAutoCancelActionsOnCombatEnd = true;
-        public bool toggleAutoEnableFiveFootStep;
-        public bool toggleAutoCancelActionsOnPlayerFinishFiveFoot = true;
-        public bool toggleAutoCancelActionsOnPlayerFinishFirstMove = true;
+        public bool toggleAutoEnableFiveFootStepOnTurnStart;
+        public bool toggleAutoCancelActionsOnFiveFootStepFinish = true;
+        public bool toggleAutoCancelActionsOnFirstMoveFinish = true;
 
-        public bool toggleAutoEndTurn;
-        public bool toggleDoNotAutoEndTurnWhenHasSwiftAction = true;
+        public bool toggleAutoEndTurnWhenActionsAreUsedUp = true;
+        public bool toggleAutoEndTurnIgnoreSwiftAction;
+        public bool toggleAutoEndTurnWhenPlayerIdle;
 
         // interface
         public bool toggleHighlightCurrentUnit = true;

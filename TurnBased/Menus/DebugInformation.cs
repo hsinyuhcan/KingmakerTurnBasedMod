@@ -28,7 +28,7 @@ namespace TurnBased.Menus
 
             if (GUILayout.Button("Clear HUD", GUILayout.ExpandWidth(false)))
             {
-                UIController.Clear();
+                Mod.Core.UI.Clear();
             }
 
             GUILayout.Space(10f);
@@ -51,12 +51,12 @@ namespace TurnBased.Menus
                 TurnController currentTurn = roundController.CurrentTurn;
 
                 GUILayout.Space(10f);
-                GUILayout.Label($"Combat Initialized: {roundController.CombatInitialized}");
+                GUILayout.Label($"Combat Initialized: {roundController.Initialized}");
 
                 GUILayout.Space(10f);
                 if (GUILayout.Button("Reset Turn", GUILayout.ExpandWidth(false)) && currentTurn != null)
                 {
-                    roundController.InitTurn(currentTurn.Unit);
+                    roundController.StartTurn(currentTurn.Unit);
                 }
 
                 GUILayout.Space(10f);

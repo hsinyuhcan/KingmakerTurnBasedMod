@@ -28,41 +28,63 @@ namespace TurnBased.UI
 
         public UnitEntityData Unit { get; private set; }
 
-        void Awake()
+        public static AttackIndicatorManager CreateObject()
+        {
+            GameObject abilityTargetSelect = Game.Instance.UI.Common?.transform.Find("AbilityTargetSelect")?.gameObject;
+            GameObject aoeRange = abilityTargetSelect?.GetComponent<AbilityAoERange>().Range;
+
+            if (!aoeRange)
+                return null;
+
+            GameObject attackIndicator = new GameObject("TurnBasedAttackIndicator");
+            attackIndicator.transform.SetParent(abilityTargetSelect.transform, true);
+
+            AttackIndicatorManager attackIndicatorManager = attackIndicator.AddComponent<AttackIndicatorManager>();
+
+            attackIndicatorManager._range = RangeIndicatorManager.CreateObject(aoeRange, "AttackRange", false);
+            DontDestroyOnLoad(attackIndicatorManager._range.gameObject);
+
+            return attackIndicatorManager;
+        }
+
+        void OnEnable()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            EventBus.Subscribe(this);
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
+            EventBus.Subscribe(this);
+        }
+
+        void OnDisable()
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod());
+
+            EventBus.Unsubscribe(this);
+            HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
         }
 
         void OnDestroy()
         {
-            EventBus.Unsubscribe(this);
-            HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, HandleToggleAttackIndicator);
-
-            if (!_range.IsNullOrDestroyed())
-                Destroy(_range.gameObject);
+            _range.SafeDestroy();
         }
 
         void Update()
         {
             if (IsInCombat() && !_isAbilityHovered && !_isAbilitySelected)
             {
-                UnitEntityData unit;
+                UnitEntityData unit = null;
                 float radius = 0f;
                 bool canTargetEnemies = true;
                 bool canTargetFriends = false;
 
-                if ((unit = ShowAttackIndicatorOnHoverUI ? Mod.Core.UI.CombatTracker.HoveringUnit : null) != null && 
-                    !unit.IsCurrentUnit())
+                if (ShowAttackIndicatorOnHoverUI && (unit = Mod.Core.UI.CombatTracker.HoveringUnit) != null)
                 {
                     GetRadius();
                 }
                 else
                 {
                     TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
-                    if ((unit = currentTurn?.Unit) != null && ShowAttackIndicatorOfCurrentUnit &&
+                    if (ShowAttackIndicatorOfCurrentUnit && (unit = currentTurn?.Unit) != null && 
                         (unit.IsDirectlyControllable ? ShowAttackIndicatorOfPlayer : ShowAttackIndicatorOfNonPlayer))
                     {
                         GetRadius();
@@ -96,7 +118,6 @@ namespace TurnBased.UI
                         canTargetEnemies = ability.Blueprint.CanTargetEnemies;
                         canTargetFriends = ability.Blueprint.CanTargetFriends;
                         _range.VisibleColor = ability.TargetAnchor == AbilityTargetAnchor.Owner ? Color.green : Color.yellow;
-
                     }
                     else
                     {
@@ -114,25 +135,6 @@ namespace TurnBased.UI
                 if (_isHandlingAOEMove)
                     EventBus.RaiseEvent<IShowAoEAffectedUIHandler>(h => h.HandleAoECancel());
             }
-        }
-
-        public static AttackIndicatorManager CreateObject()
-        {
-            GameObject abilityTargetSelect = Game.Instance.UI.Common?.transform.Find("AbilityTargetSelect")?.gameObject;
-            GameObject aoeRange = abilityTargetSelect?.GetComponent<AbilityAoERange>().Range;
-
-            if (aoeRange.IsNullOrDestroyed())
-                return null;
-
-            GameObject tbAttackIndicator = new GameObject("TurnBasedAttackIndicator");
-            tbAttackIndicator.transform.SetParent(abilityTargetSelect.transform, true);
-
-            AttackIndicatorManager tbAttackIndicatorManager = tbAttackIndicator.AddComponent<AttackIndicatorManager>();
-
-            tbAttackIndicatorManager._range = RangeIndicatorManager.CreateObject(aoeRange, "AttackRange", false);
-            DontDestroyOnLoad(tbAttackIndicatorManager._range.gameObject);
-
-            return tbAttackIndicatorManager;
         }
 
         private void HandleToggleAttackIndicator()

@@ -25,7 +25,7 @@ namespace TurnBased.UI
                     if (_visible)
                     {
                         DOTween.Pause(this);
-                        DOTween.Kill(this, false);
+                        DOTween.Kill(this);
                         SetColor(_visibleColor);
                     }
                 }
@@ -37,26 +37,25 @@ namespace TurnBased.UI
             _decals = gameObject.GetComponentsInChildren<GUIDecal>();
         }
 
-        void OnDestroy()
+        void OnDisable()
         {
-            DOTween.Pause(this);
-            DOTween.Kill(this, false);
+            DOTween.Kill(this);
         }
 
         public static RangeIndicatorManager CreateObject(GameObject aoeRange, string name, bool hasBackground = true)
         {
-            GameObject tbRange = Instantiate(aoeRange);
-            tbRange.name = name;
-            tbRange.SetActive(false);
+            GameObject range = Instantiate(aoeRange);
+            range.name = name;
+            range.SetActive(false);
 
             if (hasBackground)
-                tbRange.transform.Find("AoERangeBack").gameObject.name = name + "Back";
+                range.transform.Find("AoERangeBack").gameObject.name = name + "Back";
             else
-                DestroyImmediate(tbRange.transform.Find("AoERangeBack").gameObject);
+                DestroyImmediate(range.transform.Find("AoERangeBack").gameObject);
 
-            DestroyImmediate(tbRange.GetComponent<ScreenSpaceDecalGroup>());
+            DestroyImmediate(range.GetComponent<ScreenSpaceDecalGroup>());
 
-            return tbRange.AddComponent<RangeIndicatorManager>();
+            return range.AddComponent<RangeIndicatorManager>();
         }
 
         public void SetPosition(UnitEntityData unit)
@@ -85,7 +84,7 @@ namespace TurnBased.UI
                 _visible = visible;
 
                 DOTween.Pause(this);
-                DOTween.Kill(this, false);
+                DOTween.Kill(this);
                 TweenerCore<Color, Color, ColorOptions> tweenerCore =
                     DOTween.To(() => _currentColor, (Color color) => SetColor(color), visible ? VisibleColor : Color.clear, 0.3f);
 

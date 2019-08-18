@@ -1,4 +1,14 @@
-﻿Version 0.9.37
+﻿Version 0.9.38
+	Implemented proper "Stand Up" action (standing up from prone will cost a move action)
+	Changed an unactable unit will lose one turn instead of being frozen
+	Changed units that are summoned before combat won't get additional duration anymore when combat start
+	Changed the later the unit is summoned, the higher the order of its turn (after its caster)
+	Changed the "Auto End Turn" options
+	Changed units remembered by any enemy cannot leave the combat (regardless LOS)
+	Fixed combat start and end instantly in specific cutscene
+	Fixed minor UI issues
+
+Version 0.9.37
 	Added an option to reset settings
 	Added an option to scale the size of the combat tracker
 	Added an option to toggle 5-foot step when right click on the ground
