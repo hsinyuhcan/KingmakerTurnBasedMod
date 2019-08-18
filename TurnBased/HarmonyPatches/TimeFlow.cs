@@ -4,25 +4,24 @@ using Kingmaker.AreaLogic.Cutscenes;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers;
-using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.PubSubSystem;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities.Components.AreaEffects;
 using Kingmaker.UnitLogic.Abilities.Components.Base;
 using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
-using Kingmaker.UnitLogic.Groups;
 using Kingmaker.UnitLogic.Mechanics;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using ModMaker.Utility;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using TurnBased.Controllers;
 using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Main;
@@ -39,19 +38,17 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPostfix]
             static void Postfix()
             {
-                if (!Game.Instance.IsPaused)
+                if (!Game.Instance.IsPaused && IsInCombat())
                 {
-                    if (IsInCombat())
+                    try
                     {
-                        try
-                        {
-                            Mod.Core.Combat.Tick();
-                        }
-                        catch (Exception e)
-                        {
-                            Mod.Error(e);
-                            Game.Instance.IsPaused = true;
-                        }
+                        Mod.Core.Combat.Tick();
+                    }
+                    catch (Exception e)
+                    {
+                        Mod.Error(e);
+                        Game.Instance.IsPaused = true;
+                        EventBus.RaiseEvent<IWarningNotificationUIHandler>(h => h.HandleWarning("Turn-Based Error", false));
                     }
                 }
             }
@@ -64,19 +61,17 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPostfix]
             static void Postfix()
             {
-                if (!Game.Instance.IsPaused)
+                if (!Game.Instance.IsPaused && IsInCombat())
                 {
-                    if (IsInCombat())
+                    try
                     {
-                        try
-                        {
-                            Mod.Core.Combat.TickTime();
-                        }
-                        catch (Exception e)
-                        {
-                            Mod.Error(e);
-                            Game.Instance.IsPaused = true;
-                        }
+                        Mod.Core.Combat.TickTime();
+                    }
+                    catch (Exception e)
+                    {
+                        Mod.Error(e);
+                        Game.Instance.IsPaused = true;
+                        EventBus.RaiseEvent<IWarningNotificationUIHandler>(h => h.HandleWarning("Turn-Based Error", false));
                     }
                 }
             }
@@ -108,7 +103,7 @@ namespace TurnBased.HarmonyPatches
                     }
                     else
                     {
-                        canTick = command.Executor.IsCurrentUnit() && !IsDelaying();
+                        canTick = command.Executor.IsCurrentUnit() && (IsActing() || IsEnding());
 
                         if (canTick && !command.IsStarted)
                         {
@@ -155,23 +150,40 @@ namespace TurnBased.HarmonyPatches
                     // in combat - not current  x           x           x           x
                     // in combat - current      x           o           x           x
 
+                    bool canMove = default;
                     bool isInForceMode = __instance.GetIsInForceMode();
+                    UnitEntityView view = __instance.Unit;
 
-                    if ((__instance.Unit?.EntityData).IsCurrentUnit() && !IsDelaying() && !IsEnding() && 
-                        (isInForceMode || Mod.Core.Combat.CurrentTurn.HasMovement()))
+                    if (IsPassing())
                     {
-                        if (!isInForceMode)
-                        {
-                            // disable acceleration effect
-                            __state = __instance.GetMinSpeed();
-                            __instance.SetMinSpeed(1f);
-                            __instance.SetWarmupTime(0f);
-                            __instance.SetSlowDownTime(0f);
-                        }
-
-                        Mod.Core.Combat.CurrentTurn?.TickMovement(ref deltaTime, isInForceMode);
+                        canMove = !(view?.EntityData?.IsInCombat ?? false);
                     }
-                    else if (!IsPassing() || (__instance.Unit != null && __instance.Unit.EntityData.IsInCombat))
+                    else
+                    {
+                        canMove = (view?.EntityData).IsCurrentUnit() && IsActing() &&
+                            !(view.AnimationManager?.IsPreventingMovement ?? false) &&
+                            !view.IsCommandsPreventMovement && __instance.IsReallyMoving;
+
+                        if (canMove)
+                        {
+                            Mod.Core.Combat.CurrentTurn.TickMovement(ref deltaTime, isInForceMode);
+
+                            if (deltaTime <= 0f)
+                            {
+                                canMove = false;
+                            }
+                            else if (!isInForceMode)
+                            {
+                                // disable acceleration effect
+                                __state = __instance.GetMinSpeed();
+                                __instance.SetMinSpeed(1f);
+                                __instance.SetWarmupTime(0f);
+                                __instance.SetSlowDownTime(0f);
+                            }
+                        }
+                    }
+
+                    if (!canMove)
                     {
                         if (!isInForceMode)
                         {
@@ -222,7 +234,7 @@ namespace TurnBased.HarmonyPatches
                 {
                     if (Mod.Core.LastTickTimeOfAbilityExecutionProcess.TryGetValue(__instance, out TimeSpan gameTime))
                     {
-                        gameTime += TimeSpan.FromSeconds(Game.Instance.TimeController.GameDeltaTime);
+                        gameTime += Game.Instance.TimeController.GameDeltaTime.Seconds();
                     }
                     else
                     {
@@ -307,6 +319,43 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // ** fix stealth check
+        [HarmonyPatch(typeof(UnitStealthController), "TickUnit", typeof(UnitEntityData))]
+        static class UnitStealthController_TickUnit_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityData unit, ref float? __state)
+            {
+                if (IsInCombat() && !IsPassing())
+                {
+                    __state = Game.Instance.TimeController.GameDeltaTime;
+                    Game.Instance.TimeController.SetGameDeltaTime(0f);
+
+                    TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
+                    if (unit.IsCurrentUnit() &&
+                        (currentTurn.WantEnterStealth != unit.Stealth.WantEnterStealth || currentTurn.NeedStealthCheck))
+                    {
+                        currentTurn.WantEnterStealth = unit.Stealth.WantEnterStealth;
+                        currentTurn.NeedStealthCheck = false;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            [HarmonyPostfix]
+            static void Postfix(ref float? __state)
+            {
+                if (__state.HasValue)
+                {
+                    Game.Instance.TimeController.SetGameDeltaTime(__state.Value);
+                }
+            }
+        }
+
         // fix toggleable abilities
         [HarmonyPatch(typeof(UnitActivatableAbilitiesController), "TickOnUnit", typeof(UnitEntityData))]
         static class UnitActivatableAbilitiesController_TickOnUnit_Patch
@@ -385,7 +434,7 @@ namespace TurnBased.HarmonyPatches
 
             static bool CanTickNewRound(UnitEntityData unit)
             {
-                return !IsInCombat() || !unit.IsInCombat || (unit.IsCurrentUnit() && !IsPreparing() && !IsDelaying());
+                return !IsInCombat() || !unit.IsInCombat || (unit.IsCurrentUnit() && (IsActing() || IsEnding()));
             }
         }
 
@@ -449,65 +498,6 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // stop ticking during units' turn (do not leave combat instantly) if there are still enemies
-        [HarmonyPatch(typeof(UnitCombatLeaveController), "Tick")]
-        static class UnitCombatLeaveController_Tick_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix()
-            {
-                if (IsInCombat() && !IsPassing())
-                {
-                    UnitGroup playerGroup = Game.Instance.Player.Group;
-                    return !Game.Instance.UnitGroups
-                        .Any(group => group != playerGroup && group.IsInCombat && group.IsEnemy(playerGroup));
-                }
-                return true;
-            }
-        }
-
-        // stop ticking during units' turn
-        [HarmonyPatch]
-        static class BaseUnitController_TickOnUnit_Patch
-        {
-            [HarmonyTargetMethods]
-            static IEnumerable<MethodBase> TargetMethods(HarmonyInstance instance)
-            {
-                // ok - it's good
-                // oo - no matter
-                // ss - in another patch
-                // ?? - not sure
-                // xx - don't touch
-                //yield return GetTargetMethod(typeof(UnitCombatCooldownsController));        // ss - GameDeltaTime
-                //yield return GetTargetMethod(typeof(UnitActivatableAbilitiesController));   // ss - GameDeltaTime
-                //yield return GetTargetMethod(typeof(SummonedUnitsController));              // xx
-                //yield return GetTargetMethod(typeof(UnitAnimationController));              // xx
-                //yield return GetTargetMethod(typeof(UnitBuffsController));                  // oo - GameTime
-                //yield return GetTargetMethod(typeof(UnitConfusionController));              // ss - GameTime
-                //yield return GetTargetMethod(typeof(UnitForceMoveController));              // xx
-                //yield return GetTargetMethod(typeof(UnitGrappleController));                // oo - GameTime
-                //yield return GetTargetMethod(typeof(UnitGuardController));                  // xx
-                //yield return GetTargetMethod(typeof(UnitLifeController));                   // xx
-                //yield return GetTargetMethod(typeof(UnitMimicController));                  // xx
-                yield return GetTargetMethod(typeof(UnitRoamingController));                // ?? - GameTime
-                yield return GetTargetMethod(typeof(UnitsProximityController));             // ?? - DeltaTime
-                //yield return GetTargetMethod(typeof(UnitTicksController));                  // ss - GameDeltaTime
-                //yield return GetTargetMethod(typeof(UnitStealthController), "TickUnit");    // ss - GameTime + GameDeltaTime
-            }
-
-            [HarmonyPrefix]
-            static bool Prefix()
-            {
-                return !IsInCombat() || IsPassing();
-            }
-
-            static MethodBase GetTargetMethod(Type type)
-            {
-                return type.GetMethod("TickOnUnit", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-                    null, new Type[] { typeof(UnitEntityData) }, null);
-            }
-        }
-
         // stop time advanced during units' turn
         [HarmonyPatch]
         static class BaseUnitController_TickDeltaTime_Patch
@@ -515,8 +505,9 @@ namespace TurnBased.HarmonyPatches
             [HarmonyTargetMethods]
             static IEnumerable<MethodBase> TargetMethods(HarmonyInstance instance)
             {
-                yield return GetTargetMethod(typeof(UnitInPitController));
+                yield return GetTargetMethod(typeof(UnitInPitController), "TickOnUnit");
                 //yield return GetTargetMethod(typeof(UnitProneController));
+                yield return GetTargetMethod(typeof(UnitsProximityController), "TickOnUnit");
             }
 
 
@@ -539,10 +530,9 @@ namespace TurnBased.HarmonyPatches
                 }
             }
 
-            static MethodBase GetTargetMethod(Type type)
+            static MethodBase GetTargetMethod(Type type, string name)
             {
-                return type.GetMethod("TickOnUnit", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-                    null, new Type[] { typeof(UnitEntityData) }, null);
+                return type.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             }
         }
 
@@ -583,5 +573,27 @@ namespace TurnBased.HarmonyPatches
                 return type.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             }
         }
+
+        // stop time advanced during units' turn
+        // ok - it's good
+        // oo - no matter
+        // ss - in special patch
+        // ?? - not sure
+        // xx - don't touch
+        // UnitCombatCooldownsController        // ss - GameDeltaTime
+        // UnitActivatableAbilitiesController   // ss - GameDeltaTime
+        // SummonedUnitsController              // xx
+        // UnitAnimationController              // xx
+        // UnitBuffsController                  // oo - GameTime
+        // UnitConfusionController              // ss - GameTime
+        // UnitForceMoveController              // xx
+        // UnitGrappleController                // oo - GameTime
+        // UnitGuardController                  // xx
+        // UnitLifeController                   // xx
+        // UnitMimicController                  // xx
+        // UnitRoamingController                // ?? - GameTime
+        // UnitsProximityController             // ?? - DeltaTime
+        // UnitTicksController                  // ss - GameDeltaTime
+        // UnitStealthController                // ss - GameTime + GameDeltaTime
     }
 }

@@ -36,7 +36,7 @@ namespace TurnBased.Menus
                 {
                     Mod.ResetSettings();
                     Mod.Core.Blueprint.Update();
-                    Mod.Core.Hotkeys.Reset();
+                    Mod.Core.Hotkeys.Update();
                 }
             }
 
@@ -119,40 +119,40 @@ namespace TurnBased.Menus
 
         void OnGUIGameplay()
         {
-            AutoTurnOffAI =
-                GUIHelper.ToggleButton(AutoTurnOffAI,
+            AutoTurnOffAIOnTurnStart =
+                GUIHelper.ToggleButton(AutoTurnOffAIOnTurnStart,
                 "Auto Turn Off Unit's AI On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoTurnOnAI =
-                GUIHelper.ToggleButton(AutoTurnOnAI,
+            AutoTurnOnAIOnCombatEnd =
+                GUIHelper.ToggleButton(AutoTurnOnAIOnCombatEnd,
                 "Auto Turn On Unit's AI On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoSelectCurrentUnit =
-                GUIHelper.ToggleButton(AutoSelectCurrentUnit,
+            AutoSelectUnitOnTurnStart =
+                GUIHelper.ToggleButton(AutoSelectUnitOnTurnStart,
                 "Auto Select Current Unit On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoSelectEntireParty =
-                GUIHelper.ToggleButton(AutoSelectEntireParty,
+            AutoSelectEntirePartyOnCombatEnd =
+                GUIHelper.ToggleButton(AutoSelectEntirePartyOnCombatEnd,
                 "Auto Select The Entire Party On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoCancelActionsOnPlayerTurnStart =
-                GUIHelper.ToggleButton(AutoCancelActionsOnPlayerTurnStart,
+            AutoCancelActionsOnTurnStart =
+                GUIHelper.ToggleButton(AutoCancelActionsOnTurnStart,
                 "Auto Cancel Actions On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoCancelActionsOnCombatEnd =
                 GUIHelper.ToggleButton(AutoCancelActionsOnCombatEnd,
                 "Auto Cancel Actions On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoEnableFiveFootStep =
-                GUIHelper.ToggleButton(AutoEnableFiveFootStep,
+            AutoEnableFiveFootStepOnTurnStart =
+                GUIHelper.ToggleButton(AutoEnableFiveFootStepOnTurnStart,
                 "Auto Enable 5-Foot Step On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
             
-            AutoCancelActionsOnPlayerFinishFiveFoot =
-                GUIHelper.ToggleButton(AutoCancelActionsOnPlayerFinishFiveFoot,
+            AutoCancelActionsOnFiveFootStepFinish =
+                GUIHelper.ToggleButton(AutoCancelActionsOnFiveFootStepFinish,
                 "Auto Cancel Actions On Player's Unit Finished The 5-Foot Step", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoCancelActionsOnPlayerFinishFirstMove =
-                GUIHelper.ToggleButton(AutoCancelActionsOnPlayerFinishFirstMove,
+            AutoCancelActionsOnFirstMoveFinish =
+                GUIHelper.ToggleButton(AutoCancelActionsOnFirstMoveFinish,
                 "Auto Cancel Actions On Player's Unit Finished The First Move Action Through Move", _buttonStyle, GUILayout.ExpandWidth(false));
 
             GUILayout.Space(10f);

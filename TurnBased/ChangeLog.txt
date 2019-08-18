@@ -1,6 +1,10 @@
 ﻿Version 0.9.38
 	Implemented proper "Stand Up" action (standing up from prone will cost a move action)
 	Changed an unactable unit will lose one turn instead of being frozen
+	Changed units that are summoned before combat won't get additional duration when combat start anymore
+	Changed The later the unit is summoned, the higher the order of turn (after its caster)
+	Fixed combat could start and end instantly in specific cutscene
+	Fixed minor UI issues
 
 Version 0.9.37
 	Added an option to reset settings

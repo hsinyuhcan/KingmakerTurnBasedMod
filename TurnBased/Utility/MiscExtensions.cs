@@ -1,10 +1,12 @@
-﻿using Kingmaker.Blueprints;
+﻿using Kingmaker;
+using Kingmaker.Blueprints;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Enums;
 using Kingmaker.Items;
 using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Abilities.Blueprints;
 using Kingmaker.UnitLogic.Commands;
+using Kingmaker.UnitLogic.Groups;
 using Kingmaker.Utility;
 using System.Linq;
 
@@ -50,9 +52,9 @@ namespace TurnBased.Utility
             cooldown.AttackOfOpportunity = 0f;
         }
 
-        public static bool Approximately(this float x, float y)
+        public static bool Approximately(this float x, float y, float deviation)
         {
-            return y - 0.0001f < x && x < y + 0.0001f;
+            return y - deviation < x && x < y + deviation;
         }
 
         public static bool IsKineticBlast(this ItemEntity item)
@@ -68,6 +70,11 @@ namespace TurnBased.Utility
         public static bool IsRunning(this UnitCommands commands)
         {
             return commands.Raw.Any(command => command != null && command.IsRunning);
+        }
+
+        public static bool HasEnemy(this UnitGroup group)
+        {
+            return Game.Instance.UnitGroups.Any(other => other != group && other.IsInCombat && other.IsEnemy(group));
         }
     }
 }

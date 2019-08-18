@@ -4,7 +4,6 @@ using Kingmaker.UI.AbilityTarget;
 using ModMaker.Utility;
 using System.Reflection;
 using TurnBased.Controllers;
-using TurnBased.Utility;
 using UnityEngine;
 using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
@@ -17,33 +16,59 @@ namespace TurnBased.UI
         private RangeIndicatorManager _rangeInner;
         private RangeIndicatorManager _rangeOuter;
 
-        void Awake()
+        public static MovementIndicatorManager CreateObject()
+        {
+            GameObject abilityTargetSelect = Game.Instance.UI.Common?.transform.Find("AbilityTargetSelect")?.gameObject;
+            GameObject aoeRange = abilityTargetSelect?.GetComponent<AbilityAoERange>().Range;
+
+            if (!aoeRange)
+                return null;
+
+            GameObject movementIndicator = new GameObject("TurnBasedMovementIndicator");
+            movementIndicator.transform.SetParent(abilityTargetSelect.transform, true);
+
+            MovementIndicatorManager movementIndicatorManager = movementIndicator.AddComponent<MovementIndicatorManager>();
+
+            movementIndicatorManager._rangeInner = RangeIndicatorManager.CreateObject(aoeRange, "MovementRangeInner");
+            movementIndicatorManager._rangeInner.VisibleColor = Color.white;
+            DontDestroyOnLoad(movementIndicatorManager._rangeInner.gameObject);
+
+            movementIndicatorManager._rangeOuter = RangeIndicatorManager.CreateObject(aoeRange, "MovementRangeOuter");
+            movementIndicatorManager._rangeOuter.VisibleColor = Color.white;
+            DontDestroyOnLoad(movementIndicatorManager._rangeOuter.gameObject);
+
+            return movementIndicatorManager;
+        }
+
+        void OnEnable()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, HandleToggleMovementIndicator);
         }
 
+        void OnDisable()
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod());
+
+            HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, HandleToggleMovementIndicator);
+        }
+
         void OnDestroy()
         {
-            HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, HandleToggleMovementIndicator);
-
-            if (!_rangeInner.IsNullOrDestroyed())
-                Destroy(_rangeInner.gameObject);
-
-            if (!_rangeOuter.IsNullOrDestroyed())
-                Destroy(_rangeOuter.gameObject);
+            _rangeInner.SafeDestroy();
+            _rangeOuter.SafeDestroy();
         }
 
         void Update()
         {
             if (IsInCombat())
             {
-                UnitEntityData unit = ShowMovementIndicatorOnHoverUI ? Mod.Core.UI.CombatTracker.HoveringUnit : null;
+                UnitEntityData unit = null;
                 float radiusInner = 0f;
                 float radiusOuter = 0f;
 
-                if (unit != null && !unit.IsCurrentUnit())
+                if (ShowMovementIndicatorOnHoverUI && (unit = Mod.Core.UI.CombatTracker.HoveringUnit) != null)
                 {
                     radiusInner = unit.CurrentSpeedMps * TIME_MOVE_ACTION;
                     radiusOuter = radiusInner * 2f;
@@ -51,15 +76,11 @@ namespace TurnBased.UI
                 else
                 {
                     TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
-                    if (currentTurn != null)
+                    if (ShowMovementIndicatorOfCurrentUnit && (unit = currentTurn?.Unit) != null &&
+                        (unit.IsDirectlyControllable ? ShowMovementIndicatorOfPlayer : ShowMovementIndicatorOfNonPlayer))
                     {
-                        unit = currentTurn.Unit;
-                        if (ShowMovementIndicatorOfCurrentUnit &&
-                            (unit.IsDirectlyControllable ? ShowMovementIndicatorOfPlayer : ShowMovementIndicatorOfNonPlayer))
-                        {
-                            radiusInner = currentTurn.GetRemainingMovementRange();
-                            radiusOuter = currentTurn.GetRemainingMovementRange(true);
-                        }
+                        radiusInner = currentTurn.GetRemainingMovementRange();
+                        radiusOuter = currentTurn.GetRemainingMovementRange(true);
                     }
                 }
 
@@ -86,30 +107,6 @@ namespace TurnBased.UI
 
             _rangeInner.SetVisible(false);
             _rangeOuter.SetVisible(false);
-        }
-
-        public static MovementIndicatorManager CreateObject()
-        {
-            GameObject abilityTargetSelect = Game.Instance.UI.Common?.transform.Find("AbilityTargetSelect")?.gameObject;
-            GameObject aoeRange = abilityTargetSelect?.GetComponent<AbilityAoERange>().Range;
-
-            if (aoeRange.IsNullOrDestroyed())
-                return null;
-
-            GameObject tbMovementIndicator = new GameObject("TurnBasedMovementIndicator");
-            tbMovementIndicator.transform.SetParent(abilityTargetSelect.transform, true);
-
-            MovementIndicatorManager tbMovementIndicatorManager = tbMovementIndicator.AddComponent<MovementIndicatorManager>();
-
-            tbMovementIndicatorManager._rangeInner = RangeIndicatorManager.CreateObject(aoeRange, "MovementRangeInner");
-            tbMovementIndicatorManager._rangeInner.VisibleColor = Color.white;
-            DontDestroyOnLoad(tbMovementIndicatorManager._rangeInner.gameObject);
-
-            tbMovementIndicatorManager._rangeOuter = RangeIndicatorManager.CreateObject(aoeRange, "MovementRangeOuter");
-            tbMovementIndicatorManager._rangeOuter.VisibleColor = Color.white;
-            DontDestroyOnLoad(tbMovementIndicatorManager._rangeOuter.gameObject);
-
-            return tbMovementIndicatorManager;
         }
 
         private void HandleToggleMovementIndicator()

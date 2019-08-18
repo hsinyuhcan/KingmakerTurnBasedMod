@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static TurnBased.Utility.StatusWrapper;
+﻿using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.Utility
 {

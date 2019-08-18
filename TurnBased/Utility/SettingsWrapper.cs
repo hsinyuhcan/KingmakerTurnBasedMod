@@ -7,10 +7,12 @@ namespace TurnBased.Utility
     {
         #region Constants
 
+        // actions
         public const float TIME_STANDARD_ACTION = 6f;
         public const float TIME_MOVE_ACTION = 3f;
         public const float TIME_SWIFT_ACTION = 6f;
 
+        // hotkeys
         public const string HOTKEY_PREFIX = "TurnBasedHotkey";
         public const string HOTKEY_FOR_TOGGLE_MODE = HOTKEY_PREFIX + "ToggleTurnBasedMode";
         public const string HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR = HOTKEY_PREFIX + "ToggleMovementIndicator";
@@ -19,6 +21,7 @@ namespace TurnBased.Utility
         public const string HOTKEY_FOR_DELAY = HOTKEY_PREFIX + "Delay";
         public const string HOTKEY_FOR_END_TURN = HOTKEY_PREFIX + "EndTurn";
 
+        // combat tracker
         public const float UNIT_BUTTON_HEIGHT = 32.5f;
         public const float UNIT_BUTTON_SPACE = 2.5f;
         public static readonly Vector2 DEFAULT_BLOCK_SIZE = new Vector2(415f, 730f);
@@ -119,29 +122,29 @@ namespace TurnBased.Utility
             set => Mod.Settings.radiusOfCollision = value;
         }
 
-        public static bool AutoTurnOffAI {
-            get => Mod.Settings.toggleAutoTurnOffPlayerAI;
-            set => Mod.Settings.toggleAutoTurnOffPlayerAI = value;
+        public static bool AutoTurnOffAIOnTurnStart {
+            get => Mod.Settings.toggleAutoTurnOffAIOnTurnStart;
+            set => Mod.Settings.toggleAutoTurnOffAIOnTurnStart = value;
         }
 
-        public static bool AutoTurnOnAI {
-            get => Mod.Settings.toggleAutoTurnOnPlayerAI;
-            set => Mod.Settings.toggleAutoTurnOnPlayerAI = value;
+        public static bool AutoTurnOnAIOnCombatEnd {
+            get => Mod.Settings.toggleAutoTurnOnAIOnCombatEnd;
+            set => Mod.Settings.toggleAutoTurnOnAIOnCombatEnd = value;
         }
 
-        public static bool AutoSelectCurrentUnit {
-            get => Mod.Settings.toggleAutoSelectCurrentUnit;
-            set => Mod.Settings.toggleAutoSelectCurrentUnit = value;
+        public static bool AutoSelectUnitOnTurnStart {
+            get => Mod.Settings.toggleAutoSelectUnitOnTurnStart;
+            set => Mod.Settings.toggleAutoSelectUnitOnTurnStart = value;
         }
 
-        public static bool AutoSelectEntireParty {
-            get => Mod.Settings.toggleAutoSelectEntireParty;
-            set => Mod.Settings.toggleAutoSelectEntireParty = value;
+        public static bool AutoSelectEntirePartyOnCombatEnd {
+            get => Mod.Settings.toggleAutoSelectEntirePartyOnCombatEnd;
+            set => Mod.Settings.toggleAutoSelectEntirePartyOnCombatEnd = value;
         }
 
-        public static bool AutoCancelActionsOnPlayerTurnStart {
-            get => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart;
-            set => Mod.Settings.toggleAutoCancelActionsOnPlayerTurnStart = value;
+        public static bool AutoCancelActionsOnTurnStart {
+            get => Mod.Settings.toggleAutoCancelActionsOnTurnStart;
+            set => Mod.Settings.toggleAutoCancelActionsOnTurnStart = value;
         }
 
         public static bool AutoCancelActionsOnCombatEnd {
@@ -149,19 +152,19 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAutoCancelActionsOnCombatEnd = value;
         }
 
-        public static bool AutoEnableFiveFootStep {
-            get => Mod.Settings.toggleAutoEnableFiveFootStep;
-            set => Mod.Settings.toggleAutoEnableFiveFootStep = value;
+        public static bool AutoEnableFiveFootStepOnTurnStart {
+            get => Mod.Settings.toggleAutoEnableFiveFootStepOnTurnStart;
+            set => Mod.Settings.toggleAutoEnableFiveFootStepOnTurnStart = value;
         }
         
-        public static bool AutoCancelActionsOnPlayerFinishFiveFoot {
-            get => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFiveFoot;
-            set => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFiveFoot = value;
+        public static bool AutoCancelActionsOnFiveFootStepFinish {
+            get => Mod.Settings.toggleAutoCancelActionsOnFiveFootStepFinish;
+            set => Mod.Settings.toggleAutoCancelActionsOnFiveFootStepFinish = value;
         }
 
-        public static bool AutoCancelActionsOnPlayerFinishFirstMove {
-            get => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFirstMove;
-            set => Mod.Settings.toggleAutoCancelActionsOnPlayerFinishFirstMove = value;
+        public static bool AutoCancelActionsOnFirstMoveFinish {
+            get => Mod.Settings.toggleAutoCancelActionsOnFirstMoveFinish;
+            set => Mod.Settings.toggleAutoCancelActionsOnFirstMoveFinish = value;
         }
 
         public static bool AutoEndTurn {

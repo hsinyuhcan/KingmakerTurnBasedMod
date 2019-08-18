@@ -1,10 +1,12 @@
 ﻿using Kingmaker;
+using Kingmaker.Controllers;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.PubSubSystem;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
+using Kingmaker.UnitLogic.Parts;
 using Kingmaker.Utility;
 using System;
 using System.Linq;
@@ -15,8 +17,13 @@ namespace TurnBased.Controllers
 {
     public class TurnController :
         IDisposable,
+        IUnitCommandActHandler,
+        IUnitCommandEndHandler,
         IUnitGetUpHandler
     {
+
+        #region Fields & Events
+
         private bool _aiUsedFiveFootStep;
         private bool _enabledFiveFootStep;
         private UnitEntityData _delayTarget;
@@ -28,7 +35,9 @@ namespace TurnBased.Controllers
 
         public event Action<UnitEntityData, UnitEntityData> OnDelay;
         public event Action<UnitEntityData> OnEnd;
-
+        
+        #endregion
+        
         #region Properties
 
         public float MetersOfFiveFootStep => 5f * Feet.FeetToMetersRatio * DistanceOfFiveFootStep;
@@ -45,21 +54,25 @@ namespace TurnBased.Controllers
 
         public float MetersMovedByFiveFootStep { get; private set; }
 
-        public bool ImmuneAttackOfOpportunityOnDisengage { get; private set; }
-
         public bool EnabledFiveFootStep {
             get => _enabledFiveFootStep;
             private set {
                 if (_enabledFiveFootStep != value)
                 {
                     _enabledFiveFootStep = value;
-                    if (!value && _aiUsedFiveFootStep && HasNormalMovement())
+
+                    if (!value && _aiUsedFiveFootStep && 
+                        !Commands.Standard.IsStarted && Commands.Standard.ShouldUnitApproach && HasNormalMovement())
                     {
+                        // don't cheat if the unit doesn't need it 
                         Cooldown.MoveAction += TimeMovedByFiveFootStep;
+                        TimeMovedByFiveFootStep = 0f;
                     }
                 }
             }
         }
+
+        public bool ImmuneAttackOfOpportunityOnDisengage { get; private set; }
 
         public bool NeedStealthCheck { get; internal set; }
 
@@ -89,6 +102,8 @@ namespace TurnBased.Controllers
 
         internal void Tick()
         {
+            ImmuneAttackOfOpportunityOnDisengage = false;
+
             if (Status == TurnStatus.Preparing && IsActed())
             {
                 Status = TurnStatus.Acting;
@@ -111,44 +126,69 @@ namespace TurnBased.Controllers
 
         internal void TickMovement(ref float deltaTime, bool isInForceMode)
         {
-            if (Unit.IsMoving())
+            if (isInForceMode)
             {
-                if (isInForceMode)
+                // Charge, Overrun... etc
+                TimeMoved += deltaTime;
+                EnabledFiveFootStep = false;
+            }
+            else
+            {
+                // check remaining movement
+                float remainingMovementTime = GetRemainingMovementTime();
+                if (deltaTime >= remainingMovementTime)
+                {
+                    deltaTime = remainingMovementTime;
+                    if (deltaTime > 0f)
+                    {
+                        // is going to finish a movement
+                        OnMovementFinished();
+                    }
+                    else
+                    {
+                        // has no remaining movement
+                        return;
+                    }
+                }
+
+                // consume movement
+                if (EnabledFiveFootStep)
                 {
                     TimeMoved += deltaTime;
-                    EnabledFiveFootStep = false;
+                    TimeMovedByFiveFootStep += deltaTime;
+                    MetersMovedByFiveFootStep += deltaTime * Unit.CurrentSpeedMps;
+                    EnabledFiveFootStep = HasFiveFootStep();
+                    ImmuneAttackOfOpportunityOnDisengage = true;
                 }
                 else
                 {
-                    float remainingMovementTime = GetRemainingMovementTime();
-                    if (deltaTime >= remainingMovementTime)
-                    {
-                        deltaTime = remainingMovementTime;
+                    TimeMoved += deltaTime;
+                    Cooldown.MoveAction += deltaTime;
+                }
 
-                        if (deltaTime > 0f)
-                            OnMovementFinished();
-                    }
+                NeedStealthCheck = true;
+            }
+        }
 
-                    if (deltaTime > 0f)
-                    {
-                        NeedStealthCheck = true;
+        private void OnMovementFinished()
+        {
+            if (Unit.IsDirectlyControllable && Unit.HasMoveAction())
+            {
+                if (EnabledFiveFootStep)
+                {
+                    if (PauseOnPlayerFinishFiveFoot)
+                        Game.Instance.IsPaused = true;
 
-                        //CheckIfGoingToFinishMove(deltaTime);
+                    if (AutoCancelActionsOnFiveFootStepFinish)
+                        Unit.TryCancelCommands();
+                }
+                else
+                {
+                    if (PauseOnPlayerFinishFirstMove)
+                        Game.Instance.IsPaused = true;
 
-                        if (EnabledFiveFootStep)
-                        {
-                            TimeMoved += deltaTime;
-                            TimeMovedByFiveFootStep += deltaTime;
-                            MetersMovedByFiveFootStep += deltaTime * Unit.CurrentSpeedMps;
-                            EnabledFiveFootStep = HasFiveFootStep();
-                            ImmuneAttackOfOpportunityOnDisengage = true;
-                        }
-                        else
-                        {
-                            TimeMoved += deltaTime;
-                            Cooldown.MoveAction += deltaTime;
-                        }
-                    }
+                    if (AutoCancelActionsOnFirstMoveFinish)
+                        Unit.TryCancelCommands();
                 }
             }
         }
@@ -157,43 +197,77 @@ namespace TurnBased.Controllers
 
         #region Process Control
 
-        private bool ContinueActing()
+        private void Start()
         {
-            ImmuneAttackOfOpportunityOnDisengage = false;
+            // ensure the cooldowns are cleared
+            Cooldown.Clear();
 
-            if (EnabledFiveFootStep)
+            // update cooldowns of acting actions
+            foreach (UnitCommand command in Commands.Raw.Where(command => command != null && command.IsActing()))
             {
-                EnabledFiveFootStep = HasFiveFootStep();
+                command.Executor.UpdateCooldowns(command);
+            }
+
+            // reset AI data - UnitCombatCooldownsController.TickOnUnit()
+            CombatState.OnNewRound();
+            EventBus.RaiseEvent<IUnitNewCombatRoundHandler>(handler => handler.HandleNewCombatRound(Unit));
+
+            // reset AI data and trigger certain per-round buffs - UnitTicksController.TickNextRound()
+            CombatState.AIData.TickRound();
+            Unit.Logic.CallFactComponents<ITickEachRound>(logic => logic.OnNewRound());
+
+            // pick the effect of confution - UnitConfusionController.TickOnUnit()
+            new UnitConfusionController().TickOnUnit(Unit);
+
+            // reset the counter of AOO - UnitCombatCooldownsController.TickOnUnit()
+            if (CombatState.AttackOfOpportunityPerRound > 0 &&
+                CombatState.AttackOfOpportunityCount <= CombatState.AttackOfOpportunityPerRound)
+            {
+                CombatState.AttackOfOpportunityCount = CombatState.AttackOfOpportunityPerRound;
+                CombatState.DisengageAttackTargets.Clear();
+            }
+
+            // QoLs
+            bool isDirectlyControllable = Unit.IsDirectlyControllable;
+
+            if (isDirectlyControllable)
+            {
+                if (AutoTurnOffAIOnTurnStart)
+                    Unit.IsAIEnabled = false;
+
+                if (AutoSelectUnitOnTurnStart)
+                    Unit.Select();
+
+                if (AutoEnableFiveFootStepOnTurnStart && HasFiveFootStep())
+                    EnabledFiveFootStep = true;
+
+                if (AutoCancelActionsOnTurnStart)
+                    Unit.TryCancelCommands();
+
+                if (PauseOnPlayerTurnStart)
+                    Game.Instance.IsPaused = true;
             }
             else
             {
-                // auto enabled 5-foot step if possible when:
-                // 1. the unit has no normal movement left
-                // 2. an AI unit can approach target with 5-foot step
-                if (HasFiveFootStep())
-                {
-                    if (!HasNormalMovement())
-                    {
-                        EnabledFiveFootStep = true;
-                    }
-                    else if (!Unit.IsDirectlyControllable)
-                    {
-                        UnitCommand command = Commands.Standard;
-                        if ((command is UnitAttack || command is UnitUseAbility) && !command.IsStarted)
-                        {
-                            UnitEntityData target = command.TargetUnit;
-                            if (target != null && target != Unit && 
-                                Unit.DistanceTo(target) < command.ApproachRadius + MetersOfFiveFootStep)
-                            {
-                                EnabledFiveFootStep = true;
-                                _aiUsedFiveFootStep = true;
-                            }
-                        }
-                    }
-                }
+                if (PauseOnNonPlayerTurnStart)
+                    Game.Instance.IsPaused = true;
             }
 
-            bool hasRunningAction = Commands.IsRunning() || (Unit.View?.IsGetUp ?? false);
+            if (CameraScrollToCurrentUnit)
+                Unit.ScrollTo();
+
+            // set turn status
+            if (isDirectlyControllable)
+                Status = TurnStatus.Preparing;
+            else
+                Status = TurnStatus.Acting;
+        }
+
+        private bool ContinueActing()
+        {
+            TryAutoToggleFiveFootStep();
+
+            bool hasRunningAction = Commands.IsRunning() || Unit.View.IsGetUp;
 
             // check if the current unit can't do anything more in current turn
             if (!Unit.IsInCombat || !Unit.CanPerformAction() ||
@@ -225,7 +299,7 @@ namespace TurnBased.Controllers
         private bool ContinueWaiting()
         {
             // wait for the current action finish
-            if (!Commands.IsRunning() || (Unit.View?.IsGetUp ?? false))
+            if (!Commands.IsRunning() || Unit.View.IsGetUp)
             {
                 // delay after finish
                 TimeWaitedToEndTurn += Game.Instance.TimeController.GameDeltaTime;
@@ -242,70 +316,35 @@ namespace TurnBased.Controllers
             return true;
         }
 
-        private void Start()
+        private void TryAutoToggleFiveFootStep()
         {
-            // ensure the cooldowns are cleared
-            Cooldown.Clear();
-
-            // update cooldowns from pre-combat actions
-            foreach (UnitCommand command in Commands.Raw.Where(command => command != null && command.IsActing()))
+            if (EnabledFiveFootStep)
             {
-                command.Executor.UpdateCooldowns(command);
-            }
-
-            // UnitCombatCooldownsController.TickOnUnit()
-            CombatState.OnNewRound();
-            EventBus.RaiseEvent<IUnitNewCombatRoundHandler>(handler => handler.HandleNewCombatRound(Unit));
-
-            // UnitTicksController.TickNextRound()
-            CombatState.AIData.TickRound();
-            Unit.Logic.CallFactComponents<ITickEachRound>(logic => logic.OnNewRound());
-
-            // UnitConfusionController.TickOnUnit() - set the effect of confution
-            new UnitConfusionController().TickOnUnit(Unit);
-
-            // reset the counter of AOO
-            if (CombatState.AttackOfOpportunityPerRound > 0 &&
-                CombatState.AttackOfOpportunityCount <= CombatState.AttackOfOpportunityPerRound)
-            {
-                CombatState.AttackOfOpportunityCount = CombatState.AttackOfOpportunityPerRound;
-                CombatState.DisengageAttackTargets.Clear();
-            }
-
-            // QoLs
-            bool isDirectlyControllable = Unit.IsDirectlyControllable;
-
-            if (isDirectlyControllable)
-            {
-                if (AutoTurnOffAI)
-                    Unit.IsAIEnabled = false;
-
-                if (AutoSelectCurrentUnit)
-                    Unit.Select();
-
-                if (AutoEnableFiveFootStep && HasFiveFootStep())
-                    EnabledFiveFootStep = true;
-
-                if (AutoCancelActionsOnPlayerTurnStart)
-                    Unit.TryCancelCommands();
-
-                if (PauseOnPlayerTurnStart)
-                    Game.Instance.IsPaused = true;
+                EnabledFiveFootStep = HasFiveFootStep();
             }
             else
             {
-                if (PauseOnNonPlayerTurnStart)
-                    Game.Instance.IsPaused = true;
+                if (HasFiveFootStep())
+                {
+                    // the unit can use 5-foot step
+                    if (!HasNormalMovement())
+                    {
+                        // the unit has no remaining normal movement
+                        EnabledFiveFootStep = true;
+                    }
+                    else if (!Unit.IsDirectlyControllable)
+                    {
+                        UnitCommand command = Commands.Standard;
+                        if (command != null && !command.IsStarted && command.Target != null &&
+                            Unit.DistanceTo(command.Target.Point) < command.ApproachRadius + MetersOfFiveFootStep)
+                        {
+                            // the AI unit can approach target with 5-foot step
+                            EnabledFiveFootStep = true;
+                            _aiUsedFiveFootStep = true;
+                        }
+                    }
+                }
             }
-
-            if (CameraScrollToCurrentUnit)
-                Unit.ScrollTo();
-
-            // set turn status
-            if (isDirectlyControllable)
-                Status = TurnStatus.Preparing;
-            else
-                Status = TurnStatus.Acting;
         }
 
         private void ToDealy(UnitEntityData targetUnit)
@@ -317,6 +356,7 @@ namespace TurnBased.Controllers
         private void Delay()
         {
             Cooldown.StandardAction = _delayTarget.GetTimeToNextTurn();
+            Cooldown.MoveAction = 0f;
             Status = TurnStatus.Delayed;
             OnDelay(Unit, _delayTarget);
         }
@@ -354,18 +394,18 @@ namespace TurnBased.Controllers
 
         public bool CanToggleFiveFootStep()
         {
-            return (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) && Unit.IsDirectlyControllable &&
+            return Unit.IsDirectlyControllable &&  (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) && 
                 (EnabledFiveFootStep ? HasNormalMovement() : HasFiveFootStep());
         }
 
         public bool CanDelay()
         {
-            return Status == TurnStatus.Preparing && Unit.IsDirectlyControllable;
+            return Unit.IsDirectlyControllable && Status == TurnStatus.Preparing ;
         }
 
         public bool CanEndTurn()
         {
-            return (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) && Unit.IsDirectlyControllable;
+            return Unit.IsDirectlyControllable && (Status == TurnStatus.Preparing || Status == TurnStatus.Acting);
         }
 
         public void CommandToggleFiveFootStep()
@@ -405,19 +445,19 @@ namespace TurnBased.Controllers
                 !Commands.Empty;
         }
 
-        public bool ShouldRestrictFiveFootStep()
+        private bool ShouldRestrictFiveFootStep()
         {
-            return TimeMoved > 0f || Unit.CurrentSpeedMps * TIME_MOVE_ACTION <= MetersOfFiveFootStep;
+            return !EnabledFiveFootStep && (TimeMoved > 0f || Unit.CurrentSpeedMps * TIME_MOVE_ACTION <= MetersOfFiveFootStep);
         }
 
-        public bool ShouldRestrictNormalMovement()
+        private bool ShouldRestrictNormalMovement()
         {
             return !_aiUsedFiveFootStep && MetersMovedByFiveFootStep > 0f;
         }
 
         public bool HasFiveFootStep()
         {
-            return (EnabledFiveFootStep || !ShouldRestrictFiveFootStep()) && (MetersMovedByFiveFootStep < MetersOfFiveFootStep);
+            return !ShouldRestrictFiveFootStep() && (MetersMovedByFiveFootStep < MetersOfFiveFootStep);
         }
 
         public bool HasNormalMovement()
@@ -439,8 +479,7 @@ namespace TurnBased.Controllers
         public float GetRemainingTime()
         {
             return Math.Max(0f, Math.Min(6f, 
-                TIME_MOVE_ACTION * 
-                (2f - (Unit.UsedStandardAction() ? 1f : 0f) - (Unit.IsMoveActionRestricted() ? 1f : 0f)) - 
+                TIME_MOVE_ACTION * ((!Unit.IsMoveActionRestricted() ? 2f : 1f) - (Unit.UsedStandardAction() ? 1f : 0f)) - 
                 Cooldown.MoveAction));
         }
 
@@ -480,35 +519,31 @@ namespace TurnBased.Controllers
 
         #endregion
 
-        #region Misc
+        #region Event Handlers
 
-        private void OnMovementFinished()
+        // fix touch spell (disallow touch more than once in the same round)
+        public void HandleUnitCommandDidAct(UnitCommand command)
         {
-            if (Unit.IsDirectlyControllable && Unit.HasMoveAction())
+            if (command.Executor == Unit && (command.IsFreeTouch() || command.IsSpellstrikeAttack()))
             {
-                if (EnabledFiveFootStep)
-                {
-                    if (PauseOnPlayerFinishFiveFoot)
-                        Game.Instance.IsPaused = true;
+                UnitPartTouch unitPartTouch = command.Executor.Get<UnitPartTouch>();
+                unitPartTouch?.SetAppearTime(unitPartTouch.AppearTime - 6f.Seconds());
+            }
+        }
 
-                    if (AutoCancelActionsOnPlayerFinishFiveFoot)
-                        Unit.TryCancelCommands();
-                }
-                else
+        // return the move action if current unit attacked only once during a full attack
+        public void HandleUnitCommandDidEnd(UnitCommand command)
+        {
+            if (command.Executor == Unit && command is UnitAttack unitAttack)
+            {
+                if (command.IsActed && !command.IsIgnoreCooldown && unitAttack.IsFullAttack && unitAttack.GetAttackIndex() == 1)
                 {
-                    if (PauseOnPlayerFinishFirstMove)
-                        Game.Instance.IsPaused = true;
-
-                    if (AutoCancelActionsOnPlayerFinishFirstMove)
-                        Unit.TryCancelCommands();
+                    Cooldown.MoveAction -= TIME_MOVE_ACTION;
                 }
             }
         }
 
-        #endregion
-
-        #region Event Handlers
-
+        // cost a move action when stand up
         public void HandleUnitWillGetUp(UnitEntityData unit)
         {
             if (unit == Unit)
@@ -522,7 +557,7 @@ namespace TurnBased.Controllers
 
         public enum TurnStatus
         {
-            None, // shouldn't be
+            None, // shouldn't be here
             Preparing,
             Acting,
             Delaying,

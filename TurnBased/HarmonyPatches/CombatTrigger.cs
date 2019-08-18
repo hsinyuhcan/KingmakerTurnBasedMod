@@ -17,12 +17,11 @@ using System.Reflection;
 using System.Reflection.Emit;
 using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
-using static TurnBased.Main;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    static class SurpriseRound
+    static class CombatTrigger
     {
         // don't avoid joining the combat because of standard actions
         [HarmonyPatch(typeof(UnitEntityData), nameof(UnitEntityData.JoinCombat))]
@@ -45,22 +44,6 @@ namespace TurnBased.HarmonyPatches
                 {
                     __instance.Commands.Raw[(int)UnitCommand.CommandType.Standard] = __state;
                 }
-            }
-        }
-
-        // restrict full attack out of combat
-        [HarmonyPatch(typeof(UnitCombatState), nameof(UnitCombatState.IsFullAttackRestrictedBecauseOfMoveAction), MethodType.Getter)]
-        static class UnitCombatState_get_IsFullAttackRestrictedBecauseOfMoveAction_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitCombatState __instance, ref bool __result)
-            {
-                if (IsEnabled() && !Mod.Core.Combat.CombatInitialized)
-                {
-                    __result = true;
-                    return false;
-                }
-                return true;
             }
         }
 
@@ -112,10 +95,9 @@ namespace TurnBased.HarmonyPatches
                     // the unit is about to attack
                     if (unit.HasOffensiveCommand(command =>
                     {
-                        UnitEntityData target;
+                        UnitEntityData target = command.TargetUnit;
                         UnitState state;
-                        return (target = command.TargetUnit).IsInGame && 
-                            !(state = target.Descriptor.State).IsDead && !state.IsIgnoredByCombat;
+                        return target.IsInGame && !(state = target.Descriptor.State).IsDead && !state.IsIgnoredByCombat;
                     }))
                         return true;
 
@@ -125,20 +107,22 @@ namespace TurnBased.HarmonyPatches
                         if (command.IsOffensiveCommand() && command.TargetUnit == unit)
                         {
                             UnitEntityData attacker = command.Executor;
-
                             UnitMemoryController memory = Game.Instance.UnitMemoryController;
+
                             if (!unit.Descriptor.State.HasCondition(UnitCondition.Invisible) || 
                                 attacker.Descriptor.IsSeeInvisibility ||
                                 (attacker.Get<UnitPartBlindsense>()?.Reach(unit) ?? false))
                             {
                                 memory.AddToMemory(attacker, unit);
                             }
+
                             memory.AddToMemory(unit, attacker);
 
                             if (unit.Descriptor.Faction.Neutral &&
                                 (unit.Blueprint.GetComponent<UnitAggroFilter>()?.ShouldAggro(unit, attacker) ?? true))
                             {
                                 unit.AttackFactions.Add(attacker.Descriptor.Faction);
+                                unit.Group.UpdateAttackFactionsCache();
                             }
 
                             if (unit.IsEnemy(attacker))
@@ -149,6 +133,21 @@ namespace TurnBased.HarmonyPatches
                     }
                 }
                 return false;
+            }
+        }
+
+        // stop ticking during units' turn (do not leave combat instantly) if there are still enemies
+        [HarmonyPatch(typeof(UnitCombatLeaveController), "Tick")]
+        static class UnitCombatLeaveController_Tick_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix()
+            {
+                if (IsInCombat() && !IsPassing())
+                {
+                    return !Game.Instance.Player.Group.HasEnemy();
+                }
+                return true;
             }
         }
     }
