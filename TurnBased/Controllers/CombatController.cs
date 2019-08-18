@@ -160,7 +160,7 @@ namespace TurnBased.Controllers
 
             // try to initialize
             if (tryToInitialize && Mod.Core.Enabled && 
-                Game.Instance.Player.IsInCombat && Game.Instance.Player.Group.HasEnemy())
+                Game.Instance.Player.IsInCombat && Game.Instance.Player.Group.HasEnemyInCombat())
                 HandleCombatStart(isPartyCombatStateChanged);
             else if(Initialized)
                 HandleCombatEnd();

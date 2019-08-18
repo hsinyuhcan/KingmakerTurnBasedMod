@@ -72,7 +72,7 @@ namespace TurnBased.Utility
             return commands.Raw.Any(command => command != null && command.IsRunning);
         }
 
-        public static bool HasEnemy(this UnitGroup group)
+        public static bool HasEnemyInCombat(this UnitGroup group)
         {
             return Game.Instance.UnitGroups.Any(other => other != group && other.IsInCombat && other.IsEnemy(group));
         }

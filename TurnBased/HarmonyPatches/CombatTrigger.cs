@@ -136,7 +136,7 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // stop ticking during units' turn (do not leave combat instantly) if there are still enemies
+        // stop time advanced during units' turn if any player's enemies are in combat
         [HarmonyPatch(typeof(UnitCombatLeaveController), "Tick")]
         static class UnitCombatLeaveController_Tick_Patch
         {
@@ -145,9 +145,45 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && !IsPassing())
                 {
-                    return !Game.Instance.Player.Group.HasEnemy();
+                    return !Game.Instance.Player.Group.HasEnemyInCombat();
                 }
                 return true;
+            }
+        }
+
+        // units remembered by any enemy cannot leave the combat (regardless LOS)
+        [HarmonyPatch(typeof(UnitCombatLeaveController), "ShouldLeaveCombat", typeof(UnitGroup))]
+        static class UnitCombatLeaveController_ShouldLeaveCombat_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // groupMember.HasLOS(enemy);
+                // ---------------- after  ----------------
+                // IsInCombat() ? true : groupMember.HasLOS(enemy)
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldloc_S),
+                    new CodeInstruction(OpCodes.Ldloc_0),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.HasLOS)))
+                };
+                int startIndex = codes.FindCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    return codes.Replace(startIndex + 2, new CodeInstruction(OpCodes.Call,
+                            new Func<UnitEntityData, UnitEntityData, bool>(HasLOS).Method), true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static bool HasLOS(UnitEntityData groupMember, UnitEntityData enemy)
+            {
+                return IsInCombat() ? true : groupMember.HasLOS(enemy);
             }
         }
     }

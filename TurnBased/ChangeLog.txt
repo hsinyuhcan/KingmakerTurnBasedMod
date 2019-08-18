@@ -2,7 +2,8 @@
 	Implemented proper "Stand Up" action (standing up from prone will cost a move action)
 	Changed an unactable unit will lose one turn instead of being frozen
 	Changed units that are summoned before combat won't get additional duration when combat start anymore
-	Changed The later the unit is summoned, the higher the order of turn (after its caster)
+	Changed the later the unit is summoned, the higher the order of turn (after its caster)
+	Changed units remembered by any enemy cannot leave the combat (regardless LOS)
 	Fixed combat could start and end instantly in specific cutscene
 	Fixed minor UI issues
 
