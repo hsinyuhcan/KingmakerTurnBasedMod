@@ -31,8 +31,9 @@ namespace TurnBased
         public bool toggleAutoCancelActionsOnFiveFootStepFinish = true;
         public bool toggleAutoCancelActionsOnFirstMoveFinish = true;
 
-        public bool toggleAutoEndTurn;
-        public bool toggleDoNotAutoEndTurnWhenHasSwiftAction = true;
+        public bool toggleAutoEndTurnWhenActionsAreUsedUp = true;
+        public bool toggleAutoEndTurnIgnoreSwiftAction;
+        public bool toggleAutoEndTurnWhenPlayerIdle;
 
         // interface
         public bool toggleHighlightCurrentUnit = true;

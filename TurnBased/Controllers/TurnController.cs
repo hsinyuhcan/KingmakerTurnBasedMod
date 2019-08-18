@@ -271,12 +271,12 @@ namespace TurnBased.Controllers
 
             // check if the current unit can't do anything more in current turn
             if (!Unit.IsInCombat || !Unit.CanPerformAction() ||
-                (!hasRunningAction && GetRemainingTime() <= 0 && !HasExtraAction()))
+                (AutoEndTurnWhenActionsAreUsedUp && !hasRunningAction && GetRemainingTime() <= 0 && !HasExtraAction()))
             {
                 return false;
             }
             // check if AI is idle and timeout
-            else if (!Unit.IsDirectlyControllable || AutoEndTurn)
+            else if (!Unit.IsDirectlyControllable || AutoEndTurnWhenPlayerIdle)
             {
                 if (!hasRunningAction && !Unit.HasMotionThisTick)
                 {
@@ -472,7 +472,7 @@ namespace TurnBased.Controllers
 
         public bool HasExtraAction()
         {
-            return (DoNotAutoEndTurnWhenHasSwiftAction && Cooldown.SwiftAction == 0f) || 
+            return (!AutoEndTurnIgnoreSwiftAction && Cooldown.SwiftAction == 0f) || 
                 HasFiveFootStep() || Unit.HasFreeTouch() || Unit.PreparedSpellCombat() || Unit.PreparedSpellStrike();
         }
 

@@ -167,14 +167,19 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAutoCancelActionsOnFirstMoveFinish = value;
         }
 
-        public static bool AutoEndTurn {
-            get => Mod.Settings.toggleAutoEndTurn;
-            set => Mod.Settings.toggleAutoEndTurn = value;
+        public static bool AutoEndTurnWhenActionsAreUsedUp {
+            get => Mod.Settings.toggleAutoEndTurnWhenActionsAreUsedUp;
+            set => Mod.Settings.toggleAutoEndTurnWhenActionsAreUsedUp = value;
         }
 
-        public static bool DoNotAutoEndTurnWhenHasSwiftAction {
-            get => Mod.Settings.toggleDoNotAutoEndTurnWhenHasSwiftAction;
-            set => Mod.Settings.toggleDoNotAutoEndTurnWhenHasSwiftAction = value;
+        public static bool AutoEndTurnIgnoreSwiftAction {
+            get => Mod.Settings.toggleAutoEndTurnIgnoreSwiftAction;
+            set => Mod.Settings.toggleAutoEndTurnIgnoreSwiftAction = value;
+        }
+
+        public static bool AutoEndTurnWhenPlayerIdle {
+            get => Mod.Settings.toggleAutoEndTurnWhenPlayerIdle;
+            set => Mod.Settings.toggleAutoEndTurnWhenPlayerIdle = value;
         }
 
         #endregion

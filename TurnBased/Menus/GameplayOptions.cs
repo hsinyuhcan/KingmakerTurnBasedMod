@@ -157,14 +157,18 @@ namespace TurnBased.Menus
 
             GUILayout.Space(10f);
 
-            AutoEndTurn =
-                GUIHelper.ToggleButton(AutoEndTurn,
-                "Auto End Turn If Player's Unit Is Idle" +
-                " (For Auto Combat)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+            AutoEndTurnWhenActionsAreUsedUp =
+                GUIHelper.ToggleButton(AutoEndTurnWhenActionsAreUsedUp,
+                "Auto End Turn If All Actions Are Used Up", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            DoNotAutoEndTurnWhenHasSwiftAction =
-                GUIHelper.ToggleButton(DoNotAutoEndTurnWhenHasSwiftAction,
-                "DO NOT Auto End Turn When Current Unit Still Has The Swift Action", _buttonStyle, GUILayout.ExpandWidth(false));
+            AutoEndTurnIgnoreSwiftAction =
+                GUIHelper.ToggleButton(AutoEndTurnIgnoreSwiftAction,
+                "Auto End Turn If All Actions ... Except Swift Action", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            AutoEndTurnWhenPlayerIdle =
+                GUIHelper.ToggleButton(AutoEndTurnWhenPlayerIdle,
+                "Auto End Turn If Player's Unit Is Idle" +
+                " (Can be used for auto combat)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
         }
     }
 }
