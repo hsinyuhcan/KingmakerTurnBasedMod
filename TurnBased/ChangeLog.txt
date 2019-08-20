@@ -1,4 +1,7 @@
-﻿Version 0.9.38
+﻿Version 0.9.39
+	Fixed turn-based mode cannot auto start if the enemy spawns in player's sight
+
+Version 0.9.38
 	Implemented proper "Stand Up" action (standing up from prone will cost a move action)
 	Changed an unactable unit will lose one turn instead of being frozen
 	Changed units that are summoned before combat won't get additional duration anymore when combat start
