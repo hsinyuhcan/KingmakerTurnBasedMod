@@ -83,9 +83,12 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixAbilityCircleRadius,
                 "Fix the visual circle of certain abilities is inconsistent with the real range", false, true);
-
+            
             BugfixToggle(FixAbilityCircleNotAppear,
                 "Fix the ability circle does not appear properly when you first time select any ability of the unit using a hotkey", true, true);
+
+            BugfixToggle(FixAbilityCanTargetDeadUnit,
+                "Fix dead units can be targeted even when current ability cannot be cast to dead target", true, true);
         }
 
         private void BugfixToggle(BugfixOption option, string text, bool canToggleTB, bool canToggleRT, Action onToggle = null)
