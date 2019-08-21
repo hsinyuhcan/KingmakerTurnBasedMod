@@ -74,10 +74,6 @@ namespace TurnBased.Controllers
 
         public bool ImmuneAttackOfOpportunityOnDisengage { get; private set; }
 
-        public bool NeedStealthCheck { get; internal set; }
-
-        public bool WantEnterStealth { get; internal set; }
-
         #endregion
 
         public TurnController(UnitEntityData unit)
@@ -86,7 +82,6 @@ namespace TurnBased.Controllers
             Commands = unit.Commands;
             CombatState = unit.CombatState;
             Cooldown = CombatState.Cooldown;
-            WantEnterStealth = unit.Stealth.WantEnterStealth;
 
             Start();
 
@@ -165,8 +160,6 @@ namespace TurnBased.Controllers
                     TimeMoved += deltaTime;
                     Cooldown.MoveAction += deltaTime;
                 }
-
-                NeedStealthCheck = true;
             }
         }
 

@@ -129,9 +129,6 @@ namespace TurnBased.Utility
 
         public static void UpdateCooldowns(this UnitEntityData unit, UnitCommand command)
         {
-            if (unit.IsCurrentUnit())
-                Mod.Core.Combat.CurrentTurn.NeedStealthCheck = true;
-
             if (!command.IsIgnoreCooldown)
             {
                 UnitCombatState.Cooldowns cooldown = unit.CombatState.Cooldown;
