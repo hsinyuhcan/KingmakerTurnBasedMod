@@ -24,7 +24,7 @@ namespace TurnBased.HarmonyPatches
                 // ---------------- before ----------------
                 // unit.Memory.Contains(unit) || unit.HasLOS(unit)
                 // ---------------- after  ----------------
-                // (IgnoreMemory() || unit.Memory.Contains(unit)) || unit.HasLOS(unit)
+                // (IsEnabled() || unit.Memory.Contains(unit)) || unit.HasLOS(unit)
                 List<CodeInstruction> findingCodes = new List<CodeInstruction>
                 {
                     new CodeInstruction(OpCodes.Ldloc_S),
@@ -46,7 +46,7 @@ namespace TurnBased.HarmonyPatches
                     List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
                     {
                         new CodeInstruction(OpCodes.Call,
-                            new Func<bool>(IgnoreMemory).Method),
+                            new Func<bool>(IsEnabled).Method),
                         new CodeInstruction(OpCodes.Brtrue, codes.NewLabel(startIndex + 5, il))
                     };
                     return codes.InsertRange(startIndex, patchingCodes, true).Complete();
@@ -56,10 +56,54 @@ namespace TurnBased.HarmonyPatches
                     throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
                 }
             }
+        }
 
-            static bool IgnoreMemory()
+        // units in stealth won't be spotted by neutral units
+        [HarmonyPatch(typeof(UnitStealthController), nameof(UnitStealthController.TickUnit), typeof(UnitEntityData))]
+        static class UnitStealthController_TickUnit_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
             {
-                return IsEnabled();
+                // ---------------- before ----------------
+                // !anotherUnit.IsEnemy(unit) && !unit.Stealth.InAmbush
+                // ---------------- after  ----------------
+                // (IsEnabled() ? !unit.CanAttack(anotherUnit) : !anotherUnit.IsEnemy(unit)) && !unit.Stealth.InAmbush
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldloc_S),
+                    new CodeInstruction(OpCodes.Ldarg_1),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
+                    new CodeInstruction(OpCodes.Brtrue),
+                    new CodeInstruction(OpCodes.Ldarg_1),
+                    new CodeInstruction(OpCodes.Ldfld,
+                        GetFieldInfo<UnitEntityData, UnitStealth>(nameof(UnitEntityData.Stealth))),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<UnitStealth, bool>(nameof(UnitStealth.InAmbush)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Brtrue)
+                };
+                int startIndex = codes.FindCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<bool>(IsEnabled).Method),
+                        new CodeInstruction(OpCodes.Brfalse, codes.NewLabel(startIndex, il)),
+                        new CodeInstruction(OpCodes.Ldarg_1),
+                        new CodeInstruction(OpCodes.Ldloc_S, codes.Item(startIndex).operand),
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.CanAttack))),
+                        new CodeInstruction(OpCodes.Brtrue, codes.Item(startIndex + 3).operand),
+                        new CodeInstruction(OpCodes.Br, codes.NewLabel(startIndex + 4, il))
+                    };
+                    return codes.InsertRange(startIndex, patchingCodes, true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
             }
         }
     }
