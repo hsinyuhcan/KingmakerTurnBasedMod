@@ -293,7 +293,7 @@ namespace TurnBased.HarmonyPatches
 
             static float GetValue()
             {
-                return FixAbilityCircleRadius ? 0f : 0.5f;
+                return Mod.Enabled && FixAbilityCircleRadius ? 0f : 0.5f;
             }
         }
 
