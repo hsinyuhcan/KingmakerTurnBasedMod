@@ -61,6 +61,11 @@ namespace TurnBased.Menus
                 "Flanking Count All Opponents Within Threaten Range" +
                 " (Regardless opponents' current command)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
+            RerollPerceptionCheckEachRoundAgainstStealth =
+                GUIHelper.ToggleButton(RerollPerceptionCheckEachRoundAgainstStealth,
+                "Re-roll Perception Check Each Round Against Stealth" +
+                " (Instead of rolling once each combat)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+            
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label($"Distance Modifier Of 5-Foot Step: {DistanceOfFiveFootStep:f2}x", GUILayout.ExpandWidth(false));

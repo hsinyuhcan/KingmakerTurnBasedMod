@@ -40,7 +40,7 @@ namespace TurnBased.HarmonyPatches
                         GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.HasLOS))),
                     new CodeInstruction(OpCodes.Brfalse)
                 };
-                int startIndex = codes.FindCodes(findingCodes);
+                int startIndex = codes.FindLastCodes(findingCodes);
                 if (startIndex >= 0)
                 {
                     List<CodeInstruction> patchingCodes = new List<CodeInstruction>()

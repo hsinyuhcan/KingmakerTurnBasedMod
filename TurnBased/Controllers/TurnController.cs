@@ -246,6 +246,9 @@ namespace TurnBased.Controllers
                     Game.Instance.IsPaused = true;
             }
 
+            if (RerollPerceptionCheckEachRoundAgainstStealth)
+                Unit.CachedPerceptionRoll = 0;
+
             if (CameraScrollToCurrentUnit)
                 Unit.ScrollTo();
 

@@ -10,6 +10,7 @@ namespace TurnBased
         // gameplay
         public bool toggleSurpriseRound = true;
         public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
+        public bool toggleRerollPerceptionCheckEachRoundAgainstStealth;
         public float distanceOfFiveFootStep = 1.5f;
 
         public bool toggleMovingThroughFriends = true;

@@ -41,6 +41,11 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange = value;
         }
 
+        public static bool RerollPerceptionCheckEachRoundAgainstStealth {
+            get => Mod.Settings.toggleRerollPerceptionCheckEachRoundAgainstStealth;
+            set => Mod.Settings.toggleRerollPerceptionCheckEachRoundAgainstStealth = value;
+        }
+        
         public static float DistanceOfFiveFootStep {
             get => Mod.Settings.distanceOfFiveFootStep;
             set => Mod.Settings.distanceOfFiveFootStep = value;
