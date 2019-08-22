@@ -1,5 +1,6 @@
 ﻿using ModMaker;
 using ModMaker.Utility;
+using TurnBased.Utility;
 using UnityEngine;
 using UnityModManagerNet;
 using static ModMaker.Utility.RichTextExtensions;
@@ -11,6 +12,7 @@ namespace TurnBased.Menus
     public class InterfaceOptions : IMenuSelectablePage
     {
         GUIStyle _buttonStyle;
+        GUIStyle _labelStyle;
 
         public string Name => "Interface";
 
@@ -24,31 +26,78 @@ namespace TurnBased.Menus
             if (_buttonStyle == null)
             {
                 _buttonStyle = new GUIStyle(GUI.skin.button) { alignment = TextAnchor.MiddleLeft };
+                _labelStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleLeft, padding = _buttonStyle.padding };
             }
 
-            OnGUICamera();
+            using (new GUISubScope())
+            {
+                DoNotMarkInvisibleUnit =
+                    GUIHelper.ToggleButton(DoNotMarkInvisibleUnit,
+                    "DO NOT Mark Invisible Units" +
+                    " (Disable highlight, camera, indicators... etc)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
-            GUILayout.Space(10f);
+                DoNotShowInvisibleUnitOnCombatTracker =
+                    GUIHelper.ToggleButton(DoNotShowInvisibleUnitOnCombatTracker,
+                    "DO NOT Show Invisible Units On The Combat Tracker", _buttonStyle, GUILayout.ExpandWidth(false));
+            }
 
-            OnGUIUI();
+            using (new GUISubScope("Combat Tracker"))
+                OnGUICombatTracker();
 
-            GUILayout.Space(10f);
+            using (new GUISubScope("View"))
+                OnGUIView();
 
-            DoNotMarkInvisibleUnit =
-                GUIHelper.ToggleButton(DoNotMarkInvisibleUnit,
-                "DO NOT Mark Invisible Units" +
-                " (Disable highlight, camera, indicators... etc)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+            using (new GUISubScope("Attack Indicator"))
+                OnGUIAttackIndicator();
 
-            DoNotShowInvisibleUnitOnCombatTracker =
-                GUIHelper.ToggleButton(DoNotShowInvisibleUnitOnCombatTracker,
-                "DO NOT Show Invisible Units On The Combat Tracker", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            GUILayout.Space(10f);
-
-            OnGUICombatTracker();
+            using (new GUISubScope("Movement Indicator"))
+                OnGUIMovementIndicator();
         }
 
-        private void OnGUICamera()
+        private void OnGUICombatTracker()
+        {
+            using (new GUILayout.HorizontalScope())
+            {
+                GUIHelper.ToggleButton(CombatTrackerScale != 1f,
+                  $"Size Scale: {CombatTrackerScale:f2}", _labelStyle, GUILayout.ExpandWidth(false));
+                CombatTrackerScale =
+                    GUIHelper.RoundedHorizontalSlider(CombatTrackerScale, 2, 0.8f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+            }
+
+            using (new GUILayout.HorizontalScope())
+            {
+                GUIHelper.ToggleButton(true, 
+                    $"Width: {(int)CombatTrackerWidth:d3}", _labelStyle, GUILayout.ExpandWidth(false));
+                CombatTrackerWidth =
+                    GUIHelper.RoundedHorizontalSlider(CombatTrackerWidth, 0, 250f, 500f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+            }
+
+            using (new GUILayout.HorizontalScope())
+            {
+                GUIHelper.ToggleButton(true, 
+                    $"Units: {CombatTrackerMaxUnits:d2}", _labelStyle, GUILayout.ExpandWidth(false));
+                CombatTrackerMaxUnits =
+                    (int)GUIHelper.RoundedHorizontalSlider(CombatTrackerMaxUnits, 0, 5f, 25f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+            }
+
+            SelectUnitOnClickUI =
+                GUIHelper.ToggleButton(SelectUnitOnClickUI,
+                "Select Unit On Click", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            CameraScrollToUnitOnClickUI =
+                GUIHelper.ToggleButton(CameraScrollToUnitOnClickUI,
+                "Camera Scroll To Unit On Click", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            ShowUnitDescriptionOnRightClickUI =
+                GUIHelper.ToggleButton(ShowUnitDescriptionOnRightClickUI,
+                "Show Unit Description On Right Click", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            ShowIsFlatFootedIconOnUI =
+                GUIHelper.ToggleButton(ShowIsFlatFootedIconOnUI,
+                "Show An Icon To Indicate If The Unit Lost Dexterity Bonus To AC", _buttonStyle, GUILayout.ExpandWidth(false));
+        }
+
+        private void OnGUIView()
         {
             HighlightCurrentUnit =
                 GUIHelper.ToggleButton(HighlightCurrentUnit,
@@ -67,7 +116,7 @@ namespace TurnBased.Menus
                 "Camera Lock On Current Non-Player Unit", _buttonStyle, GUILayout.ExpandWidth(false));
         }
 
-        private void OnGUIUI()
+        private void OnGUIAttackIndicator()
         {
             ShowAttackIndicatorOfCurrentUnit =
                GUIHelper.ToggleButton(ShowAttackIndicatorOfCurrentUnit,
@@ -83,7 +132,7 @@ namespace TurnBased.Menus
 
             ShowAttackIndicatorOnHoverUI =
                 GUIHelper.ToggleButton(ShowAttackIndicatorOnHoverUI,
-                "Show Attack Indicator When Mouse Hover The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
+                "Show Attack Indicator On Hover", _buttonStyle, GUILayout.ExpandWidth(false));
 
             ShowAutoCastAbilityRange =
                 GUIHelper.ToggleButton(ShowAutoCastAbilityRange,
@@ -92,9 +141,10 @@ namespace TurnBased.Menus
             CheckForObstaclesOnTargeting =
                 GUIHelper.ToggleButton(CheckForObstaclesOnTargeting,
                 "Check For Obstacles When Determining Whether The Enemy Is Within Range", _buttonStyle, GUILayout.ExpandWidth(false));
+        }
 
-            GUILayout.Space(10f);
-
+        private void OnGUIMovementIndicator()
+        {
             ShowMovementIndicatorOfCurrentUnit =
                 GUIHelper.ToggleButton(ShowMovementIndicatorOfCurrentUnit,
                 "Show Movement Indicator Of Current Unit", _buttonStyle, GUILayout.ExpandWidth(false));
@@ -109,58 +159,7 @@ namespace TurnBased.Menus
 
             ShowMovementIndicatorOnHoverUI =
                 GUIHelper.ToggleButton(ShowMovementIndicatorOnHoverUI,
-                "Show Movement Indicator When Mouse Hover The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            GUILayout.Space(10f);
-
-            ShowIsFlatFootedIconOnUI =
-                GUIHelper.ToggleButton(ShowIsFlatFootedIconOnUI,
-                "Show An Icon To Indicate If The Unit Lost Dexterity Bonus To AC", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            ShowIsFlatFootedIconOnHoverUI =
-                GUIHelper.ToggleButton(ShowIsFlatFootedIconOnHoverUI,
-                "Show An Icon To Indicate If The Unit Lost Dexterity Bonus To AC When Mouse Hover The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            GUILayout.Space(10f);
-
-            SelectUnitOnClickUI =
-                GUIHelper.ToggleButton(SelectUnitOnClickUI,
-                "Select Unit When Click The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            CameraScrollToUnitOnClickUI =
-                GUIHelper.ToggleButton(CameraScrollToUnitOnClickUI,
-                "Camera Scroll To Unit When Click The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
-
-            ShowUnitDescriptionOnRightClickUI =
-                GUIHelper.ToggleButton(ShowUnitDescriptionOnRightClickUI,
-                "Show Unit Description When Right Click The UI Element", _buttonStyle, GUILayout.ExpandWidth(false));
-        }
-
-        private void OnGUICombatTracker()
-        {
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label($"Combat Tracker Scale: {CombatTrackerScale:f2}", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                CombatTrackerScale =
-                    GUIHelper.RoundedHorizontalSlider(CombatTrackerScale, 2, 0.8f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-            }
-
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label($"Combat Tracker Width: {(int)CombatTrackerWidth:d3}", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                CombatTrackerWidth =
-                    GUIHelper.RoundedHorizontalSlider(CombatTrackerWidth, 0, 250f, 500f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-            }
-
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label($"Combat Tracker Max Units: {CombatTrackerMaxUnits:d2}", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                CombatTrackerMaxUnits =
-                    (int)GUIHelper.RoundedHorizontalSlider(CombatTrackerMaxUnits, 0, 5f, 25f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-            }
+                "Show Movement Indicator On Hover", _buttonStyle, GUILayout.ExpandWidth(false));
         }
     }
 }

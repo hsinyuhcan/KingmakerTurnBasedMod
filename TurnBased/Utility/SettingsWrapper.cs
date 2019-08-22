@@ -30,7 +30,12 @@ namespace TurnBased.Utility
         #endregion
 
         #region Gameplay
-        
+
+        public static float DistanceOfFiveFootStep {
+            get => Mod.Settings.distanceOfFiveFootStep;
+            set => Mod.Settings.distanceOfFiveFootStep = value;
+        }
+
         public static bool SurpriseRound {
             get => Mod.Settings.toggleSurpriseRound;
             set => Mod.Settings.toggleSurpriseRound = value;
@@ -45,10 +50,10 @@ namespace TurnBased.Utility
             get => Mod.Settings.toggleRerollPerceptionCheckEachRoundAgainstStealth;
             set => Mod.Settings.toggleRerollPerceptionCheckEachRoundAgainstStealth = value;
         }
-        
-        public static float DistanceOfFiveFootStep {
-            get => Mod.Settings.distanceOfFiveFootStep;
-            set => Mod.Settings.distanceOfFiveFootStep = value;
+
+        public static float RadiusOfCollision {
+            get => Mod.Settings.radiusOfCollision;
+            set => Mod.Settings.radiusOfCollision = value;
         }
 
         public static bool MovingThroughFriends {
@@ -122,11 +127,6 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleDoNotMovingThroughNonAllies = value;
         }
 
-        public static float RadiusOfCollision {
-            get => Mod.Settings.radiusOfCollision;
-            set => Mod.Settings.radiusOfCollision = value;
-        }
-
         public static bool AutoTurnOffAIOnTurnStart {
             get => Mod.Settings.toggleAutoTurnOffAIOnTurnStart;
             set => Mod.Settings.toggleAutoTurnOffAIOnTurnStart = value;
@@ -157,11 +157,6 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAutoCancelActionsOnCombatEnd = value;
         }
 
-        public static bool AutoEnableFiveFootStepOnTurnStart {
-            get => Mod.Settings.toggleAutoEnableFiveFootStepOnTurnStart;
-            set => Mod.Settings.toggleAutoEnableFiveFootStepOnTurnStart = value;
-        }
-        
         public static bool AutoCancelActionsOnFiveFootStepFinish {
             get => Mod.Settings.toggleAutoCancelActionsOnFiveFootStepFinish;
             set => Mod.Settings.toggleAutoCancelActionsOnFiveFootStepFinish = value;
@@ -170,6 +165,11 @@ namespace TurnBased.Utility
         public static bool AutoCancelActionsOnFirstMoveFinish {
             get => Mod.Settings.toggleAutoCancelActionsOnFirstMoveFinish;
             set => Mod.Settings.toggleAutoCancelActionsOnFirstMoveFinish = value;
+        }
+
+        public static bool AutoEnableFiveFootStepOnTurnStart {
+            get => Mod.Settings.toggleAutoEnableFiveFootStepOnTurnStart;
+            set => Mod.Settings.toggleAutoEnableFiveFootStepOnTurnStart = value;
         }
 
         public static bool AutoEndTurnWhenActionsAreUsedUp {
@@ -190,6 +190,51 @@ namespace TurnBased.Utility
         #endregion
 
         #region Interface
+
+        public static bool DoNotMarkInvisibleUnit {
+            get => Mod.Settings.toggleDoNotMarkInvisibleUnit;
+            set => Mod.Settings.toggleDoNotMarkInvisibleUnit = value;
+        }
+
+        public static bool DoNotShowInvisibleUnitOnCombatTracker {
+            get => Mod.Settings.toggleDoNotShowInvisibleUnitOnCombatTracker;
+            set => Mod.Settings.toggleDoNotShowInvisibleUnitOnCombatTracker = value;
+        }
+
+        public static float CombatTrackerScale {
+            get => Mod.Settings.combatTrackerScale;
+            set => Mod.Settings.combatTrackerScale = value;
+        }
+
+        public static float CombatTrackerWidth {
+            get => Mod.Settings.combatTrackerWidth;
+            set => Mod.Settings.combatTrackerWidth = value;
+        }
+
+        public static int CombatTrackerMaxUnits {
+            get => Mod.Settings.combatTrackerMaxUnits;
+            set => Mod.Settings.combatTrackerMaxUnits = value;
+        }
+
+        public static bool SelectUnitOnClickUI {
+            get => Mod.Settings.toggleSelectUnitOnClickUI;
+            set => Mod.Settings.toggleSelectUnitOnClickUI = value;
+        }
+
+        public static bool CameraScrollToUnitOnClickUI {
+            get => Mod.Settings.toggleCameraScrollToUnitOnClickUI;
+            set => Mod.Settings.toggleCameraScrollToUnitOnClickUI = value;
+        }
+
+        public static bool ShowUnitDescriptionOnRightClickUI {
+            get => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI;
+            set => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI = value;
+        }
+
+        public static bool ShowIsFlatFootedIconOnUI {
+            get => Mod.Settings.toggleShowIsFlatFootedIconOnUI;
+            set => Mod.Settings.toggleShowIsFlatFootedIconOnUI = value;
+        }
 
         public static bool HighlightCurrentUnit {
             get => Mod.Settings.toggleHighlightCurrentUnit;
@@ -261,74 +306,6 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleShowMovementIndicatorOnHoverUI = value;
         }
 
-        public static bool ShowIsFlatFootedIconOnUI {
-            get => Mod.Settings.toggleShowIsFlatFootedIconOnUI;
-            set {
-                if (Mod.Settings.toggleShowIsFlatFootedIconOnUI != value)
-                {
-                    Mod.Settings.toggleShowIsFlatFootedIconOnUI = value;
-                    if (value)
-                    {
-                        ShowIsFlatFootedIconOnHoverUI = false;
-                    }
-                }
-            }
-        }
-
-        public static bool ShowIsFlatFootedIconOnHoverUI {
-            get => Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI;
-            set {
-                if (Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI != value)
-                {
-                    Mod.Settings.toggleShowIsFlatFootedIconOnHoverUI = value;
-                    if (value)
-                    {
-                        ShowIsFlatFootedIconOnUI = false;
-                    }
-                }
-            }
-        }
-
-        public static bool SelectUnitOnClickUI {
-            get => Mod.Settings.toggleSelectUnitOnClickUI;
-            set => Mod.Settings.toggleSelectUnitOnClickUI = value;
-        }
-
-        public static bool CameraScrollToUnitOnClickUI {
-            get => Mod.Settings.toggleCameraScrollToUnitOnClickUI;
-            set => Mod.Settings.toggleCameraScrollToUnitOnClickUI = value;
-        }
-
-        public static bool ShowUnitDescriptionOnRightClickUI {
-            get => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI;
-            set => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI = value;
-        }
-
-        public static bool DoNotMarkInvisibleUnit {
-            get => Mod.Settings.toggleDoNotMarkInvisibleUnit;
-            set => Mod.Settings.toggleDoNotMarkInvisibleUnit = value;
-        }
-
-        public static bool DoNotShowInvisibleUnitOnCombatTracker {
-            get => Mod.Settings.toggleDoNotShowInvisibleUnitOnCombatTracker;
-            set => Mod.Settings.toggleDoNotShowInvisibleUnitOnCombatTracker = value;
-        }
-
-        public static float CombatTrackerScale {
-            get => Mod.Settings.combatTrackerScale;
-            set => Mod.Settings.combatTrackerScale = value;
-        }
-
-        public static float CombatTrackerWidth {
-            get => Mod.Settings.combatTrackerWidth;
-            set => Mod.Settings.combatTrackerWidth = value;
-        }
-
-        public static int CombatTrackerMaxUnits {
-            get => Mod.Settings.combatTrackerMaxUnits;
-            set => Mod.Settings.combatTrackerMaxUnits = value;
-        }
-
         #endregion
 
         #region Hotkey
@@ -379,6 +356,45 @@ namespace TurnBased.Utility
 
         #endregion
 
+        #region Pause
+
+        public static bool DoNotPauseOnCombatStart {
+            get => Mod.Settings.toggleDoNotPauseOnCombatStart;
+            set => Mod.Settings.toggleDoNotPauseOnCombatStart = value;
+        }
+
+        public static bool PauseOnPlayerTurnStart {
+            get => Mod.Settings.togglePauseOnPlayerTurnStart;
+            set => Mod.Settings.togglePauseOnPlayerTurnStart = value;
+        }
+
+        public static bool PauseOnPlayerTurnEnd {
+            get => Mod.Settings.togglePauseOnPlayerTurnEnd;
+            set => Mod.Settings.togglePauseOnPlayerTurnEnd = value;
+        }
+
+        public static bool PauseOnNonPlayerTurnStart {
+            get => Mod.Settings.togglePauseOnNonPlayerTurnStart;
+            set => Mod.Settings.togglePauseOnNonPlayerTurnStart = value;
+        }
+
+        public static bool PauseOnNonPlayerTurnEnd {
+            get => Mod.Settings.togglePauseOnNonPlayerTurnEnd;
+            set => Mod.Settings.togglePauseOnNonPlayerTurnEnd = value;
+        }
+
+        public static bool PauseOnPlayerFinishFiveFoot {
+            get => Mod.Settings.togglePauseOnPlayerFinishFiveFoot;
+            set => Mod.Settings.togglePauseOnPlayerFinishFiveFoot = value;
+        }
+
+        public static bool PauseOnPlayerFinishFirstMove {
+            get => Mod.Settings.togglePauseOnPlayerFinishFirstMove;
+            set => Mod.Settings.togglePauseOnPlayerFinishFirstMove = value;
+        }
+
+        #endregion
+
         #region Bugfix
 
         public static BugfixOption FixNeverInCombatWithoutMC => Mod.Settings.toggleFixNeverInCombatWithoutMC;
@@ -410,44 +426,6 @@ namespace TurnBased.Utility
         public static BugfixOption FixAbilityCircleNotAppear => Mod.Settings.toggleFixAbilityCircleNotAppear;
 
         public static BugfixOption FixAbilityCanTargetDeadUnit => Mod.Settings.toggleFixAbilityCanTargetDeadUnit;
-
-        #endregion
-
-        #region Pause
-        public static bool DoNotPauseOnCombatStart {
-            get => Mod.Settings.toggleDoNotPauseOnCombatStart;
-            set => Mod.Settings.toggleDoNotPauseOnCombatStart = value;
-        }
-        
-        public static bool PauseOnPlayerTurnStart {
-            get => Mod.Settings.togglePauseOnPlayerTurnStart;
-            set => Mod.Settings.togglePauseOnPlayerTurnStart = value;
-        }
-
-        public static bool PauseOnPlayerTurnEnd {
-            get => Mod.Settings.togglePauseOnPlayerTurnEnd;
-            set => Mod.Settings.togglePauseOnPlayerTurnEnd = value;
-        }
-
-        public static bool PauseOnNonPlayerTurnStart {
-            get => Mod.Settings.togglePauseOnNonPlayerTurnStart;
-            set => Mod.Settings.togglePauseOnNonPlayerTurnStart = value;
-        }
-
-        public static bool PauseOnNonPlayerTurnEnd {
-            get => Mod.Settings.togglePauseOnNonPlayerTurnEnd;
-            set => Mod.Settings.togglePauseOnNonPlayerTurnEnd = value;
-        }
-
-        public static bool PauseOnPlayerFinishFiveFoot {
-            get => Mod.Settings.togglePauseOnPlayerFinishFiveFoot;
-            set => Mod.Settings.togglePauseOnPlayerFinishFiveFoot = value;
-        }
-
-        public static bool PauseOnPlayerFinishFirstMove {
-            get => Mod.Settings.togglePauseOnPlayerFinishFirstMove;
-            set => Mod.Settings.togglePauseOnPlayerFinishFirstMove = value;
-        }
 
         #endregion
     }

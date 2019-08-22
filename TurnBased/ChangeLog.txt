@@ -1,9 +1,11 @@
 ﻿Version 0.9.39
-	Added an option to re-roll perception check each round against stealth
+	Improved settings menu, added subtitles
 	Added an option to ignore dead units if they cannot be targeted
+	Added an option to re-roll perception check each round against stealth
 	Changed units remembered by enemies can enter stealth in combat (when they're out of LoS) 
 	Changed units in stealth won't be spotted by neutral units
-	Fixed turn-based mode cannot auto start if the enemy spawns in player's sight
+	Changed when the mouse is hovering on a unit's view, the indicators will show its circles instead of current unit's ones
+	Fixed turn-based mode cannot auto start if enemies spawn in player's sight
 	Fixed some minor errors
 
 Version 0.9.38

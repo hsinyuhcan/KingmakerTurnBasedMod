@@ -1,5 +1,6 @@
 ﻿using ModMaker;
 using ModMaker.Utility;
+using TurnBased.Utility;
 using UnityEngine;
 using UnityModManagerNet;
 using static ModMaker.Utility.RichTextExtensions;
@@ -11,6 +12,7 @@ namespace TurnBased.Menus
     public class RestrictionsOptions : IMenuSelectablePage
     {
         GUIStyle _buttonStyle;
+        GUIStyle _labelStyle;
 
         public string Name => "Gameplay";
 
@@ -24,33 +26,48 @@ namespace TurnBased.Menus
             if (_buttonStyle == null)
             {
                 _buttonStyle = new GUIStyle(GUI.skin.button) { alignment = TextAnchor.MiddleLeft };
+                _labelStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleLeft, padding = _buttonStyle.padding };
             }
 
-            using (new GUILayout.HorizontalScope())
+            using (new GUISubScope())
             {
-                Mod.Core.Enabled =
-                GUIHelper.ToggleButton(Mod.Core.Enabled,
-                "Turn-Based Mode", _buttonStyle, GUILayout.ExpandWidth(false));
-
-                if (GUILayout.Button($"Reset Settings", _buttonStyle, GUILayout.ExpandWidth(false)))
+                using (new GUILayout.HorizontalScope())
                 {
-                    Mod.ResetSettings();
-                    Mod.Core.Blueprint.Update();
-                    Mod.Core.Hotkeys.Update();
+                    Mod.Core.Enabled =
+                    GUIHelper.ToggleButton(Mod.Core.Enabled,
+                    "Turn-Based Mode", _buttonStyle, GUILayout.ExpandWidth(false));
+
+                    if (GUILayout.Button($"Reset Settings", _buttonStyle, GUILayout.ExpandWidth(false)))
+                    {
+                        Mod.ResetSettings();
+                        Mod.Core.Blueprint.Update();
+                        Mod.Core.Hotkeys.Update();
+                    }
                 }
             }
 
-            GUILayout.Space(10f);
+            using (new GUISubScope("Rule"))
+                OnGUIRule();
 
-            OnGUIMechanic();
+            using (new GUISubScope("Pathfinding"))
+                OnGUIPathfinding();
 
-            GUILayout.Space(10f);
-
-            OnGUIGameplay();
+            using (new GUISubScope("Automation"))
+                OnGUIAutomation();
         }
 
-        void OnGUIMechanic()
+        private void OnGUIRule()
         {
+            using (new GUILayout.HorizontalScope())
+            {
+                GUIHelper.ToggleButton(DistanceOfFiveFootStep != 1f, 
+                    $"Distance Modifier Of 5-Foot Step: {DistanceOfFiveFootStep:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                DistanceOfFiveFootStep =
+                   GUIHelper.RoundedHorizontalSlider(DistanceOfFiveFootStep, 1, 1f, 2f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+                GUILayout.Space(5f);
+                GUILayout.Label("(Larger value will make slower units unable to take a 5-foot step)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+            }
+
             SurpriseRound =
                 GUIHelper.ToggleButton(SurpriseRound,
                 "Surprise Round" +
@@ -65,18 +82,19 @@ namespace TurnBased.Menus
                 GUIHelper.ToggleButton(RerollPerceptionCheckEachRoundAgainstStealth,
                 "Re-roll Perception Check Each Round Against Stealth" +
                 " (Instead of rolling once each combat)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
-            
+        }
+
+        private void OnGUIPathfinding()
+        {
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label($"Distance Modifier Of 5-Foot Step: {DistanceOfFiveFootStep:f2}x", GUILayout.ExpandWidth(false));
+                GUIHelper.ToggleButton(RadiusOfCollision != 1f, 
+                    $"Radius Modifier Of Collision Detection: {RadiusOfCollision:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                RadiusOfCollision =
+                    GUIHelper.RoundedHorizontalSlider(RadiusOfCollision, 1, 0.5f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
                 GUILayout.Space(5f);
-                DistanceOfFiveFootStep =
-                    GUIHelper.RoundedHorizontalSlider(DistanceOfFiveFootStep, 1, 1f, 2f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                GUILayout.Label("(Larger value will make slower units unable to take a 5-foot step)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+                GUILayout.Label($"(A modifier affects all units' pathfinding, NOT AFFECT REACH)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
             }
-
-            GUILayout.Space(10f);
 
             MovingThroughFriends =
                 GUIHelper.ToggleButton(MovingThroughFriends,
@@ -110,19 +128,9 @@ namespace TurnBased.Menus
                 GUIHelper.ToggleButton(DoNotMovingThroughNonAllies,
                 "DO NOT Moving Through Non-Allies" +
                 " (Disable the default \"soft obstacle\" effect on non-ally units)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
-
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label($"Radius Modifier Of Collision Detection: {RadiusOfCollision:f2}x", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                RadiusOfCollision = 
-                    GUIHelper.RoundedHorizontalSlider(RadiusOfCollision, 1, 0.5f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                GUILayout.Label($"(A modifier affects all units' pathfinding, NOT AFFECT REACH)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
-            }
         }
 
-        void OnGUIGameplay()
+        private void OnGUIAutomation()
         {
             AutoTurnOffAIOnTurnStart =
                 GUIHelper.ToggleButton(AutoTurnOffAIOnTurnStart,
@@ -148,10 +156,6 @@ namespace TurnBased.Menus
                 GUIHelper.ToggleButton(AutoCancelActionsOnCombatEnd,
                 "Auto Cancel Actions On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoEnableFiveFootStepOnTurnStart =
-                GUIHelper.ToggleButton(AutoEnableFiveFootStepOnTurnStart,
-                "Auto Enable 5-Foot Step On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
-            
             AutoCancelActionsOnFiveFootStepFinish =
                 GUIHelper.ToggleButton(AutoCancelActionsOnFiveFootStepFinish,
                 "Auto Cancel Actions On Player's Unit Finished The 5-Foot Step", _buttonStyle, GUILayout.ExpandWidth(false));
@@ -160,7 +164,9 @@ namespace TurnBased.Menus
                 GUIHelper.ToggleButton(AutoCancelActionsOnFirstMoveFinish,
                 "Auto Cancel Actions On Player's Unit Finished The First Move Action Through Move", _buttonStyle, GUILayout.ExpandWidth(false));
 
-            GUILayout.Space(10f);
+            AutoEnableFiveFootStepOnTurnStart =
+                GUIHelper.ToggleButton(AutoEnableFiveFootStepOnTurnStart,
+                "Auto Enable 5-Foot Step On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoEndTurnWhenActionsAreUsedUp =
                 GUIHelper.ToggleButton(AutoEndTurnWhenActionsAreUsedUp,
