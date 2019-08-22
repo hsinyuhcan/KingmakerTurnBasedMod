@@ -4,6 +4,7 @@
 	Changed units remembered by enemies can enter stealth in combat (when they're out of LoS) 
 	Changed units in stealth won't be spotted by neutral units
 	Fixed turn-based mode cannot auto start if the enemy spawns in player's sight
+	Fixed some minor errors
 
 Version 0.9.38
 	Implemented proper "Stand Up" action (standing up from prone will cost a move action)

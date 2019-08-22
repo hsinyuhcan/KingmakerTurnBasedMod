@@ -67,7 +67,7 @@ namespace TurnBased.Controllers
         internal void Tick()
         {
             // fix if combat is ended by a cutscene, HandlePartyCombatStateChanged will not be triggered
-            if (_units.Count == 0)
+            if (_units.Count == 0 || !Game.Instance.Player.IsInCombat)
             {
                 foreach (UnitEntityData allCharacter in Game.Instance.Player.AllCharacters)
                 {
