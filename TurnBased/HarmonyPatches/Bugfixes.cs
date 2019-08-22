@@ -2,6 +2,7 @@
 using Harmony12;
 using Kingmaker;
 using Kingmaker.Blueprints;
+using Kingmaker.Controllers.Clicks.Handlers;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Items;
@@ -13,6 +14,7 @@ using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
+using Kingmaker.Utility;
 using Kingmaker.View.Equipment;
 using Kingmaker.Visual.Decals;
 using ModMaker.Utility;
@@ -293,7 +295,7 @@ namespace TurnBased.HarmonyPatches
 
             static float GetValue()
             {
-                return FixAbilityCircleRadius ? 0f : 0.5f;
+                return Mod.Enabled && FixAbilityCircleRadius ? 0f : 0.5f;
             }
         }
 
@@ -309,6 +311,65 @@ namespace TurnBased.HarmonyPatches
                     ___m_AppearAnimation.Pause();
                     ___m_DisappearAnimation.Pause();
                 }
+            }
+        }
+
+        // fix dead units can be targeted even when current ability cannot be cast to dead target
+        [HarmonyPatch(typeof(ClickWithSelectedAbilityHandler), nameof(ClickWithSelectedAbilityHandler.GetPriority), typeof(GameObject), typeof(Vector3))]
+        static class ClickWithSelectedAbilityHandler_GetPriority_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // if (... Ability.CanTarget(target))
+                // {
+                //     ...
+                // }
+                // ---------------- after  ----------------
+                // if (... Ability.CanTarget(target))
+                // {
+                //     if (IsTargetingDeadUnit(Ability, target))
+                //         return 0f;
+                //     ...
+                // }
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Call,
+                        GetPropertyInfo<ClickWithSelectedAbilityHandler, AbilityData>(nameof(ClickWithSelectedAbilityHandler.Ability)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Ldloc_S),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<AbilityData, Func<AbilityData, TargetWrapper, bool>>(nameof(AbilityData.CanTarget))),
+                    new CodeInstruction(OpCodes.Brfalse),
+                };
+                int startIndex = codes.FindCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Ldarg_0),
+                        new CodeInstruction(OpCodes.Call,
+                            GetPropertyInfo<ClickWithSelectedAbilityHandler, AbilityData>(nameof(ClickWithSelectedAbilityHandler.Ability)).GetGetMethod(true)),
+                        new CodeInstruction(OpCodes.Ldloc_S, codes.Item(startIndex + 2).operand),
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<AbilityData, TargetWrapper, bool>(IsTargetingDeadUnit).Method),
+                        new CodeInstruction(OpCodes.Brfalse, codes.NewLabel(startIndex + findingCodes.Count, il)),
+                        new CodeInstruction(OpCodes.Ldc_R4, 0f),
+                        new CodeInstruction(OpCodes.Ret)
+                  };
+                    return codes.InsertRange(startIndex + findingCodes.Count, patchingCodes, true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static bool IsTargetingDeadUnit(AbilityData ability, TargetWrapper target)
+            {
+                return Mod.Enabled && FixAbilityCanTargetDeadUnit &&
+                    target.Unit != null && target.Unit.Descriptor.State.IsDead && !ability.Blueprint.CanCastToDeadTarget;
             }
         }
     }

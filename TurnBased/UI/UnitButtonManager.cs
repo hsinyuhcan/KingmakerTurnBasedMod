@@ -207,9 +207,15 @@ namespace TurnBased.UI
             if (unitEntityView.EntityData == Unit)
             {
                 if (isHover)
+                {
                     _button.OnSelect(null);
+                    OnEnter(Unit);
+                }
                 else
+                {
                     _button.OnDeselect(null);
+                    OnExit(Unit);
+                }
             }
         }
 
@@ -304,7 +310,7 @@ namespace TurnBased.UI
         {
             UnitEntityData currentUnit;
             _iconIsSurprising.SetActive(Unit != null && !_isCurrent && Unit.IsSurprising());
-            _iconIsFlatFooted.SetActive((ShowIsFlatFootedIconOnUI || (_isMouseOver && ShowIsFlatFootedIconOnHoverUI)) &&
+            _iconIsFlatFooted.SetActive(ShowIsFlatFootedIconOnUI &&
                 Unit != null && !_isCurrent && (currentUnit = Mod.Core.Combat.CurrentTurn?.Unit) != null &&
                 Rulebook.Trigger(new RuleCheckTargetFlatFooted(currentUnit, Unit)).IsFlatFooted);
             _iconCanNotPerformAction.SetActive(Unit != null && !Unit.CanPerformAction());

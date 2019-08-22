@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using TurnBased.Controllers;
 using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Main;
@@ -319,43 +318,6 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // ** fix stealth check
-        [HarmonyPatch(typeof(UnitStealthController), "TickUnit", typeof(UnitEntityData))]
-        static class UnitStealthController_TickUnit_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitEntityData unit, ref float? __state)
-            {
-                if (IsInCombat() && !IsPassing())
-                {
-                    __state = Game.Instance.TimeController.GameDeltaTime;
-                    Game.Instance.TimeController.SetGameDeltaTime(0f);
-
-                    TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
-                    if (unit.IsCurrentUnit() &&
-                        (currentTurn.WantEnterStealth != unit.Stealth.WantEnterStealth || currentTurn.NeedStealthCheck))
-                    {
-                        currentTurn.WantEnterStealth = unit.Stealth.WantEnterStealth;
-                        currentTurn.NeedStealthCheck = false;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            [HarmonyPostfix]
-            static void Postfix(ref float? __state)
-            {
-                if (__state.HasValue)
-                {
-                    Game.Instance.TimeController.SetGameDeltaTime(__state.Value);
-                }
-            }
-        }
-
         // fix toggleable abilities
         [HarmonyPatch(typeof(UnitActivatableAbilitiesController), "TickOnUnit", typeof(UnitEntityData))]
         static class UnitActivatableAbilitiesController_TickOnUnit_Patch
@@ -544,9 +506,9 @@ namespace TurnBased.HarmonyPatches
             static IEnumerable<MethodBase> TargetMethods(HarmonyInstance instance)
             {
                 yield return GetTargetMethod(typeof(UnitFearController), "TickOnUnit");
+                yield return GetTargetMethod(typeof(UnitStealthController), "Tick");
                 yield return GetTargetMethod(typeof(UnitSwallowWholeController), "TickOnUnit");
                 yield return GetTargetMethod(typeof(AreaEffectEntityData), "Tick");
-
             }
 
             [HarmonyPrefix]

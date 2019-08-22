@@ -136,6 +136,20 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // don't engage an enemy which not "awake" (in game and not in fog of war)
+        [HarmonyPatch(typeof(UnitCombatJoinController), "ShouldEngageEnemy", typeof(UnitEntityData), typeof(UnitEntityData))]
+        static class UnitCombatJoinController_ShouldEngageEnemy_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix(UnitEntityData enemy, ref bool __result)
+            {
+                if (IsEnabled() && __result && !enemy.IsAwake)
+                {
+                    __result = false;
+                }
+            }
+        }
+
         // stop time advanced during units' turn if any player's enemies are in combat
         [HarmonyPatch(typeof(UnitCombatLeaveController), "Tick")]
         static class UnitCombatLeaveController_Tick_Patch

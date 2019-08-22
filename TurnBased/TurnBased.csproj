@@ -100,11 +100,13 @@
     <Compile Include="HarmonyPatches\CollisionDetection.cs" />
     <Compile Include="HarmonyPatches\ConfusionCondition.cs" />
     <Compile Include="HarmonyPatches\ActionCooldowns.cs" />
+    <Compile Include="HarmonyPatches\Stealth.cs" />
     <Compile Include="HarmonyPatches\Summon.cs" />
     <Compile Include="HarmonyPatches\UI.cs" />
     <Compile Include="HarmonyPatches\MagusAbilities.cs" />
     <Compile Include="HarmonyPatches\CombatTrigger.cs" />
     <Compile Include="Menus\BugfixOptions.cs" />
+    <Compile Include="Utility\GUISubScope.cs" />
     <Compile Include="Utility\MiscExtensions.cs" />
     <Compile Include="Utility\NonPublicAccessExtensions.cs" />
     <Compile Include="Utility\BugfixOption.cs" />
@@ -119,8 +121,7 @@
     <Compile Include="Menus\DebugInformation.cs" />
     <Compile Include="Menus\InterfaceOptions.cs" />
     <Compile Include="Menus\GameplayOptions.cs" />
-    <Compile Include="Menus\PauseOptions.cs" />
-    <Compile Include="Menus\HotkeyAndTimeScaleOptions.cs" />
+    <Compile Include="Menus\HotkeyAndTimeOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Core.cs" />

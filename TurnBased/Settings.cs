@@ -8,10 +8,12 @@ namespace TurnBased
     public class Settings : UnityModManager.ModSettings
     {
         // gameplay
+        public float distanceOfFiveFootStep = 1.5f;
         public bool toggleSurpriseRound = true;
         public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
-        public float distanceOfFiveFootStep = 1.5f;
+        public bool toggleRerollPerceptionCheckEachRoundAgainstStealth;
 
+        public float radiusOfCollision = 0.9f;
         public bool toggleMovingThroughFriends = true;
         public bool toggleMovingThroughNonEnemies;
         public bool toggleMovingThroughOnlyAffectPlayer;
@@ -19,7 +21,6 @@ namespace TurnBased
         public bool toggleAvoidOverlapping = true;
         public bool toggleAvoidOverlappingOnCharge = true;
         public bool toggleDoNotMovingThroughNonAllies = true;
-        public float radiusOfCollision = 0.9f;
 
         public bool toggleAutoTurnOffAIOnTurnStart = true;
         public bool toggleAutoTurnOnAIOnCombatEnd = true;
@@ -27,15 +28,25 @@ namespace TurnBased
         public bool toggleAutoSelectEntirePartyOnCombatEnd = true;
         public bool toggleAutoCancelActionsOnTurnStart = true;
         public bool toggleAutoCancelActionsOnCombatEnd = true;
-        public bool toggleAutoEnableFiveFootStepOnTurnStart;
         public bool toggleAutoCancelActionsOnFiveFootStepFinish = true;
         public bool toggleAutoCancelActionsOnFirstMoveFinish = true;
-
+        public bool toggleAutoEnableFiveFootStepOnTurnStart;
         public bool toggleAutoEndTurnWhenActionsAreUsedUp = true;
         public bool toggleAutoEndTurnIgnoreSwiftAction;
         public bool toggleAutoEndTurnWhenPlayerIdle;
 
         // interface
+        public bool toggleDoNotMarkInvisibleUnit = true;
+        public bool toggleDoNotShowInvisibleUnitOnCombatTracker = true;
+
+        public float combatTrackerScale = 0.9f;
+        public float combatTrackerWidth = 350f;
+        public int combatTrackerMaxUnits = 15;
+        public bool toggleSelectUnitOnClickUI;
+        public bool toggleCameraScrollToUnitOnClickUI = true;
+        public bool toggleShowUnitDescriptionOnRightClickUI = true;
+        public bool toggleShowIsFlatFootedIconOnUI = true;
+
         public bool toggleHighlightCurrentUnit = true;
         public bool toggleCameraScrollToCurrentUnit = true;
         public bool toggleCameraLockOnCurrentPlayerUnit;
@@ -53,20 +64,6 @@ namespace TurnBased
         public bool toggleShowMovementIndicatorOfNonPlayer;
         public bool toggleShowMovementIndicatorOnHoverUI = true;
 
-        public bool toggleShowIsFlatFootedIconOnUI = true;
-        public bool toggleShowIsFlatFootedIconOnHoverUI;
-
-        public bool toggleSelectUnitOnClickUI;
-        public bool toggleCameraScrollToUnitOnClickUI = true;
-        public bool toggleShowUnitDescriptionOnRightClickUI = true;
-
-        public bool toggleDoNotMarkInvisibleUnit = true;
-        public bool toggleDoNotShowInvisibleUnitOnCombatTracker = true;
-
-        public float combatTrackerScale = 0.9f;
-        public float combatTrackerWidth = 350f;
-        public int combatTrackerMaxUnits = 15;
-
         // hotkeys
         public SerializableDictionary<string, BindingKeysData> hotkeys = new SerializableDictionary<string, BindingKeysData>();
         public bool hotkeyToggleFiveFootStepOnRightClickGround;
@@ -79,6 +76,15 @@ namespace TurnBased
         public float castingTimeOfFullRoundSpell = 0.5f;
         public float timeToWaitForIdleAI = 0.5f;
         public float timeToWaitForEndingTurn = 0.1f;
+
+        // pause
+        public bool toggleDoNotPauseOnCombatStart = true;
+        public bool togglePauseOnPlayerTurnStart;
+        public bool togglePauseOnPlayerTurnEnd;
+        public bool togglePauseOnNonPlayerTurnStart;
+        public bool togglePauseOnNonPlayerTurnEnd;
+        public bool togglePauseOnPlayerFinishFiveFoot;
+        public bool togglePauseOnPlayerFinishFirstMove;
 
         // bugfix
         public BugfixOption toggleFixNeverInCombatWithoutMC = new BugfixOption(true, false);
@@ -95,14 +101,6 @@ namespace TurnBased
         public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleRadius = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);
-
-        // pause
-        public bool toggleDoNotPauseOnCombatStart = true;
-        public bool togglePauseOnPlayerTurnStart;
-        public bool togglePauseOnPlayerTurnEnd;
-        public bool togglePauseOnNonPlayerTurnStart;
-        public bool togglePauseOnNonPlayerTurnEnd;
-        public bool togglePauseOnPlayerFinishFiveFoot;
-        public bool togglePauseOnPlayerFinishFirstMove;
+        public BugfixOption toggleFixAbilityCanTargetDeadUnit = new BugfixOption(true, false);
     }
 }

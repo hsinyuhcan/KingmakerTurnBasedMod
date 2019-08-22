@@ -2,6 +2,7 @@
 using ModMaker;
 using ModMaker.Utility;
 using System.Collections.Generic;
+using TurnBased.Utility;
 using UnityEngine;
 using UnityModManagerNet;
 using static ModMaker.Utility.RichTextExtensions;
@@ -10,14 +11,15 @@ using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased.Menus
 {
-    public class HotkeyAndTimeScaleOptions : IMenuSelectablePage
+    public class HotkeyAndTimeOptions : IMenuSelectablePage
     {
         private string _waitingHotkeyName;
 
         GUIStyle _buttonStyle;
         GUIStyle _downButtonStyle;
+        GUIStyle _labelStyle;
 
-        public string Name => "Hotkey & Time Scale";
+        public string Name => "Hotkey & Time";
 
         public int Priority => 400;
 
@@ -36,19 +38,21 @@ namespace TurnBased.Menus
                     hover = _buttonStyle.active
                 };
                 _downButtonStyle.active.textColor = Color.gray;
+                _labelStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleLeft, padding = _buttonStyle.padding };
             }
 
-            OnGUIHotkey();
+            using (new GUISubScope("Hotkey"))
+                OnGUIHotkey();
 
-            GUILayout.Space(10f);
+            using (new GUISubScope("Time"))
+                OnGUITime();
 
-            OnGUITimeScale();
+            using (new GUISubScope("Pause"))
+                OnGUIPause();
         }
 
         private void OnGUIHotkey()
         {
-            GUILayout.Label("Hotkeys:");
-
             if (!string.IsNullOrEmpty(_waitingHotkeyName) && HotkeyHelper.ReadKey(out BindingKeysData newKey))
             {
                 Mod.Core.Hotkeys.SetHotkey(_waitingHotkeyName, newKey);
@@ -61,9 +65,10 @@ namespace TurnBased.Menus
             {
                 using (new GUILayout.VerticalScope())
                 {
-                    foreach (string name in hotkeys.Keys)
+                    foreach (KeyValuePair<string, BindingKeysData> item in hotkeys)
                     {
-                        GUILayout.Label(name.Substring(HOTKEY_PREFIX.Length).ToSentence());
+                        GUIHelper.ToggleButton(item.Value != null,
+                            item.Key.Substring(HOTKEY_PREFIX.Length).ToSentence(), _labelStyle, GUILayout.ExpandWidth(false));
                     }
                 }
 
@@ -129,76 +134,104 @@ namespace TurnBased.Menus
                 GUILayout.FlexibleSpace();
             }
 
-            GUILayout.Space(10f);
-
             ToggleFiveFootStepOnRightClickGround =
                 GUIHelper.ToggleButton(ToggleFiveFootStepOnRightClickGround,
                 "Toggle 5-foot Step When Right Click On The Ground", _buttonStyle, GUILayout.ExpandWidth(false));
         }
 
-        void OnGUITimeScale()
+        private void OnGUITime()
         {
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label($"Minimum FPS: {MinimumFPS:f0}", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
+                GUIHelper.ToggleButton(true,
+                   $"Minimum FPS: {MinimumFPS:f0}", _labelStyle, GUILayout.ExpandWidth(false));
                 MinimumFPS =
                     GUIHelper.RoundedHorizontalSlider(MinimumFPS, 0, 12f, 20f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
                 GUILayout.Space(5f);
-                GUILayout.Label("(Auto decrease Time Scale to prevent FPS drops below this value)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+                GUILayout.Label("(Auto decrease Time Scale to prevent FPS from dropping below this value)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
             }
 
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label($"Time Scale Multiplier Between Turns: {TimeScaleBetweenTurns:f2}x", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
+                GUIHelper.ToggleButton(TimeScaleBetweenTurns != 1f,
+                   $"Time Scale Multiplier Between Turns: {TimeScaleBetweenTurns:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleBetweenTurns =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleBetweenTurns, 1, 1f, 10f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
 
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label($"Time Scale Multiplier In Player's Turn: {TimeScaleInPlayerTurn:f2}x", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
+                GUIHelper.ToggleButton(TimeScaleInPlayerTurn != 1f,
+                  $"Time Scale Multiplier In Player's Turn: {TimeScaleInPlayerTurn:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleInPlayerTurn =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleInPlayerTurn, 1, 1f, 5f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
 
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label($"Time Scale Multiplier In Non-Player's Turn: {TimeScaleInNonPlayerTurn:f2}x", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
+                GUIHelper.ToggleButton(TimeScaleInNonPlayerTurn != 1f,
+                    $"Time Scale Multiplier In Non-Player's Turn: {TimeScaleInNonPlayerTurn:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleInNonPlayerTurn =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleInNonPlayerTurn, 1, 1f, 5f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
 
-            GUILayout.Space(10f);
-
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label($"Casting Time Multiplier Of Full Round Spell: {CastingTimeOfFullRoundSpell:f2}x", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
+                GUIHelper.ToggleButton(CastingTimeOfFullRoundSpell != 1f,
+                    $"Casting Time Multiplier Of Full Round Spell: {CastingTimeOfFullRoundSpell:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
                 CastingTimeOfFullRoundSpell =
                     GUIHelper.RoundedHorizontalSlider(CastingTimeOfFullRoundSpell, 1, 0.5f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+                GUILayout.Space(5f);
+                GUILayout.Label("(The animation of casting a full round spell is 6 seconds by default)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
             }
-
-            GUILayout.Space(10f);
 
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label($"Time To Wait For Idle AI: {TimeToWaitForIdleAI:f2}s", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
+                GUIHelper.ToggleButton(true,
+                    $"Time To Wait For Idle AI: {TimeToWaitForIdleAI:f2}s", _labelStyle, GUILayout.ExpandWidth(false));
                 TimeToWaitForIdleAI =
                     GUIHelper.RoundedHorizontalSlider(TimeToWaitForIdleAI, 1, 0.1f, 3f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
 
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label($"Time To Wait For Ending Turn: {TimeToWaitForEndingTurn:f2}s", GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
+                GUIHelper.ToggleButton(true,
+                    $"Time To Wait For Ending Turn: {TimeToWaitForEndingTurn:f2}s", _labelStyle, GUILayout.ExpandWidth(false));
                 TimeToWaitForEndingTurn =
                     GUIHelper.RoundedHorizontalSlider(TimeToWaitForEndingTurn, 1, 0.1f, 3f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
+        }
+
+        void OnGUIPause()
+        {
+            DoNotPauseOnCombatStart =
+                GUIHelper.ToggleButton(DoNotPauseOnCombatStart,
+                "DO NOT Auto Pause On Combat Start" +
+                " (Ignore the game setting)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+
+            PauseOnPlayerTurnStart =
+                GUIHelper.ToggleButton(PauseOnPlayerTurnStart,
+                "Pause On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            PauseOnPlayerTurnEnd =
+                GUIHelper.ToggleButton(PauseOnPlayerTurnEnd,
+                "Pause On Player's Turn End", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            PauseOnNonPlayerTurnStart =
+                GUIHelper.ToggleButton(PauseOnNonPlayerTurnStart,
+                "Pause On Non-Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            PauseOnNonPlayerTurnEnd =
+                GUIHelper.ToggleButton(PauseOnNonPlayerTurnEnd,
+                "Pause On Non-Player's Turn End", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            PauseOnPlayerFinishFiveFoot =
+                GUIHelper.ToggleButton(PauseOnPlayerFinishFiveFoot,
+                "Pause On Player's Unit Finished The 5-Foot Step", _buttonStyle, GUILayout.ExpandWidth(false));
+
+            PauseOnPlayerFinishFirstMove =
+                GUIHelper.ToggleButton(PauseOnPlayerFinishFirstMove,
+                "Pause On Player's Unit Finished The First Move Action Through Move", _buttonStyle, GUILayout.ExpandWidth(false));
         }
     }
 }

@@ -154,20 +154,6 @@ namespace TurnBased.Menus
                                 GUILayout.Label(unit.CombatState.AttackOfOpportunityCount.ToString());
                         }
 
-                        using (new GUILayout.VerticalScope())
-                        {
-                            GUILayout.Label("TTNR");
-                            foreach (UnitEntityData unit in units)
-                                GUILayout.Label(HightlightedCooldownText(unit.GetTimeToNextTurn()));
-                        }
-
-                        using (new GUILayout.VerticalScope())
-                        {
-                            GUILayout.Label("CanAct");
-                            foreach (UnitEntityData unit in units)
-                                GUILayout.Label(unit.CanPerformAction().ToString());
-                        }
-
                         GUILayout.FlexibleSpace();
                     }
                 }
