@@ -32,14 +32,15 @@ namespace TurnBased.Controllers
         #region Fields
 
         private TurnController _currentTurn;
+        private bool _hasEnemyInCombat;
         private bool _hasSurpriseRound;
+        private bool _isUnitsChanged;
         private TimeSpan _startTime;
         private float _timeSinceStart;
         private readonly TimeScaleRegulator _timeScale = new TimeScaleRegulator();
         private List<UnitEntityData> _units = new List<UnitEntityData>();
         HashSet<UnitEntityData> _unitsToSurprise = new HashSet<UnitEntityData>();
         private readonly UnitsOrderComaprer _unitsOrderComaprer = new UnitsOrderComaprer();
-        private bool _unitsSorted;
 
         #endregion
 
@@ -56,7 +57,21 @@ namespace TurnBased.Controllers
             }
         }
 
+        public bool HasEnemyInCombat {
+            get {
+                UpdateUnitsInfo();
+                return _hasEnemyInCombat;
+            }
+        }
+
         public bool Initialized { get; private set; }
+
+        public IEnumerable<UnitEntityData> SortedUnits {
+            get {
+                UpdateUnitsInfo();
+                return _units;
+            }
+        }
 
         internal HashSet<RayView> TickedRayView { get; } = new HashSet<RayView>();
 
@@ -83,8 +98,8 @@ namespace TurnBased.Controllers
             // try to start a turn for the next unit
             if (CurrentTurn == null)
             {
-                UnitEntityData nextUnit = GetSortedUnits(true).First();
-                if (nextUnit.GetTimeToNextTurn() <= 0f)
+                UnitEntityData nextUnit = SortedUnits.FirstOrDefault();
+                if (nextUnit != null && nextUnit.GetTimeToNextTurn() <= 0f)
                 {
                     StartTurn(nextUnit);
                 }
@@ -103,7 +118,7 @@ namespace TurnBased.Controllers
 
                 // trim the delta time, when a turn will start at the end of this tick
                 TimeController timeController = Game.Instance.TimeController;
-                float timeToNextTurn = GetSortedUnits().First().GetTimeToNextTurn();
+                float timeToNextTurn = SortedUnits.FirstOrDefault()?.GetTimeToNextTurn() ?? 0f;
                 if (timeController.GameDeltaTime > timeToNextTurn && timeToNextTurn != 0f)
                 {
                     timeController.SetDeltaTime(timeToNextTurn);
@@ -127,16 +142,6 @@ namespace TurnBased.Controllers
 
         #region Methods
 
-        public IEnumerable<UnitEntityData> GetSortedUnits(bool forceSort = false)
-        {
-            if (!_unitsSorted || forceSort)
-            {
-                _units = _units.OrderBy(unit => unit, _unitsOrderComaprer).ToList();    // stable sort
-                _unitsSorted = true;
-            }
-            return _units;
-        }
-
         public bool IsSurprising(UnitEntityData unit)
         {
             return _hasSurpriseRound && _timeSinceStart < 6f && 
@@ -150,7 +155,7 @@ namespace TurnBased.Controllers
                 CurrentTurn = new TurnController(unit);
                 CurrentTurn.OnDelay += HandleDelayTurn;
                 CurrentTurn.OnEnd += HandleEndTurn;
-                _unitsSorted = false;
+                _isUnitsChanged = true;
             }
         }
 
@@ -159,8 +164,7 @@ namespace TurnBased.Controllers
             Mod.Debug(MethodBase.GetCurrentMethod(), tryToInitialize, isPartyCombatStateChanged);
 
             // try to initialize
-            if (tryToInitialize && Mod.Core.Enabled && 
-                Game.Instance.Player.IsInCombat && Game.Instance.Player.Group.HasEnemyInCombat())
+            if (tryToInitialize && Mod.Core.Enabled && Game.Instance.Player.IsInCombat)
                 HandleCombatStart(isPartyCombatStateChanged);
             else if(Initialized)
                 HandleCombatEnd();
@@ -169,13 +173,14 @@ namespace TurnBased.Controllers
         private void Clear()
         {
             // reset fields and properties
+            _hasEnemyInCombat = false;
             _hasSurpriseRound = false;
+            _isUnitsChanged = false;
             _startTime = Game.Instance.Player.GameTime;
             _timeSinceStart = 0f;
             _timeScale.Reset();
             _units.Clear();
             _unitsToSurprise.Clear();
-            _unitsSorted = false;
             CurrentTurn = null;
             Initialized = false;
             TickedRayView.Clear();
@@ -186,6 +191,7 @@ namespace TurnBased.Controllers
             Clear();
 
             _units.AddRange(Game.Instance.State.Units.Where(unit => unit.IsInCombat));
+            _isUnitsChanged = true;
 
             // surprise round
             if (isPartyCombatStateChanged && SurpriseRound)
@@ -252,7 +258,7 @@ namespace TurnBased.Controllers
             if (unit.IsInCombat && !_units.Contains(unit))
             {
                 _units.Add(unit);
-                _unitsSorted = false;
+                _isUnitsChanged = true;
             }
         }
 
@@ -261,7 +267,7 @@ namespace TurnBased.Controllers
             if (unit.IsInCombat && !_units.Contains(unit))
             {
                 _units.Insert(_units.IndexOf(targetUnit) + 1, unit);
-                _unitsSorted = false;
+                _isUnitsChanged = true;
             }
         }
 
@@ -273,7 +279,17 @@ namespace TurnBased.Controllers
                 {
                     CurrentTurn = null;
                 }
-                _unitsSorted = false;
+                _isUnitsChanged = true;
+            }
+        }
+
+        private void UpdateUnitsInfo()
+        {
+            if (_isUnitsChanged)
+            {
+                _hasEnemyInCombat = Game.Instance.Player.Group.HasEnemyInCombat();
+                _units = _units.OrderBy(unit => unit, _unitsOrderComaprer).ToList();    // stable sort
+                _isUnitsChanged = false;
             }
         }
 

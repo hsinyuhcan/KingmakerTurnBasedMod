@@ -322,7 +322,7 @@ namespace TurnBased.UI
             bool isDirty = false;
 
             // renew elements
-            foreach (UnitEntityData unit in Mod.Core.Combat.GetSortedUnits())
+            foreach (UnitEntityData unit in Mod.Core.Combat.SortedUnits)
             {
                 if (newCount >= CombatTrackerMaxUnits)
                 {

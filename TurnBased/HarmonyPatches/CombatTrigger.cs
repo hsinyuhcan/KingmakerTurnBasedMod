@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
+using static TurnBased.Main;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -159,7 +160,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && !IsPassing())
                 {
-                    return !Game.Instance.Player.Group.HasEnemyInCombat();
+                    return !Mod.Core.Combat.HasEnemyInCombat;
                 }
                 return true;
             }
