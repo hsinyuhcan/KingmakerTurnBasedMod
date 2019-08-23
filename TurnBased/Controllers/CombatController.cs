@@ -1,6 +1,5 @@
 ﻿using Kingmaker;
 using Kingmaker.Blueprints.Root;
-using Kingmaker.Blueprints.Root.Strings.GameLog;
 using Kingmaker.Controllers;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem;
@@ -63,6 +62,7 @@ namespace TurnBased.Controllers
                 UpdateUnitsInfo();
                 return _hasEnemyInCombat;
             }
+            set => _hasEnemyInCombat = value;
         }
 
         public bool Initialized { get; private set; }
@@ -186,7 +186,6 @@ namespace TurnBased.Controllers
         private void Clear()
         {
             // reset fields and properties
-            _hasEnemyInCombat = false;
             _hasSurpriseRound = false;
             _isUnitsChanged = false;
             _startTime = Game.Instance.Player.GameTime;
@@ -194,6 +193,7 @@ namespace TurnBased.Controllers
             _units.Clear();
             _unitsToSurprise.Clear();
             CurrentTurn = null;
+            HasEnemyInCombat = false;
             Initialized = false;
             RoundNumber = 0;
             TickedRayView.Clear();
@@ -313,7 +313,7 @@ namespace TurnBased.Controllers
         {
             if (_isUnitsChanged)
             {
-                _hasEnemyInCombat = Game.Instance.Player.Group.HasEnemyInCombat();
+                HasEnemyInCombat = Game.Instance.Player.Group.HasEnemyInCombat();
                 _units = _units.OrderBy(unit => unit, _unitsOrderComaprer).ToList();    // stable sort
                 _isUnitsChanged = false;
             }
