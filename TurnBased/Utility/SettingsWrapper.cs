@@ -46,9 +46,9 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange = value;
         }
 
-        public static bool RerollPerceptionCheckEachRoundAgainstStealth {
-            get => Mod.Settings.toggleRerollPerceptionCheckEachRoundAgainstStealth;
-            set => Mod.Settings.toggleRerollPerceptionCheckEachRoundAgainstStealth = value;
+        public static bool RerollPerceptionDiceAgainstStealthOncePerRound {
+            get => Mod.Settings.toggleRerollPerceptionDiceAgainstStealthOncePerRound;
+            set => Mod.Settings.toggleRerollPerceptionDiceAgainstStealthOncePerRound = value;
         }
 
         public static float RadiusOfCollision {

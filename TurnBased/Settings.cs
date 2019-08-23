@@ -11,7 +11,7 @@ namespace TurnBased
         public float distanceOfFiveFootStep = 1.5f;
         public bool toggleSurpriseRound = true;
         public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
-        public bool toggleRerollPerceptionCheckEachRoundAgainstStealth;
+        public bool toggleRerollPerceptionDiceAgainstStealthOncePerRound;
 
         public float radiusOfCollision = 0.9f;
         public bool toggleMovingThroughFriends = true;

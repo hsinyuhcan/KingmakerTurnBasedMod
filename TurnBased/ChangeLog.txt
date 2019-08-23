@@ -1,7 +1,7 @@
 ﻿Version 0.9.39
 	Improved settings menu, added subtitles
 	Added an option to ignore dead units if they cannot be targeted
-	Added an option to re-roll perception check each round against stealth
+	Added an option to re-roll perception dice against stealth once per round
 	Changed units remembered by enemies can enter stealth in combat (when they're out of LoS) 
 	Changed units in stealth won't be spotted by neutral units
 	Changed when the mouse is hovering on a unit's view, the indicators will show its circles instead of current unit's ones
