@@ -77,6 +77,12 @@ namespace TurnBased.Menus
             BugfixToggle(FixAbilityNotAutoDeactivateIfCombatEnded,
                 "Fix some abilities will not be auto deactivated after combat (Inspire Greatness, Inspire Heroics)", true, true,
                 () => Mod.Core.Blueprint.AbilityDeactivateIfCombatEnded.Update());
+            
+            BugfixToggle(FixBlindFightDistance,
+                "Fix Blind-Fight needs a extreme close distance to prevent from losing AC instead of melee distance", true, true);
+
+            BugfixToggle(FixConfusedUnitCanAttackDeadUnit,
+                "Fix sometimes a confused unit can act normally because it tried to attack a dead unit and failed", true, true);
 
             BugfixToggle(FixHasMotionThisTick,
                 "Fix sometimes the game does not regard a unit that is forced to move as a unit that is moved (cause AoO inconsistent)", true, true);
@@ -87,8 +93,11 @@ namespace TurnBased.Menus
             BugfixToggle(FixAbilityCircleNotAppear,
                 "Fix the ability circle does not appear properly when you first time select any ability of the unit using a hotkey", true, true);
 
+            BugfixToggle(FixAbilityCanTargetUntargetableUnit,
+                "Fix untargetable units can be targeted by abilities", true, true);
+
             BugfixToggle(FixAbilityCanTargetDeadUnit,
-                "Fix dead units can be targeted even when current ability cannot be cast to dead target", true, true);
+                "Fix dead units can be targeted by abilities that cannot be cast to dead target", true, true);
         }
 
         private void BugfixToggle(BugfixOption option, string text, bool canToggleTB, bool canToggleRT, Action onToggle = null)

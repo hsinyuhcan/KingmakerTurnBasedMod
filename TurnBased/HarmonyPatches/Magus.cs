@@ -13,7 +13,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    static class MagusAbilities
+    static class Magus
     {
         // fix Magus Spell Combat and Spellstrike (Spell Combat consumes one more move action after attack)
         [HarmonyPatch(typeof(MagusController), nameof(MagusController.HandleUnitCommandDidAct), typeof(UnitCommand))]

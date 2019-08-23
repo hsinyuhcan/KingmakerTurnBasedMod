@@ -46,9 +46,9 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange = value;
         }
 
-        public static bool RerollPerceptionCheckEachRoundAgainstStealth {
-            get => Mod.Settings.toggleRerollPerceptionCheckEachRoundAgainstStealth;
-            set => Mod.Settings.toggleRerollPerceptionCheckEachRoundAgainstStealth = value;
+        public static bool RerollPerceptionDiceAgainstStealthOncePerRound {
+            get => Mod.Settings.toggleRerollPerceptionDiceAgainstStealthOncePerRound;
+            set => Mod.Settings.toggleRerollPerceptionDiceAgainstStealthOncePerRound = value;
         }
 
         public static float RadiusOfCollision {
@@ -339,6 +339,11 @@ namespace TurnBased.Utility
             set => Mod.Settings.timeScaleInNonPlayerTurn = value;
         }
 
+        public static float TimeScaleInUnknownTurn {
+            get => Mod.Settings.timeScaleInUnknownTurn;
+            set => Mod.Settings.timeScaleInUnknownTurn = value;
+        }
+        
         public static float CastingTimeOfFullRoundSpell {
             get => Mod.Settings.castingTimeOfFullRoundSpell;
             set => Mod.Settings.castingTimeOfFullRoundSpell = value;
@@ -418,6 +423,10 @@ namespace TurnBased.Utility
         public static BugfixOption FixSpellstrikeWithMetamagicReach => Mod.Settings.toggleFixSpellstrikeWithMetamagicReach;
 
         public static BugfixOption FixAbilityNotAutoDeactivateIfCombatEnded => Mod.Settings.toggleFixAbilityNotAutoDeactivateIfCombatEnded;
+
+        public static BugfixOption FixBlindFightDistance => Mod.Settings.toggleFixBlindFightDistance;
+
+        public static BugfixOption FixConfusedUnitCanAttackDeadUnit => Mod.Settings.toggleFixConfusedUnitCanAttackDeadUnit;
         
         public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
 
@@ -425,8 +434,10 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixAbilityCircleNotAppear => Mod.Settings.toggleFixAbilityCircleNotAppear;
 
-        public static BugfixOption FixAbilityCanTargetDeadUnit => Mod.Settings.toggleFixAbilityCanTargetDeadUnit;
+        public static BugfixOption FixAbilityCanTargetUntargetableUnit => Mod.Settings.toggleFixAbilityCanTargetUntargetableUnit;
 
+        public static BugfixOption FixAbilityCanTargetDeadUnit => Mod.Settings.toggleFixAbilityCanTargetDeadUnit;
+        
         #endregion
     }
 }

@@ -11,7 +11,7 @@ namespace TurnBased
         public float distanceOfFiveFootStep = 1.5f;
         public bool toggleSurpriseRound = true;
         public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
-        public bool toggleRerollPerceptionCheckEachRoundAgainstStealth;
+        public bool toggleRerollPerceptionDiceAgainstStealthOncePerRound;
 
         public float radiusOfCollision = 0.9f;
         public bool toggleMovingThroughFriends = true;
@@ -73,6 +73,7 @@ namespace TurnBased
         public float timeScaleBetweenTurns = 5f;
         public float timeScaleInPlayerTurn = 1f;
         public float timeScaleInNonPlayerTurn = 2f;
+        public float timeScaleInUnknownTurn = 3f;
         public float castingTimeOfFullRoundSpell = 0.5f;
         public float timeToWaitForIdleAI = 0.5f;
         public float timeToWaitForEndingTurn = 0.1f;
@@ -98,9 +99,12 @@ namespace TurnBased
         public BugfixOption toggleFixSpellstrikeOnNeutralUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixSpellstrikeWithMetamagicReach = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityNotAutoDeactivateIfCombatEnded = new BugfixOption(true, false);
+        public BugfixOption toggleFixBlindFightDistance = new BugfixOption(true, false);
+        public BugfixOption toggleFixConfusedUnitCanAttackDeadUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleRadius = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);
+        public BugfixOption toggleFixAbilityCanTargetUntargetableUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCanTargetDeadUnit = new BugfixOption(true, false);
     }
 }

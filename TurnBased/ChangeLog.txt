@@ -1,7 +1,19 @@
-﻿Version 0.9.39
+﻿Version 0.9.40
+	Added round number to the combat log
+	Added a mark in front of the name of the units which cannot act before the next round
+	Added a time scale multiplier for invisible units
+	Added an option to fix the distance of Blind-Fight
+	Added an option to prevent abilities from targeting untargetable units
+	Added an option to prevent confused units from trying to attack dead units
+	Fixed some issue of confusion
+	Fixed turn-based mode cannot auto start in certain cases
+	Fixed player's unit cannot end its turn if it's unable to act
+	Fixed the resource of activated abilities won't be consumed even if the unit delays to the next round
+
+Version 0.9.39
 	Improved settings menu, added subtitles
 	Added an option to ignore dead units if they cannot be targeted
-	Added an option to re-roll perception check each round against stealth
+	Added an option to re-roll perception dice against stealth once per round
 	Changed units remembered by enemies can enter stealth in combat (when they're out of LoS) 
 	Changed units in stealth won't be spotted by neutral units
 	Changed when the mouse is hovering on a unit's view, the indicators will show its circles instead of current unit's ones

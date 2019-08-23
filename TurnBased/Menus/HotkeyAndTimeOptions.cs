@@ -162,7 +162,7 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(TimeScaleInPlayerTurn != 1f,
-                  $"Time Scale Multiplier In Player's Turn: {TimeScaleInPlayerTurn:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                  $"Time Scale Multiplier For Player Units: {TimeScaleInPlayerTurn:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleInPlayerTurn =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleInPlayerTurn, 1, 1f, 5f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
@@ -170,11 +170,19 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(TimeScaleInNonPlayerTurn != 1f,
-                    $"Time Scale Multiplier In Non-Player's Turn: {TimeScaleInNonPlayerTurn:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                    $"Time Scale Multiplier For Non-Player Units: {TimeScaleInNonPlayerTurn:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleInNonPlayerTurn =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleInNonPlayerTurn, 1, 1f, 5f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
 
+            using (new GUILayout.HorizontalScope())
+            {
+                GUIHelper.ToggleButton(TimeScaleInUnknownTurn != 1f,
+                    $"Time Scale Multiplier For Unknown Units: {TimeScaleInUnknownTurn:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                TimeScaleInUnknownTurn =
+                    GUIHelper.RoundedHorizontalSlider(TimeScaleInUnknownTurn, 1, 1f, 5f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+            }
+            
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(CastingTimeOfFullRoundSpell != 1f,

@@ -84,9 +84,9 @@ namespace TurnBased.Menus
                 GUILayout.Label($"Move Action: {currentTurn?.Commands.Raw[3]}");
                 GUILayout.Label($"Swift Action: {currentTurn?.Commands.Raw[2]}");
 
-                List<UnitEntityData> units = roundController.GetSortedUnits().ToList();
+                IEnumerable<UnitEntityData> units = roundController.SortedUnits;
 
-                if (units.Count > 0)
+                if (units.Any())
                 {
                     GUILayout.Space(10f);
                     using (new GUILayout.HorizontalScope())

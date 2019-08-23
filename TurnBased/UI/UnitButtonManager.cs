@@ -33,6 +33,7 @@ namespace TurnBased.UI
         private Color[] _colors;
         private Image _mask;
         private Image _maskActive;
+        private GameObject _markIsNextRound;
         private GameObject _iconCanNotPerformAction;
         private GameObject _iconIsSurprising;
         private GameObject _iconIsFlatFooted;
@@ -68,7 +69,6 @@ namespace TurnBased.UI
             buttonUnit.name = "Button_Unit";
             buttonUnit.GetComponent<ButtonPF>().onClick = new Button.ButtonClickedEvent();
             DestroyImmediate(buttonUnit.GetComponent<JournalQuestNaviElement>());
-            buttonUnit.transform.Find("BackgroundInActive/Decal").SafeDestroy();
             buttonUnit.transform.Find("Complied").SafeDestroy();
 
             RectTransform rectButtonUnit = (RectTransform)buttonUnit.transform;
@@ -156,7 +156,9 @@ namespace TurnBased.UI
 
             _mask = gameObject.transform.Find("BackgroundInActive/Highlight").gameObject.GetComponent<Image>();
             _maskActive = gameObject.transform.Find("BackgroundActive/Highlight").gameObject.GetComponent<Image>();
-        
+
+            _markIsNextRound = gameObject.transform.Find("BackgroundInActive/Decal").gameObject;
+
             _iconCanNotPerformAction = gameObject.transform.Find("CanNotPerformAction").gameObject;
             _iconIsSurprising = gameObject.transform.Find("IsSurprising").gameObject;
             _iconIsFlatFooted = gameObject.transform.Find("IsFlatFooted").gameObject;
@@ -309,6 +311,7 @@ namespace TurnBased.UI
         private void UpdateStateIcons()
         {
             UnitEntityData currentUnit;
+            _markIsNextRound.SetActive(Unit != null && !_isCurrent && Unit.GetTimeToNextTurn() >= Mod.Core.Combat.TimeToNextRound);
             _iconIsSurprising.SetActive(Unit != null && !_isCurrent && Unit.IsSurprising());
             _iconIsFlatFooted.SetActive(ShowIsFlatFootedIconOnUI &&
                 Unit != null && !_isCurrent && (currentUnit = Mod.Core.Combat.CurrentTurn?.Unit) != null &&

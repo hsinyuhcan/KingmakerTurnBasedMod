@@ -14,7 +14,6 @@ using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Mechanics;
-using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using ModMaker.Utility;
 using System;
@@ -204,120 +203,6 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // tick ray effects even while time is frozen (e.g. Lightning Bolt)
-        [HarmonyPatch(typeof(RayView), nameof(RayView.Update))]
-        static class RayView_Update_Patch
-        {
-            [HarmonyPrefix]
-            static void Prefix(RayView __instance)
-            {
-                if (IsInCombat() && !IsPassing())
-                {
-                    if (Mod.Core.Combat.TickedRayView.Add(__instance))
-                    {
-                        __instance.SetPrevTickTime(TimeSpan.Zero);
-                    }
-                }
-            }
-        }
-
-        // tick AbilityDeliverEffect even while time is frozen (e.g. Scorching Ray)
-        [HarmonyPatch(typeof(AbilityExecutionProcess), nameof(AbilityExecutionProcess.Tick))]
-        static class AbilityExecutionProcess_Tick_Patch
-        {
-            [HarmonyPrefix]
-            static void Prefix(AbilityExecutionProcess __instance, ref TimeSpan? __state)
-            {
-                if ((IsInCombat() && __instance.Context.AbilityBlueprint.GetComponent<AbilityDeliverEffect>() != null) ||
-                    (Mod.Enabled && Mod.Core.LastTickTimeOfAbilityExecutionProcess.ContainsKey(__instance)))
-                {
-                    if (Mod.Core.LastTickTimeOfAbilityExecutionProcess.TryGetValue(__instance, out TimeSpan gameTime))
-                    {
-                        gameTime += Game.Instance.TimeController.GameDeltaTime.Seconds();
-                    }
-                    else
-                    {
-                        gameTime = Game.Instance.Player.GameTime;
-                    }
-
-                    Mod.Core.LastTickTimeOfAbilityExecutionProcess[__instance] = gameTime;
-
-                    __state = Game.Instance.Player.GameTime;
-                    Game.Instance.Player.GameTime = gameTime;
-                }
-            }
-
-            [HarmonyPostfix]
-            static void Postfix(AbilityExecutionProcess __instance, ref TimeSpan? __state)
-            {
-                if (__state.HasValue)
-                {
-                    if (__instance.IsEnded)
-                        Mod.Core.LastTickTimeOfAbilityExecutionProcess.Remove(__instance);
-
-                    Game.Instance.Player.GameTime = __state.Value;
-                }
-            }
-        }
-
-        // stop ticking AbilityAreaEffectMovement when time is frozen (e.g. Cloudkill)
-        [HarmonyPatch(typeof(AbilityAreaEffectMovement), "OnTick", typeof(MechanicsContext), typeof(AreaEffectEntityData))]
-        static class AbilityAreaEffectMovement_OnTick_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix()
-            {
-                return !IsInCombat() || IsPassing();
-            }
-        }
-
-        // stop ticking cutscene commands when time is frozen (to fix some scripted event animations being skipped during TB combat)
-        [HarmonyPatch(typeof(CutscenePlayerData.TrackData), nameof(CutscenePlayerData.TrackData.Tick), typeof(CutscenePlayerData))]
-        static class TrackData_Tick_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(CutscenePlayerData.TrackData __instance)
-            {
-                return !IsInCombat() || IsPassing() || !__instance.IsPlaying;
-            }
-        }
-
-        // ** moved to TurnController
-        [HarmonyPatch(typeof(UnitConfusionController), "TickOnUnit", typeof(UnitEntityData))]
-        static class UnitConfusionController_TickOnUnit_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitEntityData unit)
-            {
-                return !IsInCombat() || !unit.IsInCombat || unit.IsCurrentUnit();
-            }
-
-            [HarmonyPostfix]
-            static void Postfix(UnitEntityData unit)
-            {
-                if (IsInCombat() && unit.IsCurrentUnit())
-                {
-                    UnitPartConfusion unitPartConfusion = unit.Get<UnitPartConfusion>();
-                    if (unitPartConfusion != null &&
-                        unitPartConfusion.RoundStartTime == Game.Instance.TimeController.GameTime)
-                    {
-                        unitPartConfusion.RoundStartTime -= TimeSpan.FromTicks(1L);
-                    }
-                }
-            }
-        }
-
-        // ** moved to TurnController
-        [HarmonyPatch(typeof(UnitTicksController), "TickOnUnit", typeof(UnitEntityData))]
-        static class UnitTicksController_TickOnUnit_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitEntityData unit)
-            {
-                return !IsInCombat() || !unit.IsInCombat;
-            }
-        }
-
         // fix toggleable abilities
         [HarmonyPatch(typeof(UnitActivatableAbilitiesController), "TickOnUnit", typeof(UnitEntityData))]
         static class UnitActivatableAbilitiesController_TickOnUnit_Patch
@@ -400,63 +285,92 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // fix prone (units can only stand up in their turn)
-        [HarmonyPatch(typeof(UnitProneController), nameof(UnitProneController.Tick), typeof(UnitEntityData))]
-        static class UnitProneController_Tick_Patch
+        // tick ray effects even while time is frozen (e.g. Lightning Bolt)
+        [HarmonyPatch(typeof(RayView), nameof(RayView.Update))]
+        static class RayView_Update_Patch
         {
             [HarmonyPrefix]
-            static void Prefix(UnitEntityData unit)
+            static void Prefix(RayView __instance)
             {
-                if (IsInCombat())
+                if (IsInCombat() && !IsPassing())
                 {
-                    ProneState proneState = unit.Descriptor.State.Prone;
-                    if (proneState.Active)
+                    if (Mod.Core.Combat.TickedRayView.Add(__instance))
                     {
-                        if (IsPassing())
-                        {
-                            if (unit.IsInCombat)
-                            {
-                                proneState.Duration = 3f.Seconds() - unit.GetTimeToNextTurn().Seconds() - new TimeSpan(1L);
-                                if (proneState.Duration < TimeSpan.Zero)
-                                {
-                                    proneState.Duration = TimeSpan.Zero;
-                                }
-                                proneState.Duration -= Game.Instance.TimeController.DeltaTime.Seconds();
-                            }
-                        }
-                        else
-                        {
-                            if (unit.IsCurrentUnit())
-                            {
-                                if (IsActing() && unit.HasMoveAction())
-                                {
-                                    proneState.Duration = 3f.Seconds();
-                                }
-                                else
-                                {
-                                    proneState.Duration = TimeSpan.Zero;
-                                }
-                            }
-                            proneState.Duration -= Game.Instance.TimeController.DeltaTime.Seconds();
-                        }
+                        __instance.SetPrevTickTime(TimeSpan.Zero);
                     }
                 }
             }
         }
 
-        // fix prone (remove the delay after standing up)
-        [HarmonyPatch(typeof(UnitEntityView), nameof(UnitEntityView.IsGetUp), MethodType.Getter)]
-        static class UnitEntityView_get_IsGetUp_Patch
+        // tick AbilityDeliverEffect even while time is frozen (e.g. Scorching Ray)
+        [HarmonyPatch(typeof(AbilityExecutionProcess), nameof(AbilityExecutionProcess.Tick))]
+        static class AbilityExecutionProcess_Tick_Patch
         {
             [HarmonyPrefix]
-            static bool Prefix(UnitEntityView __instance, ref bool __result)
+            static void Prefix(AbilityExecutionProcess __instance, ref TimeSpan? __state)
             {
-                if (IsInCombat())
+                if ((IsInCombat() && __instance.Context.AbilityBlueprint.GetComponent<AbilityDeliverEffect>() != null) ||
+                    (Mod.Enabled && Mod.Core.LastTickTimeOfAbilityExecutionProcess.ContainsKey(__instance)))
                 {
-                    __result = __instance.AnimationManager?.IsStandUp ?? false;
-                    return false;
+                    if (Mod.Core.LastTickTimeOfAbilityExecutionProcess.TryGetValue(__instance, out TimeSpan gameTime))
+                    {
+                        gameTime += Game.Instance.TimeController.GameDeltaTime.Seconds();
+                    }
+                    else
+                    {
+                        gameTime = Game.Instance.Player.GameTime;
+                    }
+
+                    Mod.Core.LastTickTimeOfAbilityExecutionProcess[__instance] = gameTime;
+
+                    __state = Game.Instance.Player.GameTime;
+                    Game.Instance.Player.GameTime = gameTime;
                 }
-                return true;
+            }
+
+            [HarmonyPostfix]
+            static void Postfix(AbilityExecutionProcess __instance, ref TimeSpan? __state)
+            {
+                if (__state.HasValue)
+                {
+                    if (__instance.IsEnded)
+                        Mod.Core.LastTickTimeOfAbilityExecutionProcess.Remove(__instance);
+
+                    Game.Instance.Player.GameTime = __state.Value;
+                }
+            }
+        }
+
+        // stop ticking AbilityAreaEffectMovement when time is frozen (e.g. Cloudkill)
+        [HarmonyPatch(typeof(AbilityAreaEffectMovement), "OnTick", typeof(MechanicsContext), typeof(AreaEffectEntityData))]
+        static class AbilityAreaEffectMovement_OnTick_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix()
+            {
+                return !IsInCombat() || IsPassing();
+            }
+        }
+
+        // stop ticking cutscene commands when time is frozen (to fix some scripted event animations being skipped during TB combat)
+        [HarmonyPatch(typeof(CutscenePlayerData.TrackData), nameof(CutscenePlayerData.TrackData.Tick), typeof(CutscenePlayerData))]
+        static class TrackData_Tick_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(CutscenePlayerData.TrackData __instance)
+            {
+                return !IsInCombat() || IsPassing() || !__instance.IsPlaying;
+            }
+        }
+
+        // ** moved to TurnController
+        [HarmonyPatch(typeof(UnitTicksController), "TickOnUnit", typeof(UnitEntityData))]
+        static class UnitTicksController_TickOnUnit_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityData unit)
+            {
+                return !IsInCombat() || !unit.IsInCombat;
             }
         }
 

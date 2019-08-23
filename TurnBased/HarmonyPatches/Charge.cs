@@ -25,7 +25,7 @@ using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
 {
-    static class ChargeAbility
+    static class Charge
     {
         // fix Charge ability disables the obstacle detection for 1 second
         [HarmonyPatch(typeof(UnitMovementAgent), nameof(UnitMovementAgent.IsCharging), MethodType.Setter)]

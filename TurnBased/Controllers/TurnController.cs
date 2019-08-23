@@ -99,7 +99,7 @@ namespace TurnBased.Controllers
         {
             ImmuneAttackOfOpportunityOnDisengage = false;
 
-            if (Status == TurnStatus.Preparing && IsActed())
+            if (Status == TurnStatus.Preparing && (IsActed() || !Unit.CanPerformAction()))
             {
                 Status = TurnStatus.Acting;
             }
@@ -209,9 +209,6 @@ namespace TurnBased.Controllers
             CombatState.AIData.TickRound();
             Unit.Logic.CallFactComponents<ITickEachRound>(logic => logic.OnNewRound());
 
-            // pick the effect of confution - UnitConfusionController.TickOnUnit()
-            new UnitConfusionController().TickOnUnit(Unit);
-
             // reset the counter of AOO - UnitCombatCooldownsController.TickOnUnit()
             if (CombatState.AttackOfOpportunityPerRound > 0 &&
                 CombatState.AttackOfOpportunityCount <= CombatState.AttackOfOpportunityPerRound)
@@ -246,17 +243,14 @@ namespace TurnBased.Controllers
                     Game.Instance.IsPaused = true;
             }
 
-            if (RerollPerceptionCheckEachRoundAgainstStealth)
+            if (RerollPerceptionDiceAgainstStealthOncePerRound)
                 Unit.CachedPerceptionRoll = 0;
 
             if (CameraScrollToCurrentUnit)
                 Unit.ScrollTo();
 
             // set turn status
-            if (isDirectlyControllable)
-                Status = TurnStatus.Preparing;
-            else
-                Status = TurnStatus.Acting;
+            Status = isDirectlyControllable ? TurnStatus.Preparing : TurnStatus.Acting;
         }
 
         private bool ContinueActing()
@@ -382,6 +376,14 @@ namespace TurnBased.Controllers
             Cooldown.SwiftAction = TIME_SWIFT_ACTION;
 
             ToEnd();
+        }
+
+        public void ForceTickActivatableAbilities()
+        {
+            TurnStatus status = Status;
+            Status = TurnStatus.Acting;
+            new UnitActivatableAbilitiesController().TickOnUnit(Unit);
+            Status = status;
         }
 
         #endregion

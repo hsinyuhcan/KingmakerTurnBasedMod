@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
+using static TurnBased.Main;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -136,7 +137,7 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // don't engage an enemy which not "awake" (in game and not in fog of war)
+        // don't engage an enemy which is not "awake" (in game and not in fog of war)
         [HarmonyPatch(typeof(UnitCombatJoinController), "ShouldEngageEnemy", typeof(UnitEntityData), typeof(UnitEntityData))]
         static class UnitCombatJoinController_ShouldEngageEnemy_Patch
         {
@@ -159,7 +160,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && !IsPassing())
                 {
-                    return !Game.Instance.Player.Group.HasEnemyInCombat();
+                    return !Mod.Core.Combat.HasEnemyInCombat;
                 }
                 return true;
             }
