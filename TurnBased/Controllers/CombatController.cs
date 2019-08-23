@@ -144,7 +144,10 @@ namespace TurnBased.Controllers
             else
             {
                 // modify time scale
-                _timeScale.Modify(CurrentTurn.Unit.IsDirectlyControllable ? TimeScaleInPlayerTurn : TimeScaleInNonPlayerTurn);
+                _timeScale.Modify(
+                    (!DoNotShowInvisibleUnitOnCombatTracker || CurrentTurn.Unit.IsVisibleForPlayer) ?
+                    CurrentTurn.Unit.IsDirectlyControllable ? 
+                    TimeScaleInPlayerTurn : TimeScaleInNonPlayerTurn : TimeScaleInUnknownTurn);
             }
 
             // set game time

@@ -38,7 +38,8 @@ namespace TurnBased.Menus
 
                 DoNotShowInvisibleUnitOnCombatTracker =
                     GUIHelper.ToggleButton(DoNotShowInvisibleUnitOnCombatTracker,
-                    "DO NOT Show Invisible Units On The Combat Tracker", _buttonStyle, GUILayout.ExpandWidth(false));
+                    "DO NOT Show Invisible Units On The Combat Tracker" +
+                    " (Display them as \"Unknown\" when they're acting)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
             }
 
             using (new GUISubScope("Combat Tracker"))
@@ -124,11 +125,11 @@ namespace TurnBased.Menus
 
             ShowAttackIndicatorOfPlayer =
                 GUIHelper.ToggleButton(ShowAttackIndicatorOfPlayer,
-                "Show Attack Indicator ... Of Player", _buttonStyle, GUILayout.ExpandWidth(false));
+                "Show Attack Indicator ... For Player", _buttonStyle, GUILayout.ExpandWidth(false));
 
             ShowAttackIndicatorOfNonPlayer =
                 GUIHelper.ToggleButton(ShowAttackIndicatorOfNonPlayer,
-                "Show Attack Indicator ... Of Non-Player", _buttonStyle, GUILayout.ExpandWidth(false));
+                "Show Attack Indicator ... For Non-Player", _buttonStyle, GUILayout.ExpandWidth(false));
 
             ShowAttackIndicatorOnHoverUI =
                 GUIHelper.ToggleButton(ShowAttackIndicatorOnHoverUI,
@@ -151,11 +152,11 @@ namespace TurnBased.Menus
 
             ShowMovementIndicatorOfPlayer =
                 GUIHelper.ToggleButton(ShowMovementIndicatorOfPlayer,
-                "Show Movement Indicator ... Of Player", _buttonStyle, GUILayout.ExpandWidth(false));
+                "Show Movement Indicator ... For Player", _buttonStyle, GUILayout.ExpandWidth(false));
 
             ShowMovementIndicatorOfNonPlayer =
                 GUIHelper.ToggleButton(ShowMovementIndicatorOfNonPlayer,
-                "Show Movement Indicator ... Of Non-Player", _buttonStyle, GUILayout.ExpandWidth(false));
+                "Show Movement Indicator ... For Non-Player", _buttonStyle, GUILayout.ExpandWidth(false));
 
             ShowMovementIndicatorOnHoverUI =
                 GUIHelper.ToggleButton(ShowMovementIndicatorOnHoverUI,

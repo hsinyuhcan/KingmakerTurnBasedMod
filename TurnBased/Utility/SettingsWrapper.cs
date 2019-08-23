@@ -339,6 +339,11 @@ namespace TurnBased.Utility
             set => Mod.Settings.timeScaleInNonPlayerTurn = value;
         }
 
+        public static float TimeScaleInUnknownTurn {
+            get => Mod.Settings.timeScaleInUnknownTurn;
+            set => Mod.Settings.timeScaleInUnknownTurn = value;
+        }
+        
         public static float CastingTimeOfFullRoundSpell {
             get => Mod.Settings.castingTimeOfFullRoundSpell;
             set => Mod.Settings.castingTimeOfFullRoundSpell = value;

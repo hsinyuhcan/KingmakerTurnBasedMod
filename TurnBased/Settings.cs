@@ -73,6 +73,7 @@ namespace TurnBased
         public float timeScaleBetweenTurns = 5f;
         public float timeScaleInPlayerTurn = 1f;
         public float timeScaleInNonPlayerTurn = 2f;
+        public float timeScaleInUnknownTurn = 3f;
         public float castingTimeOfFullRoundSpell = 0.5f;
         public float timeToWaitForIdleAI = 0.5f;
         public float timeToWaitForEndingTurn = 0.1f;
