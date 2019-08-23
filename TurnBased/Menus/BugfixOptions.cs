@@ -78,6 +78,9 @@ namespace TurnBased.Menus
                 "Fix some abilities will not be auto deactivated after combat (Inspire Greatness, Inspire Heroics)", true, true,
                 () => Mod.Core.Blueprint.AbilityDeactivateIfCombatEnded.Update());
 
+            BugfixToggle(FixConfusedUnitCanAttackDeadUnit,
+                "Fix sometimes a confused unit can act normally because it tried to attack a dead unit and failed", true, true);
+
             BugfixToggle(FixHasMotionThisTick,
                 "Fix sometimes the game does not regard a unit that is forced to move as a unit that is moved (cause AoO inconsistent)", true, true);
 

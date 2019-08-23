@@ -418,6 +418,8 @@ namespace TurnBased.Utility
         public static BugfixOption FixSpellstrikeWithMetamagicReach => Mod.Settings.toggleFixSpellstrikeWithMetamagicReach;
 
         public static BugfixOption FixAbilityNotAutoDeactivateIfCombatEnded => Mod.Settings.toggleFixAbilityNotAutoDeactivateIfCombatEnded;
+
+        public static BugfixOption FixConfusedUnitCanAttackDeadUnit => Mod.Settings.toggleFixConfusedUnitCanAttackDeadUnit;
         
         public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
 

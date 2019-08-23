@@ -98,6 +98,7 @@ namespace TurnBased
         public BugfixOption toggleFixSpellstrikeOnNeutralUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixSpellstrikeWithMetamagicReach = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityNotAutoDeactivateIfCombatEnded = new BugfixOption(true, false);
+        public BugfixOption toggleFixConfusedUnitCanAttackDeadUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleRadius = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);

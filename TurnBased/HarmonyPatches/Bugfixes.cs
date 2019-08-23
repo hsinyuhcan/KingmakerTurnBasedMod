@@ -7,6 +7,7 @@ using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Items;
 using Kingmaker.Items.Slots;
+using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.UnitLogic.ActivatableAbilities;
@@ -223,6 +224,63 @@ namespace TurnBased.HarmonyPatches
                         __result = true;
                     }
                 }
+            }
+        }
+
+        // fix sometimes a confused unit can act normally because it tried but failed to attack a dead unit
+        [HarmonyPatch(typeof(UnitConfusionController), "AttackNearest", typeof(UnitPartConfusion))]
+        static class UnitConfusionController_AttackNearest_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // unitInMemory != part.Owner.Unit
+                // ---------------- after  ----------------
+                // IsValid(unitInMemory) && unitInMemory != part.Owner.Unit
+                // ---------------- before ----------------
+                // unitInGroup != part.Owner.Unit
+                // ---------------- after  ----------------
+                // IsValid(unitInGroup) && unitInGroup != part.Owner.Unit
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<UnitPart, UnitDescriptor>(nameof(UnitPart.Owner)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<UnitDescriptor, UnitEntityData>(nameof(UnitDescriptor.Unit)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Bne_Un)
+                };
+                int startIndex_1 = codes.FindCodes(findingCodes);
+                int startIndex_2 = codes.FindCodes(startIndex_1 + findingCodes.Count, findingCodes);
+                if (startIndex_1 >= 0 && startIndex_2 >= 0)
+                {
+                    return codes
+                        .InsertRange(startIndex_2, CreatePatch(codes, il, startIndex_2), false)
+                        .InsertRange(startIndex_1, CreatePatch(codes, il, startIndex_1), false).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static List<CodeInstruction> CreatePatch(IEnumerable<CodeInstruction> codes, ILGenerator il, int startIndex)
+            {
+                return new List<CodeInstruction>()
+                {
+                    new CodeInstruction(OpCodes.Dup),
+                    new CodeInstruction(OpCodes.Call,
+                        new Func<UnitEntityData, bool>(IsValid).Method),
+                    new CodeInstruction(OpCodes.Brtrue, codes.NewLabel(startIndex, il)),
+                    new CodeInstruction(OpCodes.Pop),
+                    new CodeInstruction(OpCodes.Br, codes.NewLabel(startIndex + 4, il))
+                };
+            }
+
+            static bool IsValid(UnitEntityData unit)
+            {
+                return (Mod.Enabled && FixConfusedUnitCanAttackDeadUnit) ? !unit.Descriptor.State.IsDead : true;
             }
         }
 
