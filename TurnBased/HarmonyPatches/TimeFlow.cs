@@ -14,7 +14,6 @@ using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Mechanics;
-using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using ModMaker.Utility;
 using System;
@@ -279,31 +278,6 @@ namespace TurnBased.HarmonyPatches
             static bool Prefix(CutscenePlayerData.TrackData __instance)
             {
                 return !IsInCombat() || IsPassing() || !__instance.IsPlaying;
-            }
-        }
-
-        // ** moved to TurnController
-        [HarmonyPatch(typeof(UnitConfusionController), "TickOnUnit", typeof(UnitEntityData))]
-        static class UnitConfusionController_TickOnUnit_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitEntityData unit)
-            {
-                return !IsInCombat() || !unit.IsInCombat || unit.IsCurrentUnit();
-            }
-
-            [HarmonyPostfix]
-            static void Postfix(UnitEntityData unit)
-            {
-                if (IsInCombat() && unit.IsCurrentUnit())
-                {
-                    UnitPartConfusion unitPartConfusion = unit.Get<UnitPartConfusion>();
-                    if (unitPartConfusion != null &&
-                        unitPartConfusion.RoundStartTime == Game.Instance.TimeController.GameTime)
-                    {
-                        unitPartConfusion.RoundStartTime -= TimeSpan.FromTicks(1L);
-                    }
-                }
             }
         }
 

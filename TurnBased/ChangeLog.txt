@@ -1,5 +1,6 @@
 ﻿Version 0.9.40
 	Added an option to prevent confused units from trying to attack dead units
+	Fixed some issue of confusion
 	Fixed turn-based mode cannot auto start in certain cases
 	Fixed player's unit cannot end its turn if it's unable to act
 

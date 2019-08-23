@@ -209,9 +209,6 @@ namespace TurnBased.Controllers
             CombatState.AIData.TickRound();
             Unit.Logic.CallFactComponents<ITickEachRound>(logic => logic.OnNewRound());
 
-            // pick the effect of confution - UnitConfusionController.TickOnUnit()
-            new UnitConfusionController().TickOnUnit(Unit);
-
             // reset the counter of AOO - UnitCombatCooldownsController.TickOnUnit()
             if (CombatState.AttackOfOpportunityPerRound > 0 &&
                 CombatState.AttackOfOpportunityCount <= CombatState.AttackOfOpportunityPerRound)
@@ -253,10 +250,7 @@ namespace TurnBased.Controllers
                 Unit.ScrollTo();
 
             // set turn status
-            if (isDirectlyControllable)
-                Status = TurnStatus.Preparing;
-            else
-                Status = TurnStatus.Acting;
+            Status = isDirectlyControllable ? TurnStatus.Preparing : TurnStatus.Acting;
         }
 
         private bool ContinueActing()

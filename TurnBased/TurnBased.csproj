@@ -98,7 +98,7 @@
     <Compile Include="HarmonyPatches\Bugfixes.cs" />
     <Compile Include="HarmonyPatches\ChargeAbility.cs" />
     <Compile Include="HarmonyPatches\CollisionDetection.cs" />
-    <Compile Include="HarmonyPatches\ConfusionCondition.cs" />
+    <Compile Include="HarmonyPatches\Confusion.cs" />
     <Compile Include="HarmonyPatches\ActionCooldowns.cs" />
     <Compile Include="HarmonyPatches\Stealth.cs" />
     <Compile Include="HarmonyPatches\Summon.cs" />
