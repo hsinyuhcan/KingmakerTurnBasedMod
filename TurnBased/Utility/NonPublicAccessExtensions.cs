@@ -58,6 +58,12 @@ namespace TurnBased.Utility
                 (uiDecalBase, state);
         }
 
+        public static void TickOnUnit(this UnitActivatableAbilitiesController controller, UnitEntityData unit)
+        {
+            GetMethod<UnitActivatableAbilitiesController, Action<UnitActivatableAbilitiesController, UnitEntityData>>("TickOnUnit")
+                (controller, unit);
+        }
+
         public static int GetExclusiveState(this UnitAnimationManager unitAnimationManager)
         {
             return (int)typeof(UnitAnimationManager)

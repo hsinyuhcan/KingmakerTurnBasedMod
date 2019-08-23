@@ -378,6 +378,14 @@ namespace TurnBased.Controllers
             ToEnd();
         }
 
+        public void ForceTickActivatableAbilities()
+        {
+            TurnStatus status = Status;
+            Status = TurnStatus.Acting;
+            new UnitActivatableAbilitiesController().TickOnUnit(Unit);
+            Status = status;
+        }
+
         #endregion
 
         #region Special Actions

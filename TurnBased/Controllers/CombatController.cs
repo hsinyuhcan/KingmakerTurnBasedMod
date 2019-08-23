@@ -327,6 +327,10 @@ namespace TurnBased.Controllers
         {
             if (unit != targetUnit)
             {
+                if (targetUnit.GetTimeToNextTurn() >= TimeToNextRound)
+                {
+                    CurrentTurn.ForceTickActivatableAbilities();
+                }
                 RemoveUnit(unit);
                 InsertUnit(unit, targetUnit);
             }
