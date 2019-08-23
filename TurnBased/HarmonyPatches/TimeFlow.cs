@@ -203,6 +203,88 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // fix toggleable abilities
+        [HarmonyPatch(typeof(UnitActivatableAbilitiesController), "TickOnUnit", typeof(UnitEntityData))]
+        static class UnitActivatableAbilitiesController_TickOnUnit_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // activatableAbility.TimeToNextRound -= Game.Instance.TimeController.GameDeltaTime;
+                // if (activatableAbility.TimeToNextRound <= 0f)
+                // ---------------- after  ----------------
+                // activatableAbility.TimeToNextRound = GetTimeToNextRound(unit);
+                // if (activatableAbility.TimeToNextRound <= 0f && CanTickNewRound(unit))
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldloc_3),
+                    new CodeInstruction(OpCodes.Dup),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<ActivatableAbility, float>(nameof(ActivatableAbility.TimeToNextRound)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Call,
+                        GetPropertyInfo<Game, Game>(nameof(Game.Instance)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Ldfld,
+                        GetFieldInfo<Game, TimeController>(nameof(Game.TimeController))),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<TimeController, float>(nameof(TimeController.GameDeltaTime)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Sub),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<ActivatableAbility, float>(nameof(ActivatableAbility.TimeToNextRound)).GetSetMethod(true)),
+                    new CodeInstruction(OpCodes.Ldloc_3),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<ActivatableAbility, float>(nameof(ActivatableAbility.TimeToNextRound)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Ldc_R4),
+                    new CodeInstruction(OpCodes.Bgt_Un),
+                };
+                int startIndex = codes.FindCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    List<CodeInstruction> patchingCodes_1 = new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Ldarg_1),
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<float, UnitEntityData, float>(GetTimeToNextRound).Method)
+                    };
+                    List<CodeInstruction> patchingCodes_2 = new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Ldarg_1),
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<UnitEntityData, bool>(CanTickNewRound).Method),
+                        new CodeInstruction(OpCodes.Brfalse, codes.Item(startIndex + findingCodes.Count - 1).operand)
+                    };
+                    return codes
+                        .InsertRange(startIndex + findingCodes.Count, patchingCodes_2, true)
+                        .ReplaceRange(startIndex + 3, 4, patchingCodes_1, false).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static float GetTimeToNextRound(float timeToNextRound, UnitEntityData unit)
+            {
+                if (IsInCombat())
+                {
+                    if (!IsPassing())
+                    {
+                        return timeToNextRound;
+                    }
+                    else if (unit.IsInCombat)
+                    {
+                        return unit.GetTimeToNextTurn();
+                    }
+                }
+                return timeToNextRound -= Game.Instance.TimeController.GameDeltaTime;
+            }
+
+            static bool CanTickNewRound(UnitEntityData unit)
+            {
+                return !IsInCombat() || !unit.IsInCombat || (unit.IsCurrentUnit() && (IsActing() || IsEnding()));
+            }
+        }
+
         // tick ray effects even while time is frozen (e.g. Lightning Bolt)
         [HarmonyPatch(typeof(RayView), nameof(RayView.Update))]
         static class RayView_Update_Patch
@@ -289,148 +371,6 @@ namespace TurnBased.HarmonyPatches
             static bool Prefix(UnitEntityData unit)
             {
                 return !IsInCombat() || !unit.IsInCombat;
-            }
-        }
-
-        // fix toggleable abilities
-        [HarmonyPatch(typeof(UnitActivatableAbilitiesController), "TickOnUnit", typeof(UnitEntityData))]
-        static class UnitActivatableAbilitiesController_TickOnUnit_Patch
-        {
-            [HarmonyTranspiler]
-            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
-            {
-                // ---------------- before ----------------
-                // activatableAbility.TimeToNextRound -= Game.Instance.TimeController.GameDeltaTime;
-                // if (activatableAbility.TimeToNextRound <= 0f)
-                // ---------------- after  ----------------
-                // activatableAbility.TimeToNextRound = GetTimeToNextRound(unit);
-                // if (activatableAbility.TimeToNextRound <= 0f && CanTickNewRound(unit))
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
-                {
-                    new CodeInstruction(OpCodes.Ldloc_3),
-                    new CodeInstruction(OpCodes.Dup),
-                    new CodeInstruction(OpCodes.Callvirt,
-                        GetPropertyInfo<ActivatableAbility, float>(nameof(ActivatableAbility.TimeToNextRound)).GetGetMethod(true)),
-                    new CodeInstruction(OpCodes.Call,
-                        GetPropertyInfo<Game, Game>(nameof(Game.Instance)).GetGetMethod(true)),
-                    new CodeInstruction(OpCodes.Ldfld,
-                        GetFieldInfo<Game, TimeController>(nameof(Game.TimeController))),
-                    new CodeInstruction(OpCodes.Callvirt,
-                        GetPropertyInfo<TimeController, float>(nameof(TimeController.GameDeltaTime)).GetGetMethod(true)),
-                    new CodeInstruction(OpCodes.Sub),
-                    new CodeInstruction(OpCodes.Callvirt,
-                        GetPropertyInfo<ActivatableAbility, float>(nameof(ActivatableAbility.TimeToNextRound)).GetSetMethod(true)),
-                    new CodeInstruction(OpCodes.Ldloc_3),
-                    new CodeInstruction(OpCodes.Callvirt,
-                        GetPropertyInfo<ActivatableAbility, float>(nameof(ActivatableAbility.TimeToNextRound)).GetGetMethod(true)),
-                    new CodeInstruction(OpCodes.Ldc_R4),
-                    new CodeInstruction(OpCodes.Bgt_Un),
-                };
-                int startIndex = codes.FindCodes(findingCodes);
-                if (startIndex >= 0)
-                {
-                    List<CodeInstruction> patchingCodes_1 = new List<CodeInstruction>()
-                    {
-                        new CodeInstruction(OpCodes.Ldarg_1),
-                        new CodeInstruction(OpCodes.Call,
-                            new Func<float, UnitEntityData, float>(GetTimeToNextRound).Method)
-                    };
-                    List<CodeInstruction> patchingCodes_2 = new List<CodeInstruction>()
-                    {
-                        new CodeInstruction(OpCodes.Ldarg_1),
-                        new CodeInstruction(OpCodes.Call,
-                            new Func<UnitEntityData, bool>(CanTickNewRound).Method),
-                        new CodeInstruction(OpCodes.Brfalse, codes.Item(startIndex + findingCodes.Count - 1).operand)
-                    };
-                    return codes
-                        .InsertRange(startIndex + findingCodes.Count, patchingCodes_2, true)
-                        .ReplaceRange(startIndex + 3, 4, patchingCodes_1, false).Complete();
-                }
-                else
-                {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
-                }
-            }
-
-            static float GetTimeToNextRound(float timeToNextRound, UnitEntityData unit)
-            {
-                if (IsInCombat())
-                {
-                    if (!IsPassing())
-                    {
-                        return timeToNextRound;
-                    }
-                    else if (unit.IsInCombat)
-                    {
-                        return unit.GetTimeToNextTurn();
-                    }
-                }
-                return timeToNextRound -= Game.Instance.TimeController.GameDeltaTime;
-            }
-
-            static bool CanTickNewRound(UnitEntityData unit)
-            {
-                return !IsInCombat() || !unit.IsInCombat || (unit.IsCurrentUnit() && (IsActing() || IsEnding()));
-            }
-        }
-
-        // fix prone (units can only stand up in their turn)
-        [HarmonyPatch(typeof(UnitProneController), nameof(UnitProneController.Tick), typeof(UnitEntityData))]
-        static class UnitProneController_Tick_Patch
-        {
-            [HarmonyPrefix]
-            static void Prefix(UnitEntityData unit)
-            {
-                if (IsInCombat())
-                {
-                    ProneState proneState = unit.Descriptor.State.Prone;
-                    if (proneState.Active)
-                    {
-                        if (IsPassing())
-                        {
-                            if (unit.IsInCombat)
-                            {
-                                proneState.Duration = 3f.Seconds() - unit.GetTimeToNextTurn().Seconds() - new TimeSpan(1L);
-                                if (proneState.Duration < TimeSpan.Zero)
-                                {
-                                    proneState.Duration = TimeSpan.Zero;
-                                }
-                                proneState.Duration -= Game.Instance.TimeController.DeltaTime.Seconds();
-                            }
-                        }
-                        else
-                        {
-                            if (unit.IsCurrentUnit())
-                            {
-                                if (IsActing() && unit.HasMoveAction())
-                                {
-                                    proneState.Duration = 3f.Seconds();
-                                }
-                                else
-                                {
-                                    proneState.Duration = TimeSpan.Zero;
-                                }
-                            }
-                            proneState.Duration -= Game.Instance.TimeController.DeltaTime.Seconds();
-                        }
-                    }
-                }
-            }
-        }
-
-        // fix prone (remove the delay after standing up)
-        [HarmonyPatch(typeof(UnitEntityView), nameof(UnitEntityView.IsGetUp), MethodType.Getter)]
-        static class UnitEntityView_get_IsGetUp_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitEntityView __instance, ref bool __result)
-            {
-                if (IsInCombat())
-                {
-                    __result = __instance.AnimationManager?.IsStandUp ?? false;
-                    return false;
-                }
-                return true;
             }
         }
 
