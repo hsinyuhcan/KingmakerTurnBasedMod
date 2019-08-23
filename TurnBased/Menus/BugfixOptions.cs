@@ -77,6 +77,9 @@ namespace TurnBased.Menus
             BugfixToggle(FixAbilityNotAutoDeactivateIfCombatEnded,
                 "Fix some abilities will not be auto deactivated after combat (Inspire Greatness, Inspire Heroics)", true, true,
                 () => Mod.Core.Blueprint.AbilityDeactivateIfCombatEnded.Update());
+            
+            BugfixToggle(FixBlindFightDistance,
+                "Fix Blind-Fight needs a extreme close distance to prevent from losing AC instead of melee distance", true, true);
 
             BugfixToggle(FixConfusedUnitCanAttackDeadUnit,
                 "Fix sometimes a confused unit can act normally because it tried to attack a dead unit and failed", true, true);

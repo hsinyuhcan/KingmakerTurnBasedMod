@@ -419,6 +419,8 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixAbilityNotAutoDeactivateIfCombatEnded => Mod.Settings.toggleFixAbilityNotAutoDeactivateIfCombatEnded;
 
+        public static BugfixOption FixBlindFightDistance => Mod.Settings.toggleFixBlindFightDistance;
+
         public static BugfixOption FixConfusedUnitCanAttackDeadUnit => Mod.Settings.toggleFixConfusedUnitCanAttackDeadUnit;
         
         public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;

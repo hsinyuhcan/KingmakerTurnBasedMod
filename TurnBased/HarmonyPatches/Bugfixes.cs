@@ -4,9 +4,11 @@ using Kingmaker;
 using Kingmaker.Blueprints;
 using Kingmaker.Controllers.Clicks.Handlers;
 using Kingmaker.Controllers.Units;
+using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Items;
 using Kingmaker.Items.Slots;
+using Kingmaker.RuleSystem.Rules;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Abilities.Components;
@@ -222,6 +224,25 @@ namespace TurnBased.HarmonyPatches
                         list.Spells.Any(item => item.StickyTouch?.TouchDeliveryAbility == spell.Blueprint)))
                     {
                         __result = true;
+                    }
+                }
+            }
+        }
+
+        // fix Blind-Fight needs a extreme close distance to prevent from losing AC instead of melee distance
+        [HarmonyPatch(typeof(FlatFootedIgnore), nameof(FlatFootedIgnore.OnEventAboutToTrigger), typeof(RuleCheckTargetFlatFooted))]
+        static class FlatFootedIgnore_OnEventAboutToTrigger_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix(FlatFootedIgnore __instance, RuleCheckTargetFlatFooted evt)
+            {
+                if (Mod.Enabled && FixBlindFightDistance && !evt.IgnoreConcealment)
+                {
+                    if (evt.Target.Descriptor == __instance.Owner &&
+                        __instance.Type == FlatFootedIgnoreType.BlindFight &&
+                        evt.Initiator.CombatState.IsEngage(evt.Target))
+                    {
+                        evt.IgnoreConcealment = true;
                     }
                 }
             }
