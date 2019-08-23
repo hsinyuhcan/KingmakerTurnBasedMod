@@ -1,4 +1,5 @@
 ﻿Version 0.9.40
+	Added round number to the combat log
 	Added an option to prevent confused units from trying to attack dead units
 	Fixed some issue of confusion
 	Fixed turn-based mode cannot auto start in certain cases

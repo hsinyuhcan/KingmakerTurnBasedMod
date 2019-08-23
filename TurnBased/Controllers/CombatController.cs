@@ -1,11 +1,13 @@
 ﻿using Kingmaker;
 using Kingmaker.Blueprints.Root;
+using Kingmaker.Blueprints.Root.Strings.GameLog;
 using Kingmaker.Controllers;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.PubSubSystem;
 using Kingmaker.RuleSystem.Rules;
+using Kingmaker.UI.Log;
 using Kingmaker.UnitLogic;
 using Kingmaker.View;
 using ModMaker;
@@ -36,7 +38,6 @@ namespace TurnBased.Controllers
         private bool _hasSurpriseRound;
         private bool _isUnitsChanged;
         private TimeSpan _startTime;
-        private float _timeSinceStart;
         private readonly TimeScaleRegulator _timeScale = new TimeScaleRegulator();
         private List<UnitEntityData> _units = new List<UnitEntityData>();
         HashSet<UnitEntityData> _unitsToSurprise = new HashSet<UnitEntityData>();
@@ -73,7 +74,13 @@ namespace TurnBased.Controllers
             }
         }
 
+        public int RoundNumber { get; private set; }
+
         internal HashSet<RayView> TickedRayView { get; } = new HashSet<RayView>();
+
+        public float TimeSinceStart { get; private set; }
+
+        public float TimeToNextRound { get; private set; }
 
         #endregion
 
@@ -126,7 +133,13 @@ namespace TurnBased.Controllers
                 }
 
                 // advance time
-                _timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
+                TimeSinceStart += timeController.GameDeltaTime;
+                if ((TimeToNextRound -= timeController.GameDeltaTime) <= 0f)
+                {
+                    RoundNumber++;
+                    TimeToNextRound += 6f;
+                    LogRound();
+                }
             }
             else
             {
@@ -135,7 +148,7 @@ namespace TurnBased.Controllers
             }
 
             // set game time
-            Game.Instance.Player.GameTime = _startTime + _timeSinceStart.Seconds();
+            Game.Instance.Player.GameTime = _startTime + TimeSinceStart.Seconds();
         }
 
         #endregion
@@ -144,8 +157,8 @@ namespace TurnBased.Controllers
 
         public bool IsSurprising(UnitEntityData unit)
         {
-            return _hasSurpriseRound && _timeSinceStart < 6f && 
-                (unit == CurrentTurn?.Unit ? true : _timeSinceStart + unit.GetTimeToNextTurn() < 6f);
+            return _hasSurpriseRound && TimeSinceStart < 6f && 
+                (unit == CurrentTurn?.Unit ? true : unit.GetTimeToNextTurn() < TimeToNextRound);
         }
 
         public void StartTurn(UnitEntityData unit)
@@ -177,13 +190,15 @@ namespace TurnBased.Controllers
             _hasSurpriseRound = false;
             _isUnitsChanged = false;
             _startTime = Game.Instance.Player.GameTime;
-            _timeSinceStart = 0f;
             _timeScale.Reset();
             _units.Clear();
             _unitsToSurprise.Clear();
             CurrentTurn = null;
             Initialized = false;
+            RoundNumber = 0;
             TickedRayView.Clear();
+            TimeSinceStart = 0f;
+            TimeToNextRound = 0f;
         }
 
         private void HandleCombatStart(bool isPartyCombatStateChanged)
@@ -233,6 +248,10 @@ namespace TurnBased.Controllers
                 }
             }
 
+            RoundNumber = _hasSurpriseRound ? 0 : 1;
+            TimeToNextRound = 6f;
+            LogRound();
+
             Initialized = true;
         }
 
@@ -251,6 +270,13 @@ namespace TurnBased.Controllers
             if (AutoCancelActionsOnCombatEnd)
                 foreach (UnitEntityData unit in Game.Instance.Player.ControllableCharacters)
                     unit.TryCancelCommands();
+        }
+
+        private void LogRound()
+        {
+            Game.Instance.UI.BattleLogManager.LogView.AddLogEntry(
+                RoundNumber > 0 ? string.Format("<b>Round {0} started.</b>", RoundNumber) : "<b>Surprise round started.</b>",
+                new Color(0.5f, 0.1f, 0.1f, 1f), LogChannel.Combat);
         }
 
         private void AddUnit(UnitEntityData unit)
@@ -352,7 +378,7 @@ namespace TurnBased.Controllers
         {
             UnitEntityData unit = rule.Initiator;
             UnitCombatState.Cooldowns cooldown = unit.CombatState.Cooldown;
-            if (_timeSinceStart == 0f)
+            if (TimeSinceStart == 0f)
             {
                 // it's the beginning of combat
                 if (unit.IsSummoned(out UnitEntityData caster) && _units.Contains(caster))
@@ -382,7 +408,7 @@ namespace TurnBased.Controllers
                 }
                 else
                 {
-                    if (_hasSurpriseRound && _timeSinceStart < 6f)
+                    if (_hasSurpriseRound && TimeSinceStart < 6f)
                     {
                         // units that join during surprise round will be regard as surprised
                         cooldown.Initiative = 6f;
