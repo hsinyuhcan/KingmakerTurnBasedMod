@@ -2,6 +2,7 @@
 	Added round number to the combat log
 	Added a mark in front of the name of the units which cannot act before the next round
 	Added an option to fix the distance of Blind-Fight
+	Added an option to prevent abilities from targeting untargetable units
 	Added an option to prevent confused units from trying to attack dead units
 	Fixed some issue of confusion
 	Fixed turn-based mode cannot auto start in certain cases

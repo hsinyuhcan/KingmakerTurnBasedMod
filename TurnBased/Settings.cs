@@ -103,6 +103,7 @@ namespace TurnBased
         public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleRadius = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);
+        public BugfixOption toggleFixAbilityCanTargetUntargetableUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCanTargetDeadUnit = new BugfixOption(true, false);
     }
 }

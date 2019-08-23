@@ -393,7 +393,8 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // fix dead units can be targeted even when current ability cannot be cast to dead target
+        // fix untargetable units can be targeted by abilities
+        // fix dead units can be targeted by abilities that cannot be cast to dead target
         [HarmonyPatch(typeof(ClickWithSelectedAbilityHandler), nameof(ClickWithSelectedAbilityHandler.GetPriority), typeof(GameObject), typeof(Vector3))]
         static class ClickWithSelectedAbilityHandler_GetPriority_Patch
         {
@@ -408,7 +409,7 @@ namespace TurnBased.HarmonyPatches
                 // ---------------- after  ----------------
                 // if (... Ability.CanTarget(target))
                 // {
-                //     if (IsTargetingDeadUnit(Ability, target))
+                //     if (CanNotTarget(Ability, target))
                 //         return 0f;
                 //     ...
                 // }
@@ -432,7 +433,7 @@ namespace TurnBased.HarmonyPatches
                             GetPropertyInfo<ClickWithSelectedAbilityHandler, AbilityData>(nameof(ClickWithSelectedAbilityHandler.Ability)).GetGetMethod(true)),
                         new CodeInstruction(OpCodes.Ldloc_S, codes.Item(startIndex + 2).operand),
                         new CodeInstruction(OpCodes.Call,
-                            new Func<AbilityData, TargetWrapper, bool>(IsTargetingDeadUnit).Method),
+                            new Func<AbilityData, TargetWrapper, bool>(CanNotTarget).Method),
                         new CodeInstruction(OpCodes.Brfalse, codes.NewLabel(startIndex + findingCodes.Count, il)),
                         new CodeInstruction(OpCodes.Ldc_R4, 0f),
                         new CodeInstruction(OpCodes.Ret)
@@ -445,10 +446,11 @@ namespace TurnBased.HarmonyPatches
                 }
             }
 
-            static bool IsTargetingDeadUnit(AbilityData ability, TargetWrapper target)
+            static bool CanNotTarget(AbilityData ability, TargetWrapper target)
             {
-                return Mod.Enabled && FixAbilityCanTargetDeadUnit &&
-                    target.Unit != null && target.Unit.Descriptor.State.IsDead && !ability.Blueprint.CanCastToDeadTarget;
+                return Mod.Enabled && target.Unit != null &&
+                    ((FixAbilityCanTargetUntargetableUnit && target.Unit.Descriptor.State.IsUntargetable) ||
+                    (FixAbilityCanTargetDeadUnit && target.Unit.Descriptor.State.IsDead && !ability.Blueprint.CanCastToDeadTarget));
             }
         }
     }
