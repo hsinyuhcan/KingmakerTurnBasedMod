@@ -99,7 +99,7 @@ namespace TurnBased.Controllers
         {
             ImmuneAttackOfOpportunityOnDisengage = false;
 
-            if (Status == TurnStatus.Preparing && IsActed())
+            if (Status == TurnStatus.Preparing && (IsActed() || !Unit.CanPerformAction()))
             {
                 Status = TurnStatus.Acting;
             }

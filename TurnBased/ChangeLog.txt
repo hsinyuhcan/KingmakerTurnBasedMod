@@ -1,5 +1,6 @@
 ﻿Version 0.9.40
 	Fixed turn-based mode cannot auto start in certain cases
+	Fixed player's unit cannot end its turn if it's unable to act
 
 Version 0.9.39
 	Improved settings menu, added subtitles
