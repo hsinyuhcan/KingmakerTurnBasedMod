@@ -349,6 +349,11 @@ namespace TurnBased.Utility
             set => Mod.Settings.timeScaleInUnknownTurn = value;
         }
 
+        public static float MaxDelayBetweenIterativeAttacks {
+            get => Mod.Settings.maxDelayBetweenIterativeAttacks;
+            set => Mod.Settings.maxDelayBetweenIterativeAttacks = value;
+        }
+
         public static float CastingTimeOfFullRoundSpell {
             get => Mod.Settings.castingTimeOfFullRoundSpell;
             set => Mod.Settings.castingTimeOfFullRoundSpell = value;

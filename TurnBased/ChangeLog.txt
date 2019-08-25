@@ -1,4 +1,5 @@
 ﻿Version 1.0.0
+	Added an option to set the max delay between iterative attacks
 	Added an option to fix the missing effect of Shadow Evocation Sirocco
 	Added an option to prevent unconscious units from instantly leaving combat
 	Changed to mark the units who can act in current round instead of who cannot act

@@ -185,6 +185,16 @@ namespace TurnBased.Menus
             
             using (new GUILayout.HorizontalScope())
             {
+                GUIHelper.ToggleButton(MaxDelayBetweenIterativeAttacks != 3f,
+                    $"Max Delay Between Iterative Attacks: {MaxDelayBetweenIterativeAttacks:f2}s", _labelStyle, GUILayout.ExpandWidth(false));
+                MaxDelayBetweenIterativeAttacks =
+                    GUIHelper.RoundedHorizontalSlider(MaxDelayBetweenIterativeAttacks, 1, 0.5f, 3f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+                GUILayout.Space(5f);
+                GUILayout.Label("(It's 6 second / attacks count by default)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+            }
+
+            using (new GUILayout.HorizontalScope())
+            {
                 GUIHelper.ToggleButton(CastingTimeOfFullRoundSpell != 1f,
                     $"Casting Time Multiplier Of Full Round Spell: {CastingTimeOfFullRoundSpell:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
                 CastingTimeOfFullRoundSpell =
