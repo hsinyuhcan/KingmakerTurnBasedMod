@@ -311,7 +311,7 @@ namespace TurnBased.UI
         private void UpdateStateIcons()
         {
             UnitEntityData currentUnit;
-            _markIsNextRound.SetActive(Unit != null && !_isCurrent && Unit.GetTimeToNextTurn() >= Mod.Core.Combat.TimeToNextRound);
+            _markIsNextRound.SetActive(Unit != null && !_isCurrent && Unit.GetTimeToNextTurn() < Mod.Core.Combat.TimeToNextRound);
             _iconIsSurprising.SetActive(Unit != null && !_isCurrent && Unit.IsSurprising());
             _iconIsFlatFooted.SetActive(ShowIsFlatFootedIconOnUI &&
                 Unit != null && !_isCurrent && (currentUnit = Mod.Core.Combat.CurrentTurn?.Unit) != null &&
