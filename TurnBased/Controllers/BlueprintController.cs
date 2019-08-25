@@ -52,9 +52,18 @@ namespace TurnBased.Controllers
                 (blueprint, value) => blueprint.SetActivateWithUnitCommand(value),
                 UnitCommand.CommandType.Move);
 
+        // ShadowEvocationGreaterSiroccoArea
+        public BlueprintModifier<BlueprintAbilityAreaEffect, string> FxOfShadowEvocationSirocco
+            = new BlueprintModifier<BlueprintAbilityAreaEffect, string>(
+                () => FixFxOfShadowEvocationSirocco,
+                new string[] { "bb87c7513a16b9a44b4948a4e932a81b" },
+                (blueprint) => blueprint.Fx.AssetId,
+                (blueprint, value) => blueprint.Fx.AssetId = value,
+                "9f9ebe136ce5a9345b5b016f011c5aa6");
+
         // InspireGreatnessToggleAbility
         // InspireHeroicsToggleAbility
-        public BlueprintModifier<BlueprintActivatableAbility, bool> AbilityDeactivateIfCombatEnded 
+        public BlueprintModifier<BlueprintActivatableAbility, bool> AbilityDeactivateIfCombatEnded
             = new BlueprintModifier<BlueprintActivatableAbility, bool>(
                 () => FixAbilityNotAutoDeactivateIfCombatEnded,
                 new string[] { "be36959e44ac33641ba9e0204f3d227b", "a4ce06371f09f504fa86fcf6d0e021e4" },
@@ -70,6 +79,7 @@ namespace TurnBased.Controllers
             ActionTypeOfOverrun.Update(modify);
             ActionTypeOfVitalStrike.Update(modify);
             ActionTypeOfAngelicForm.Update(modify);
+            FxOfShadowEvocationSirocco.Update(modify);
             AbilityDeactivateIfCombatEnded.Update(modify);
         }
 
@@ -83,7 +93,7 @@ namespace TurnBased.Controllers
             private TBlueprint[] _blueprints;
             private TValue[] _backup;
 
-            public BlueprintModifier(Func<bool> option, string[] assetGuid, 
+            public BlueprintModifier(Func<bool> option, string[] assetGuid,
                 Func<TBlueprint, TValue> getter, Action<TBlueprint, TValue> setter, TValue value)
             {
                 _option = option;

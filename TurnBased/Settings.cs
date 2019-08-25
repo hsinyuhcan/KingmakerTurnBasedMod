@@ -98,6 +98,7 @@ namespace TurnBased
         public BugfixOption toggleFixKineticistWontStopPriorCommand = new BugfixOption(true, false);
         public BugfixOption toggleFixSpellstrikeOnNeutralUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixSpellstrikeWithMetamagicReach = new BugfixOption(true, false);
+        public BugfixOption toggleFixFxOfShadowEvocationSirocco = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityNotAutoDeactivateIfCombatEnded = new BugfixOption(true, false);
         public BugfixOption toggleFixBlindFightDistance = new BugfixOption(true, false);
         public BugfixOption toggleFixConfusedUnitCanAttackDeadUnit = new BugfixOption(true, false);

@@ -74,10 +74,14 @@ namespace TurnBased.Menus
             BugfixToggle(FixSpellstrikeWithMetamagicReach,
                 "Fix Spellstrike does not take effect when using Metamagic (Reach) on a touch spell", true, true);
 
+            BugfixToggle(FixFxOfShadowEvocationSirocco,
+                "Fix the Fx effect of Shadow Evocation (Sirocco) is missing (use normal Sirocco to replace it)", true, true,
+                () => Mod.Core.Blueprint.FxOfShadowEvocationSirocco.Update());
+
             BugfixToggle(FixAbilityNotAutoDeactivateIfCombatEnded,
                 "Fix some abilities will not be auto deactivated after combat (Inspire Greatness, Inspire Heroics)", true, true,
                 () => Mod.Core.Blueprint.AbilityDeactivateIfCombatEnded.Update());
-            
+
             BugfixToggle(FixBlindFightDistance,
                 "Fix Blind-Fight needs a extreme close distance to prevent from losing AC instead of melee distance", true, true);
 
@@ -89,7 +93,7 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixAbilityCircleRadius,
                 "Fix the visual circle of certain abilities is inconsistent with the real range", false, true);
-            
+
             BugfixToggle(FixAbilityCircleNotAppear,
                 "Fix the ability circle does not appear properly when you first time select any ability of the unit using a hotkey", true, true);
 

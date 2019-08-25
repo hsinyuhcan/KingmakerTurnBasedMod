@@ -343,7 +343,7 @@ namespace TurnBased.Utility
             get => Mod.Settings.timeScaleInUnknownTurn;
             set => Mod.Settings.timeScaleInUnknownTurn = value;
         }
-        
+
         public static float CastingTimeOfFullRoundSpell {
             get => Mod.Settings.castingTimeOfFullRoundSpell;
             set => Mod.Settings.castingTimeOfFullRoundSpell = value;
@@ -422,12 +422,14 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixSpellstrikeWithMetamagicReach => Mod.Settings.toggleFixSpellstrikeWithMetamagicReach;
 
+        public static BugfixOption FixFxOfShadowEvocationSirocco => Mod.Settings.toggleFixFxOfShadowEvocationSirocco;
+
         public static BugfixOption FixAbilityNotAutoDeactivateIfCombatEnded => Mod.Settings.toggleFixAbilityNotAutoDeactivateIfCombatEnded;
 
         public static BugfixOption FixBlindFightDistance => Mod.Settings.toggleFixBlindFightDistance;
 
         public static BugfixOption FixConfusedUnitCanAttackDeadUnit => Mod.Settings.toggleFixConfusedUnitCanAttackDeadUnit;
-        
+
         public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
 
         public static BugfixOption FixAbilityCircleRadius => Mod.Settings.toggleFixAbilityCircleRadius;
@@ -437,7 +439,7 @@ namespace TurnBased.Utility
         public static BugfixOption FixAbilityCanTargetUntargetableUnit => Mod.Settings.toggleFixAbilityCanTargetUntargetableUnit;
 
         public static BugfixOption FixAbilityCanTargetDeadUnit => Mod.Settings.toggleFixAbilityCanTargetDeadUnit;
-        
+
         #endregion
     }
 }

@@ -1,4 +1,7 @@
-﻿Version 0.9.40
+﻿Version 1.0.0
+	Added an option to fix the missing effect of Shadow Evocation Sirocco
+
+Version 0.9.40
 	Added round number to the combat log
 	Added a mark in front of the name of the units which cannot act before the next round
 	Added a time scale multiplier for invisible units
@@ -202,7 +205,7 @@ Version 0.9.16
 Version 0.9.15
     Improved combat UI, better skin and offering more info
     Improved time accuracy
-    Implemented "Moving Through Friend﻿s" as an option
+    Implemented "Moving Through Friends" as an option
     Changed some code logic, supposed to make it work more properly, but might cause new bugs
     Fixed the turn will be more than 6s if the time goes too fast
     Fixed the confusion effects sometimes does not work properly
@@ -225,7 +228,7 @@ Version 0.9.13
     Fixed when two units can start their turn at the same time, the order list will confuse
 
 Version 0.9.12
-    ﻿Made the "Scroll To ..." and "Auto Select ..." options ﻿separate
+    Made the "Scroll To ..." and "Auto Select ..." options separate
     Fixed certain AI units can not end their turn
 
 Version 0.9.11
@@ -257,7 +260,7 @@ Version 0.9.7
 Version 0.9.6
     Refactored the code to make it more readable, maintainable and extensible
     Removed the turn-based mode button (because there is already an in-game button that can turn off the mod in UMM)
-    Replaced the word "round" with "turn" ﻿to be consistent with the information on d20pfsrd﻿
+    Replaced the word "round" with "turn" to be consistent with the information on d20pfsrd
     Implemented Delay (with a custom hotkey)
     Changed if a unit is unable to act when it's turn began, it will be delay by 6s (pass 1t)
     Improved toggleable ability mechanic, you can turn off abilities before doing anything in current turn, and without losing charges or actions
@@ -267,7 +270,7 @@ Version 0.9.6
     Fixed units can still cast a full-round spell after used one move action
     Fixed the count of Attack Of Opportunity isn't reset at turn start, instead it's reset by it's own timer
     Fixed ray spell effect glitch (the animation is frozen by time, e.g. Lightning Bolt)
-    Fixed another ray effect glitch (﻿multi-ray ﻿only comes after turn end, e.g. Scorching Ray)
+    Fixed another ray effect glitch (multi-ray only comes after turn end, e.g. Scorching Ray)
     Fixed some area effect moves in real time (e.g. Cloudkill)
 
 Version 0.9.5
