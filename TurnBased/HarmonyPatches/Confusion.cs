@@ -33,7 +33,7 @@ namespace TurnBased.HarmonyPatches
                     }
                     else
                     {
-                        return !unit.IsInCombat;
+                        return IsPassing() && !unit.IsInCombat;
                     }
                 }
                 return true;

@@ -1,6 +1,7 @@
 ﻿Version 1.0.0
 	Added an option to fix the missing effect of Shadow Evocation Sirocco
 	Added an option to prevent unconscious units from instantly leaving combat
+	Fixed a confused player unit is still uncontrollable on turn start even if it should act normally this turn
 
 Version 0.9.40
 	Added round number to the combat log
@@ -9,7 +10,7 @@ Version 0.9.40
 	Added an option to fix the distance of Blind-Fight
 	Added an option to prevent abilities from targeting untargetable units
 	Added an option to prevent confused units from trying to attack dead units
-	Fixed some issue of confusion
+	Fixed some issues of confusion
 	Fixed turn-based mode cannot auto start in certain cases
 	Fixed player's unit cannot end its turn if it's unable to act
 	Fixed the resource of activated abilities won't be consumed even if the unit delays to the next round

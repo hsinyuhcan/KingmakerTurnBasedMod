@@ -83,8 +83,6 @@ namespace TurnBased.Controllers
             CombatState = unit.CombatState;
             Cooldown = CombatState.Cooldown;
 
-            Start();
-
             EventBus.Subscribe(this);
         }
 
@@ -190,7 +188,7 @@ namespace TurnBased.Controllers
 
         #region Process Control
 
-        private void Start()
+        public void Start()
         {
             // ensure the cooldowns are cleared
             Cooldown.Clear();
@@ -208,6 +206,9 @@ namespace TurnBased.Controllers
             // reset AI data and trigger certain per-round buffs - UnitTicksController.TickNextRound()
             CombatState.AIData.TickRound();
             Unit.Logic.CallFactComponents<ITickEachRound>(logic => logic.OnNewRound());
+
+            // update confusion effects
+            new UnitConfusionController().Tick();
 
             // reset the counter of AOO - UnitCombatCooldownsController.TickOnUnit()
             if (CombatState.AttackOfOpportunityPerRound > 0 &&

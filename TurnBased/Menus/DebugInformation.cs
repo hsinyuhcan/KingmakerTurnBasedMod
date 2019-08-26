@@ -54,7 +54,7 @@ namespace TurnBased.Menus
                 GUILayout.Label($"Combat Initialized: {roundController.Initialized}");
 
                 GUILayout.Space(10f);
-                if (GUILayout.Button("Reset Turn", GUILayout.ExpandWidth(false)) && currentTurn != null)
+                if (GUILayout.Button("Reset Current Turn", GUILayout.ExpandWidth(false)) && currentTurn != null)
                 {
                     roundController.StartTurn(currentTurn.Unit);
                 }

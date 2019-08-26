@@ -171,6 +171,7 @@ namespace TurnBased.Controllers
                 CurrentTurn = new TurnController(unit);
                 CurrentTurn.OnDelay += HandleDelayTurn;
                 CurrentTurn.OnEnd += HandleEndTurn;
+                CurrentTurn.Start();
                 _isUnitsChanged = true;
             }
         }
