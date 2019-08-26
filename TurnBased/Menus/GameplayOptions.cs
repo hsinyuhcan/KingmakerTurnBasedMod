@@ -78,9 +78,9 @@ namespace TurnBased.Menus
                 "Prevent Unconscious Units From Instantly Leaving Combat" +
                 " (Treat them as conscious unit instead)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
-            FlankingCountAllOpponents =
-                GUIHelper.ToggleButton(FlankingCountAllOpponents,
-                "Flanking Count All Opponents Within Threaten Range" +
+            FlankingCountAllNearbyOpponents =
+                GUIHelper.ToggleButton(FlankingCountAllNearbyOpponents,
+                "Flanking Count All Opponents Within Threatened Range" +
                 " (Regardless opponents' current command)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             RerollPerceptionDiceAgainstStealthOncePerRound =

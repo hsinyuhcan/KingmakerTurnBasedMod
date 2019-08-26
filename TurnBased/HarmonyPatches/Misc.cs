@@ -104,7 +104,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(UnitCombatState __instance, ref bool __result)
             {
-                if (IsInCombat() && __instance.Unit.IsInCombat && FlankingCountAllOpponents)
+                if (IsInCombat() && __instance.Unit.IsInCombat && FlankingCountAllNearbyOpponents)
                 {
                     __result = __instance.EngagedBy.Count > 1 && !__instance.Unit.Descriptor.State.Features.CannotBeFlanked;
                     return false;

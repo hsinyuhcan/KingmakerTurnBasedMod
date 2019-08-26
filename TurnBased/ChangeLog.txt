@@ -1,7 +1,8 @@
 ﻿Version 1.0.0
 	Added an option to set the max delay between iterative attacks
-	Added an option to fix the missing effect of Shadow Evocation Sirocco
 	Added an option to prevent unconscious units from instantly leaving combat
+	Added an option to fix the missing effect of Shadow Evocation Sirocco
+	Added an option to fix that you can somehow make an AoO to an unmoved unit just as it's leaving the threatened range
 	Changed to mark the units who can act in current round instead of who cannot act
 	Fixed a confused player unit is still uncontrollable on turn start even if it should act normally this turn
 
@@ -137,7 +138,7 @@ Version 0.9.28
 
 Version 0.9.27
     Fixed sometimes the game won't consider a unit is moved even if it's moved, caused AOO inconsistent
-    Fixed sometimes a unit can't make the AOO for the opponent which leaving the threaten range when the unit is threatening multiple targets
+    Fixed sometimes a unit can't make an AoO to the target which leaving the threatened range when the unit is threatening multiple targets
 
 Version 0.9.26
     Fixed a critical bug that causes 0.9.25 cannot be loaded

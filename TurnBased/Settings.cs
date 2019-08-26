@@ -11,7 +11,7 @@ namespace TurnBased
         public float distanceOfFiveFootStep = 1.5f;
         public bool toggleSurpriseRound = true;
         public bool togglePreventUnconsciousUnitLeavingCombat = true;
-        public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
+        public bool toggleFlankingCountAllOpponentsWithinThreatenedRange = true;
         public bool toggleRerollPerceptionDiceAgainstStealthOncePerRound;
 
         public float radiusOfCollision = 0.9f;
@@ -63,7 +63,7 @@ namespace TurnBased
         public bool toggleShowMovementIndicatorOfCurrentUnit = true;
         public bool toggleShowMovementIndicatorOfPlayer = true;
         public bool toggleShowMovementIndicatorOfNonPlayer;
-        public bool toggleShowMovementIndicatorOnHoverUI = true;
+        public bool toggleShowMovementIndicatorOnHoverUI;
 
         // hotkeys
         public SerializableDictionary<string, BindingKeysData> hotkeys = new SerializableDictionary<string, BindingKeysData>();
@@ -105,6 +105,7 @@ namespace TurnBased
         public BugfixOption toggleFixBlindFightDistance = new BugfixOption(true, false);
         public BugfixOption toggleFixConfusedUnitCanAttackDeadUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
+        public BugfixOption toggleFixCanMakeAttackOfOpportunityToUnmovedTarget = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleRadius = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCanTargetUntargetableUnit = new BugfixOption(true, false);

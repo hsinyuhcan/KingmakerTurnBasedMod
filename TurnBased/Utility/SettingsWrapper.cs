@@ -46,9 +46,9 @@ namespace TurnBased.Utility
             set => Mod.Settings.togglePreventUnconsciousUnitLeavingCombat = value;
         }
 
-        public static bool FlankingCountAllOpponents {
-            get => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange;
-            set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange = value;
+        public static bool FlankingCountAllNearbyOpponents {
+            get => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenedRange;
+            set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenedRange = value;
         }
 
         public static bool RerollPerceptionDiceAgainstStealthOncePerRound {
@@ -442,6 +442,8 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
 
+        public static BugfixOption FixCanMakeAttackOfOpportunityToUnmovedTarget => Mod.Settings.toggleFixCanMakeAttackOfOpportunityToUnmovedTarget;
+        
         public static BugfixOption FixAbilityCircleRadius => Mod.Settings.toggleFixAbilityCircleRadius;
 
         public static BugfixOption FixAbilityCircleNotAppear => Mod.Settings.toggleFixAbilityCircleNotAppear;

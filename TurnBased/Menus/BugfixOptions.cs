@@ -91,6 +91,9 @@ namespace TurnBased.Menus
             BugfixToggle(FixHasMotionThisTick,
                 "Fix sometimes the game does not regard a unit that is forced to move as a unit that is moved (cause AoO inconsistent)", true, true);
 
+            BugfixToggle(FixCanMakeAttackOfOpportunityToUnmovedTarget,
+                "Fix that you can make an AoO to an unmoved unit just as it's leaving the threatened range (when switching from reach weapon)", true, true);
+            
             BugfixToggle(FixAbilityCircleRadius,
                 "Fix the visual circle of certain abilities is inconsistent with the real range", false, true);
 
