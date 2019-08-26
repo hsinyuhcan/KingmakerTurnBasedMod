@@ -18,6 +18,7 @@ using System.Reflection.Emit;
 using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Main;
+using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -110,7 +111,7 @@ namespace TurnBased.HarmonyPatches
                             UnitEntityData attacker = command.Executor;
                             UnitMemoryController memory = Game.Instance.UnitMemoryController;
 
-                            if (!unit.Descriptor.State.HasCondition(UnitCondition.Invisible) || 
+                            if (!unit.Descriptor.State.HasCondition(UnitCondition.Invisible) ||
                                 attacker.Descriptor.IsSeeInvisibility ||
                                 (attacker.Get<UnitPartBlindsense>()?.Reach(unit) ?? false))
                             {
@@ -166,29 +167,49 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // units remembered by any enemy cannot leave the combat (regardless LOS)
+        // prevent unconscious units from instantly leaving combat
+        // units remembered by any enemy cannot leave combat (regardless LOS)
         [HarmonyPatch(typeof(UnitCombatLeaveController), "ShouldLeaveCombat", typeof(UnitGroup))]
         static class UnitCombatLeaveController_ShouldLeaveCombat_Patch
         {
             [HarmonyTranspiler]
             static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
             {
-                // ---------------- before ----------------
+                // ---------------- before 1 ----------------
+                // if (group.All(unit => !unit.Descriptor.State.IsConscious))
+                // ---------------- after 1  ----------------
+                // if (group.All(unit => IsInCombat() ? unit.Descriptor.State.IsDead : !unit.Descriptor.State.IsConscious))
+                // ---------------- before 2 ----------------
                 // groupMember.HasLOS(enemy);
-                // ---------------- after  ----------------
+                // ---------------- after 2  ----------------
                 // IsInCombat() ? true : groupMember.HasLOS(enemy)
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                List<CodeInstruction> findingCodes_1 = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Ldsfld),
+                    new CodeInstruction(OpCodes.Brtrue_S),
+                    new CodeInstruction(OpCodes.Ldnull),
+                    new CodeInstruction(OpCodes.Ldftn),
+                    new CodeInstruction(OpCodes.Newobj)
+                };
+                List<CodeInstruction> findingCodes_2 = new List<CodeInstruction>
                 {
                     new CodeInstruction(OpCodes.Ldloc_S),
                     new CodeInstruction(OpCodes.Ldloc_0),
                     new CodeInstruction(OpCodes.Callvirt,
                         GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.HasLOS)))
                 };
-                int startIndex = codes.FindCodes(findingCodes);
-                if (startIndex >= 0)
+                int startIndex_1 = codes.FindCodes(findingCodes_1);
+                int startIndex_2 = codes.FindCodes(findingCodes_2);
+                if (startIndex_1 >= 0 && startIndex_2 >= 0)
                 {
-                    return codes.Replace(startIndex + 2, new CodeInstruction(OpCodes.Call,
-                            new Func<UnitEntityData, UnitEntityData, bool>(HasLOS).Method), true).Complete();
+                    return codes
+                        .Replace(startIndex_2 + 2, new CodeInstruction(OpCodes.Call,
+                            new Func<UnitEntityData, UnitEntityData, bool>(HasLOS).Method), true)
+                        .Replace(startIndex_1 + 4, new CodeInstruction(OpCodes.Ldftn,
+                            new Func<UnitEntityData, bool>(ShouldLeaveCombat).Method), true)
+                        .Replace(startIndex_1 + 2, new CodeInstruction(OpCodes.Pop))
+                        .Complete();
                 }
                 else
                 {
@@ -196,9 +217,52 @@ namespace TurnBased.HarmonyPatches
                 }
             }
 
+            static bool ShouldLeaveCombat(UnitEntityData unit)
+            {
+                return IsInCombat() && PreventUnconsciousUnitLeavingCombat ? 
+                    unit.Descriptor.State.IsDead : !unit.Descriptor.State.IsConscious;
+            }
+
             static bool HasLOS(UnitEntityData groupMember, UnitEntityData enemy)
             {
                 return IsInCombat() ? true : groupMember.HasLOS(enemy);
+            }
+        }
+
+        // prevent unconscious units from instantly leaving combat
+        [HarmonyPatch(typeof(UnitLifeController), "SetLifeState", typeof(UnitEntityData), typeof(UnitLifeState))]
+        static class UnitLifeController_SetLifeState_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // unit.LeaveCombat();
+                // ---------------- after  ----------------
+                // if (!IsInCombat() || unit.Descriptor.State.LifeState == UnitLifeState.Dead)
+                //     unit.LeaveCombat();
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<UnitEntityData, Action<UnitEntityData>>(nameof(UnitEntityData.LeaveCombat)))
+                };
+                int startIndex = codes.FindCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    return codes.Replace(startIndex + 1, new CodeInstruction(OpCodes.Call,
+                        new Action<UnitEntityData>(LeaveCombat).Method), true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static void LeaveCombat(UnitEntityData unit)
+            {
+                if (!IsInCombat() || !PreventUnconsciousUnitLeavingCombat || unit.Descriptor.State.LifeState == UnitLifeState.Dead)
+                    unit.LeaveCombat();
             }
         }
     }

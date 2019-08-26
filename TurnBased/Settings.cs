@@ -10,6 +10,7 @@ namespace TurnBased
         // gameplay
         public float distanceOfFiveFootStep = 1.5f;
         public bool toggleSurpriseRound = true;
+        public bool togglePreventUnconsciousUnitLeavingCombat = true;
         public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
         public bool toggleRerollPerceptionDiceAgainstStealthOncePerRound;
 

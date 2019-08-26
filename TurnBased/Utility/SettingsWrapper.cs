@@ -41,6 +41,11 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleSurpriseRound = value;
         }
 
+        public static bool PreventUnconsciousUnitLeavingCombat {
+            get => Mod.Settings.togglePreventUnconsciousUnitLeavingCombat;
+            set => Mod.Settings.togglePreventUnconsciousUnitLeavingCombat = value;
+        }
+
         public static bool FlankingCountAllOpponents {
             get => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange;
             set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange = value;

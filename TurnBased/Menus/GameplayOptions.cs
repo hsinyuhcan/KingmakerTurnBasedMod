@@ -73,6 +73,11 @@ namespace TurnBased.Menus
                 "Surprise Round" +
                 " (All unseen units get a surprise round before regular rounds)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
+            PreventUnconsciousUnitLeavingCombat =
+                GUIHelper.ToggleButton(PreventUnconsciousUnitLeavingCombat,
+                "Prevent Unconscious Units From Instantly Leaving Combat" +
+                " (Treat them as conscious unit instead)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+
             FlankingCountAllOpponents =
                 GUIHelper.ToggleButton(FlankingCountAllOpponents,
                 "Flanking Count All Opponents Within Threaten Range" +
