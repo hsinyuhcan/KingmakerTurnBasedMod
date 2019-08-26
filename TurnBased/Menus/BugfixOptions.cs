@@ -1,6 +1,7 @@
 ﻿using ModMaker;
 using ModMaker.Utility;
 using System;
+using TurnBased.Controllers;
 using TurnBased.Utility;
 using UnityEngine;
 using UnityModManagerNet;
@@ -34,6 +35,8 @@ namespace TurnBased.Menus
 
         void OnGUIBugfix()
         {
+            BlueprintController blueprint = Mod.Core.Blueprint;
+
             BugfixToggle(FixNeverInCombatWithoutMC,
                 "Fix when the main character is not in your party, the game will never consider that you are in combat", false, true);
 
@@ -48,19 +51,19 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixActionTypeOfCharge,
                 "Fix the action type of Charge (Standard Action => Full Round Action)", true, true,
-                () => Mod.Core.Blueprint.ActionTypeOfCharge.Update());
+                () => blueprint.ActionTypeOfCharge.Update());
 
             BugfixToggle(FixActionTypeOfOverrun,
                 "Fix the action type of Overrun (Standard Action => Full Round Action)", true, true,
-                () => Mod.Core.Blueprint.ActionTypeOfOverrun.Update());
+                () => blueprint.ActionTypeOfOverrun.Update());
 
             BugfixToggle(FixActionTypeOfVitalStrike,
                 "Fix the action type of Vital Strike (Full Round Action => Standard Action)", true, true,
-                () => Mod.Core.Blueprint.ActionTypeOfVitalStrike.Update());
+                () => blueprint.ActionTypeOfVitalStrike.Update());
 
             BugfixToggle(FixActionTypeOfAngelicForm,
                 "Fix the action type of Angelic Form (Standard Action => Move Action)", true, true,
-                () => Mod.Core.Blueprint.ActionTypeOfAngelicForm.Update());
+                () => blueprint.ActionTypeOfAngelicForm.Update());
 
             BugfixToggle(FixActionTypeOfKineticBlade,
                 "Fix activating Kinetic Blade is regarded as drawing weapon and costs an additional standard action", true, true);
@@ -73,14 +76,18 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixSpellstrikeWithMetamagicReach,
                 "Fix Spellstrike does not take effect when using Metamagic (Reach) on a touch spell", true, true);
+            
+            BugfixToggle(FixDamageBonusOfBlastRune,
+                "Fix the damage bonus of Blast Rune isn't increased with class level (it's the first ability of Rune Domain)", true, true,
+                () => blueprint.DamageBonusOfBlastRune.Update());
 
             BugfixToggle(FixFxOfShadowEvocationSirocco,
                 "Fix the Fx effect of Shadow Evocation (Sirocco) is missing (use normal Sirocco to replace it)", true, true,
-                () => Mod.Core.Blueprint.FxOfShadowEvocationSirocco.Update());
+                () => blueprint.FxOfShadowEvocationSirocco.Update());
 
             BugfixToggle(FixAbilityNotAutoDeactivateIfCombatEnded,
                 "Fix some abilities will not be auto deactivated after combat (Inspire Greatness, Inspire Heroics)", true, true,
-                () => Mod.Core.Blueprint.AbilityDeactivateIfCombatEnded.Update());
+                () => blueprint.AbilityDeactivateIfCombatEnded.Update());
 
             BugfixToggle(FixBlindFightDistance,
                 "Fix Blind-Fight needs a extreme close distance to prevent from losing AC instead of melee distance", true, true);

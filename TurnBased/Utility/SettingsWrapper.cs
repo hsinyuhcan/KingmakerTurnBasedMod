@@ -431,6 +431,8 @@ namespace TurnBased.Utility
         public static BugfixOption FixSpellstrikeOnNeutralUnit => Mod.Settings.toggleFixSpellstrikeOnNeutralUnit;
 
         public static BugfixOption FixSpellstrikeWithMetamagicReach => Mod.Settings.toggleFixSpellstrikeWithMetamagicReach;
+        
+        public static BugfixOption FixDamageBonusOfBlastRune => Mod.Settings.toggleFixDamageBonusOfBlastRune;
 
         public static BugfixOption FixFxOfShadowEvocationSirocco => Mod.Settings.toggleFixFxOfShadowEvocationSirocco;
 
