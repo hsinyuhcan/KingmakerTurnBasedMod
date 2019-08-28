@@ -16,7 +16,7 @@ namespace TurnBased.Controllers
         IModEventHandler,
         ISceneHandler
     {
-        public IDictionary<string, BindingKeysData> BindingKeys => Mod.Settings.hotkeys;
+        public IDictionary<string, BindingKeysData> Hotkeys => Mod.Settings.hotkeys;
 
         public int Priority => 0;
 
@@ -33,40 +33,20 @@ namespace TurnBased.Controllers
             };
 
             // remove invalid keys from the settings
-            foreach (string name in BindingKeys.Keys.ToList())
+            foreach (string name in Hotkeys.Keys.ToList())
                 if (!hotkeys.ContainsKey(name))
-                    BindingKeys.Remove(name);
+                    Hotkeys.Remove(name);
 
             // add missing keys to the settings
             foreach (KeyValuePair<string, BindingKeysData> item in hotkeys)
-                if (!BindingKeys.ContainsKey(item.Key))
-                    BindingKeys.Add(item.Key, item.Value);
-        }
-
-        public void Update()
-        {
-            Mod.Debug(MethodBase.GetCurrentMethod());
-
-            Initialize();
-            RegisterAll();
+                if (!Hotkeys.ContainsKey(item.Key))
+                    Hotkeys.Add(item.Key, item.Value);
         }
 
         public void SetHotkey(string name, BindingKeysData value)
         {
-            BindingKeys[name] = value;
+            Hotkeys[name] = value;
             TryRegisterHotkey(name, value);
-        }
-
-        private void RegisterAll()
-        {
-            foreach (KeyValuePair<string, BindingKeysData> item in BindingKeys)
-                TryRegisterHotkey(item.Key, item.Value);
-        }
-
-        private void UnregisterAll()
-        {
-            foreach (string name in BindingKeys.Keys)
-                TryRegisterHotkey(name, null);
         }
 
         private void TryRegisterHotkey(string name, BindingKeysData value)
@@ -74,13 +54,24 @@ namespace TurnBased.Controllers
             Mod.Debug(MethodBase.GetCurrentMethod(), name, HotkeyHelper.GetKeyText(value));
 
             if (value != null)
-            {
                 HotkeyHelper.RegisterKey(name, value, KeyboardAccess.GameModesGroup.World);
-            }
             else
-            {
                 HotkeyHelper.UnregisterKey(name);
-            }
+        }
+
+        public void Update(bool initialize, bool register)
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod(), initialize, register);
+
+            if (initialize)
+                Initialize();
+
+            if (register)
+                foreach (KeyValuePair<string, BindingKeysData> item in Hotkeys)
+                    TryRegisterHotkey(item.Key, item.Value);
+            else
+                foreach (string name in Hotkeys.Keys)
+                    TryRegisterHotkey(name, null);
         }
 
         public void HandleModEnable()
@@ -88,8 +79,7 @@ namespace TurnBased.Controllers
             Mod.Debug(MethodBase.GetCurrentMethod());
 
             Mod.Core.Hotkeys = this;
-            Initialize();
-            RegisterAll();
+            Update(true, true);
 
             EventBus.Subscribe(this);
         }
@@ -100,7 +90,7 @@ namespace TurnBased.Controllers
 
             EventBus.Unsubscribe(this);
 
-            UnregisterAll();
+            Update(false, false);
             Mod.Core.Hotkeys = null;
         }
 
@@ -110,7 +100,7 @@ namespace TurnBased.Controllers
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            RegisterAll();
+            Update(false, true);
         }
     }
 }

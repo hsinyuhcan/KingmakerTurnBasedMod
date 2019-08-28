@@ -1,4 +1,5 @@
 ﻿Version 1.0.0
+	Added a check to reset all settings when upgrading from beta version
 	Added localization support
 	Added an option to set the max delay between iterative attacks
 	Added an option to prevent unconscious units from instantly leaving combat

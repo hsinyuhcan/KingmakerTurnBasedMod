@@ -35,7 +35,7 @@ namespace TurnBased.Menus
 
         void OnGUIBugfix()
         {
-            BlueprintController blueprint = Mod.Core.Blueprint;
+            BlueprintController blueprint = Mod.Core.Blueprints;
 
             BugfixToggle(FixNeverInCombatWithoutMC,
                 Local["Menu_Opt_FixNeverInCombatWithoutMC"], false, true);
@@ -87,7 +87,7 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixAbilityNotAutoDeactivateIfCombatEnded,
                 Local["Menu_Opt_FixAbilityNotAutoDeactivateIfCombatEnded"], true, true,
-                () => blueprint.AbilityDeactivateIfCombatEnded.Update());
+                () => blueprint.AbilityNotDeactivateIfCombatEnded.Update());
 
             BugfixToggle(FixBlindFightDistance,
                 Local["Menu_Opt_FixBlindFightDistance"], true, true);

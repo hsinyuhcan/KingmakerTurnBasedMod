@@ -59,7 +59,7 @@ namespace TurnBased.Menus
                 _waitingHotkeyName = null;
             }
 
-            IDictionary<string, BindingKeysData> hotkeys = Mod.Core.Hotkeys.BindingKeys;
+            IDictionary<string, BindingKeysData> hotkeys = Mod.Core.Hotkeys.Hotkeys;
 
             using (new GUILayout.HorizontalScope())
             {

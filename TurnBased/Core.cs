@@ -17,13 +17,13 @@ namespace TurnBased
     {
         internal Dictionary<AbilityExecutionProcess, TimeSpan> LastTickTimeOfAbilityExecutionProcess = new Dictionary<AbilityExecutionProcess, TimeSpan>();
 
-        public BlueprintController Blueprint { get; } = new BlueprintController();
+        public BlueprintController Blueprints { get; internal set; }
 
         public CombatController Combat { get; internal set; }
 
         public HotkeyController Hotkeys { get; internal set; }
 
-        public int Priority => 300;
+        public int Priority => 200;
 
         public UIController UI { get; internal set; }
 
@@ -35,18 +35,28 @@ namespace TurnBased
                     Mod.Debug(MethodBase.GetCurrentMethod(), value);
 
                     Mod.Settings.toggleTurnBasedMode = value;
+                    Blueprints.Update(true);
                     Combat.Reset(value);
-
-                    EventBus.RaiseEvent<IWarningNotificationUIHandler>(h =>
-                        h.HandleWarning(value ? Local["UI_Txt_TurnBasedMode"] : Local["UI_Txt_RealTimeMode"], false));
+                    EventBus.RaiseEvent<IWarningNotificationUIHandler>
+                        (h => h.HandleWarning(value ? Local["UI_Txt_TurnBasedMode"] : Local["UI_Txt_RealTimeMode"], false));
                 }
             }
+        }
+
+        public void ResetSettings()
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod());
+
+            Mod.ResetSettings();
+            Mod.Settings.lastModVersion = Mod.Version.ToString();
+            LocalizationFileName = Local.FileName;
+            Hotkeys?.Update(true, true);
+            Blueprints?.Update(true);
         }
 
         private void HandleToggleTurnBasedMode()
         {
             Enabled = !Enabled;
-            Mod.Core.Blueprint.Update();
         }
 
         public void HandleModEnable()
@@ -54,10 +64,15 @@ namespace TurnBased
             Mod.Debug(MethodBase.GetCurrentMethod());
 
             if (LocalizationFileName != null)
-                if (!Local.Import(LocalizationFileName))
-                    LocalizationFileName = null;
+            {
+                Local.Import(LocalizationFileName);
+                LocalizationFileName = Local.FileName;
+            }
 
-            Mod.Core.Blueprint.Update();
+            if (!Version.TryParse(Mod.Settings.lastModVersion, out Version version) || version < new Version(1, 0, 0))
+                ResetSettings();
+            else
+                Mod.Settings.lastModVersion = Mod.Version.ToString();
 
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
             EventBus.Subscribe(this);
@@ -69,8 +84,6 @@ namespace TurnBased
             
             EventBus.Unsubscribe(this);
             HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
-
-            Mod.Core.Blueprint.Update(false);
         }
 
         public void OnAreaBeginUnloading() { }
@@ -79,8 +92,7 @@ namespace TurnBased
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Mod.Core.Blueprint.Update();
-            Mod.Core.LastTickTimeOfAbilityExecutionProcess.Clear();
+            LastTickTimeOfAbilityExecutionProcess.Clear();
 
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
         }

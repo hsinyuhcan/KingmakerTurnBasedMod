@@ -65,24 +65,23 @@ namespace TurnBased.Menus
 
             GUILayout.Space(5f);
 
-            string fileName = LocalizationFileName ?? "Default.json";
+            string fileName = Local.FileName ?? "Default.json";
+
+            void Export()
+            {
+                _exportMessage = Local.Export(fileName) ? null : string.Format(Local["Menu_Txt_FaildToExport"], fileName);
+            }
 
             if (GUILayout.Button(string.Format(Local["Menu_Btn_Export"], fileName), _buttonStyle, GUILayout.ExpandWidth(false)))
             {
-                if (Local.Export(fileName))
-                    _exportMessage = null;
-                else
-                    _exportMessage = string.Format(Local["Menu_Txt_FaildToExport"], fileName);
+                Export();
             }
 
             if (GUILayout.Button(string.Format(Local["Menu_Btn_SortAndExport"], fileName) +
                 Local["Menu_Cmt_SortAndExport"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false)))
             {
                 Local.Sort();
-                if (Local.Export(fileName))
-                    _exportMessage = null;
-                else
-                    _exportMessage = string.Format(Local["Menu_Txt_FaildToExport"], fileName);
+                Export();
             }
 
             if (!string.IsNullOrEmpty(_exportMessage))
@@ -101,23 +100,16 @@ namespace TurnBased.Menus
             if (GUILayout.Button(Local["Menu_Btn_DefaultLanguage"], _buttonStyle, GUILayout.ExpandWidth(false)))
             {
                 Local.Reset();
-                LocalizationFileName = null;
                 _importMessage = null;
+                LocalizationFileName = Local.FileName;
             }
 
             foreach (string fileName in _files)
             {
                 if (GUILayout.Button(Path.GetFileNameWithoutExtension(fileName), _buttonStyle, GUILayout.ExpandWidth(false)))
                 {
-                    if (Local.Import(fileName))
-                    {
-                        LocalizationFileName = fileName;
-                        _importMessage = null;
-                    }
-                    else
-                    {
-                        _importMessage = string.Format(Local["Menu_Txt_FaildToImport"], fileName);
-                    }
+                    _importMessage = Local.Import(fileName) ? null : string.Format(Local["Menu_Txt_FaildToImport"], fileName);
+                    LocalizationFileName = Local.FileName;
                 }
             }
 

@@ -1,8 +1,10 @@
 ﻿using Kingmaker.Blueprints;
+using Kingmaker.PubSubSystem;
 using Kingmaker.UnitLogic.Abilities.Blueprints;
 using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Mechanics.Components;
+using ModMaker;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -13,7 +15,9 @@ using static TurnBased.Utility.SettingsWrapper;
 
 namespace TurnBased.Controllers
 {
-    public class BlueprintController
+    public class BlueprintController : 
+        IModEventHandler,
+        ISceneHandler
     {
         // ChargeAbility
         // SwiftBlowImprovedChargeAbility
@@ -77,7 +81,7 @@ namespace TurnBased.Controllers
 
         // InspireGreatnessToggleAbility
         // InspireHeroicsToggleAbility
-        public ValueModifier<BlueprintActivatableAbility, bool> AbilityDeactivateIfCombatEnded
+        public ValueModifier<BlueprintActivatableAbility, bool> AbilityNotDeactivateIfCombatEnded
             = new ValueModifier<BlueprintActivatableAbility, bool>(
                 () => FixAbilityNotAutoDeactivateIfCombatEnded,
                 new string[] { "be36959e44ac33641ba9e0204f3d227b", "a4ce06371f09f504fa86fcf6d0e021e4" },
@@ -85,7 +89,9 @@ namespace TurnBased.Controllers
                 (blueprint, value) => blueprint.DeactivateIfCombatEnded = value,
                 true);
 
-        public void Update(bool modify = true)
+        public int Priority => 400;
+
+        public void Update(bool modify)
         {
             Mod.Debug(MethodBase.GetCurrentMethod(), modify);
 
@@ -95,7 +101,32 @@ namespace TurnBased.Controllers
             ActionTypeOfAngelicForm.Update(modify);
             DamageBonusOfBlastRune.Update(modify);
             FxOfShadowEvocationSirocco.Update(modify);
-            AbilityDeactivateIfCombatEnded.Update(modify);
+            AbilityNotDeactivateIfCombatEnded.Update(modify);
+        }
+
+        public void HandleModEnable()
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod());
+
+            Mod.Core.Blueprints = this;
+            Update(true);
+        }
+
+        public void HandleModDisable()
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod());
+
+            Update(false);
+            Mod.Core.Blueprints = null;
+        }
+
+        public void OnAreaBeginUnloading() { }
+
+        public void OnAreaDidLoad()
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod());
+
+            Update(true);
         }
 
         public class BlueprintModifier<TBlueprint, TValue> where TBlueprint : BlueprintScriptableObject

@@ -19,7 +19,7 @@ namespace TurnBased.Controllers
 
         public MovementIndicatorManager MovementIndicator { get; private set; }
 
-        public int Priority => 900;
+        public int Priority => 800;
 
         public void Attach()
         {

@@ -7,6 +7,7 @@ namespace TurnBased
 {
     public class Settings : UnityModManager.ModSettings
     {
+        public string lastModVersion;
         public bool toggleTurnBasedMode = true;
 
         // gameplay

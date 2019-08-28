@@ -39,9 +39,7 @@ namespace TurnBased.Menus
 
                     if (GUILayout.Button(Local["Menu_Btn_ResetSettings"], _buttonStyle, GUILayout.ExpandWidth(false)))
                     {
-                        Mod.ResetSettings();
-                        Mod.Core.Blueprint.Update();
-                        Mod.Core.Hotkeys.Update();
+                        Mod.Core.ResetSettings();
                     }
                 }
             }
