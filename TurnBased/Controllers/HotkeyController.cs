@@ -25,9 +25,9 @@ namespace TurnBased.Controllers
                 {HOTKEY_FOR_TOGGLE_MODE, new BindingKeysData() { IsAltDown = true, Key = KeyCode.T } },
                 {HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR, new BindingKeysData() { IsAltDown = true, Key = KeyCode.R }},
                 {HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR, new BindingKeysData() { IsAltDown = true, Key = KeyCode.R }},
-                {HOTKEY_FOR_FIVE_FOOT_STEP, new BindingKeysData() { IsAltDown = true, Key = KeyCode.F } },
-                {HOTKEY_FOR_DELAY, new BindingKeysData() { IsAltDown = true, Key = KeyCode.D }},
                 {HOTKEY_FOR_END_TURN, new BindingKeysData() { IsAltDown = true, Key = KeyCode.E } },
+                {HOTKEY_FOR_DELAY, new BindingKeysData() { IsAltDown = true, Key = KeyCode.D }},
+                {HOTKEY_FOR_FIVE_FOOT_STEP, new BindingKeysData() { IsAltDown = true, Key = KeyCode.F } },
             };
 
             // remove invalid keys from the settings

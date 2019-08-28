@@ -97,7 +97,7 @@ namespace TurnBased.Controllers
         {
             ImmuneAttackOfOpportunityOnDisengage = false;
 
-            if (Status == TurnStatus.Preparing && (IsActed() || !Unit.CanPerformAction()))
+            if (Status == TurnStatus.Preparing && (IsActed() || !Unit.IsAbleToAct()))
             {
                 Status = TurnStatus.Acting;
             }
@@ -261,7 +261,7 @@ namespace TurnBased.Controllers
             bool hasRunningAction = Commands.IsRunning() || Unit.View.IsGetUp;
 
             // check if the current unit can't do anything more in current turn
-            if (!Unit.IsInCombat || !Unit.CanPerformAction() ||
+            if (!Unit.IsInCombat || !Unit.IsAbleToAct() ||
                 (AutoEndTurnWhenActionsAreUsedUp && !hasRunningAction && GetRemainingTime() <= 0 && !HasExtraAction()))
             {
                 return false;
@@ -471,7 +471,7 @@ namespace TurnBased.Controllers
 
         public bool HasExtraAction()
         {
-            return (!AutoEndTurnIgnoreSwiftAction && Cooldown.SwiftAction == 0f) || 
+            return (!AutoEndTurnExceptSwiftAction && Cooldown.SwiftAction == 0f) || 
                 HasFiveFootStep() || Unit.HasFreeTouch() || Unit.PreparedSpellCombat() || Unit.PreparedSpellStrike();
         }
 

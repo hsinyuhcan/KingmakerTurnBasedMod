@@ -10,14 +10,15 @@ namespace TurnBased
 #endif
     static class Main
     {
+        public static LocalizationManager<DefaultLanguage> Local;
         public static ModManager<Core, Settings> Mod;
         public static MenuManager Menu;
 
         static bool Load(UnityModManager.ModEntry modEntry)
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Mod = new ModManager<Core, Settings>(modEntry, assembly);
-            Menu = new MenuManager(modEntry, assembly);
+            Local = new LocalizationManager<DefaultLanguage>();
+            Mod = new ModManager<Core, Settings>();
+            Menu = new MenuManager();
             modEntry.OnToggle = OnToggle;
 #if (DEBUG)
             modEntry.OnUnload = Unload;
@@ -26,9 +27,10 @@ namespace TurnBased
 
         static bool Unload(UnityModManager.ModEntry modEntry)
         {
-            Menu = null;
             Mod.Disable(modEntry, true);
+            Menu = null;
             Mod = null;
+            Local = null;
             return true;
         }
 #else
@@ -40,13 +42,16 @@ namespace TurnBased
         {
             if (value)
             {
-                Mod.Enable(modEntry);
-                Menu.Enable(modEntry);
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                Local.Enable(modEntry);
+                Mod.Enable(modEntry, assembly);
+                Menu.Enable(modEntry, assembly);
             }
             else
             {
                 Menu.Disable(modEntry);
                 Mod.Disable(modEntry, false);
+                Local.Disable(modEntry);
                 ReflectionCache.Clear();
             }
             return true;

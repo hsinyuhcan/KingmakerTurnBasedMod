@@ -19,7 +19,7 @@ namespace TurnBased.Menus
         GUIStyle _downButtonStyle;
         GUIStyle _labelStyle;
 
-        public string Name => "Hotkey & Time";
+        public string Name => Local["Menu_Tab_HotkeyAndTime"];
 
         public int Priority => 400;
 
@@ -41,13 +41,13 @@ namespace TurnBased.Menus
                 _labelStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleLeft, padding = _buttonStyle.padding };
             }
 
-            using (new GUISubScope("Hotkey"))
+            using (new GUISubScope(Local["Menu_Sub_Hotkey"]))
                 OnGUIHotkey();
 
-            using (new GUISubScope("Time"))
+            using (new GUISubScope(Local["Menu_Sub_Time"]))
                 OnGUITime();
 
-            using (new GUISubScope("Pause"))
+            using (new GUISubScope(Local["Menu_Sub_Pause"]))
                 OnGUIPause();
         }
 
@@ -67,8 +67,7 @@ namespace TurnBased.Menus
                 {
                     foreach (KeyValuePair<string, BindingKeysData> item in hotkeys)
                     {
-                        GUIHelper.ToggleButton(item.Value != null,
-                            item.Key.Substring(HOTKEY_PREFIX.Length).ToSentence(), _labelStyle, GUILayout.ExpandWidth(false));
+                        GUIHelper.ToggleButton(item.Value != null, Local[item.Key], _labelStyle, GUILayout.ExpandWidth(false));
                     }
                 }
 
@@ -89,7 +88,7 @@ namespace TurnBased.Menus
                     foreach (string name in hotkeys.Keys)
                     {
                         bool waitingThisHotkey = _waitingHotkeyName == name;
-                        if (GUILayout.Button("Set", waitingThisHotkey ? _downButtonStyle : _buttonStyle))
+                        if (GUILayout.Button(Local["Menu_Btn_Set"], waitingThisHotkey ? _downButtonStyle : _buttonStyle))
                         {
                             if (waitingThisHotkey)
                                 _waitingHotkeyName = null;
@@ -104,7 +103,7 @@ namespace TurnBased.Menus
                     string hotkeyToClear = default;
                     foreach (string name in hotkeys.Keys)
                     {
-                        if (GUILayout.Button($"Clear", _buttonStyle))
+                        if (GUILayout.Button(Local["Menu_Btn_Clear"], _buttonStyle))
                         {
                             hotkeyToClear = name;
 
@@ -122,7 +121,7 @@ namespace TurnBased.Menus
                     {
                         if (item.Value != null && !HotkeyHelper.CanBeRegistered(item.Key, item.Value))
                         {
-                            GUILayout.Label($"Duplicated!!".Color(RGBA.yellow));
+                            GUILayout.Label(Local["Menu_Txt_Duplicated"].Color(RGBA.yellow));
                         }
                         else
                         {
@@ -136,7 +135,7 @@ namespace TurnBased.Menus
 
             ToggleFiveFootStepOnRightClickGround =
                 GUIHelper.ToggleButton(ToggleFiveFootStepOnRightClickGround,
-                "Toggle 5-foot Step When Right Click On The Ground", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_ToggleFiveFootStepOnRightClickGround"], _buttonStyle, GUILayout.ExpandWidth(false));
         }
 
         private void OnGUITime()
@@ -144,17 +143,16 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(true,
-                   $"Minimum FPS: {MinimumFPS:f0}", _labelStyle, GUILayout.ExpandWidth(false));
+                   string.Format(Local["Menu_Opt_MinimumFPS"], MinimumFPS), _labelStyle, GUILayout.ExpandWidth(false));
                 MinimumFPS =
                     GUIHelper.RoundedHorizontalSlider(MinimumFPS, 0, 12f, 20f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                GUILayout.Label("(Auto decrease Time Scale to prevent FPS from dropping below this value)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+                GUILayout.Label(Local["Menu_Cmt_MinimumFPS"].Color(RGBA.silver), GUILayout.ExpandWidth(false));
             }
 
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(TimeScaleBetweenTurns != 1f,
-                   $"Time Scale Multiplier Between Turns: {TimeScaleBetweenTurns:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                   string.Format(Local["Menu_Opt_TimeScaleBetweenTurns"], TimeScaleBetweenTurns), _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleBetweenTurns =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleBetweenTurns, 1, 1f, 10f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
@@ -162,7 +160,7 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(TimeScaleInPlayerTurn != 1f,
-                  $"Time Scale Multiplier For Player Units: {TimeScaleInPlayerTurn:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                  string.Format(Local["Menu_Opt_TimeScaleInPlayerTurn"], TimeScaleInPlayerTurn), _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleInPlayerTurn =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleInPlayerTurn, 1, 1f, 5f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
@@ -170,7 +168,7 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(TimeScaleInNonPlayerTurn != 1f,
-                    $"Time Scale Multiplier For Non-Player Units: {TimeScaleInNonPlayerTurn:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                    string.Format(Local["Menu_Opt_TimeScaleInNonPlayerTurn"], TimeScaleInNonPlayerTurn), _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleInNonPlayerTurn =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleInNonPlayerTurn, 1, 1f, 5f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
@@ -178,7 +176,7 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(TimeScaleInUnknownTurn != 1f,
-                    $"Time Scale Multiplier For Unknown Units: {TimeScaleInUnknownTurn:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                    string.Format(Local["Menu_Opt_TimeScaleInUnknownTurn"], TimeScaleInUnknownTurn), _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleInUnknownTurn =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleInUnknownTurn, 1, 1f, 5f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
@@ -186,27 +184,25 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(MaxDelayBetweenIterativeAttacks != 3f,
-                    $"Max Delay Between Iterative Attacks: {MaxDelayBetweenIterativeAttacks:f2}s", _labelStyle, GUILayout.ExpandWidth(false));
+                    string.Format(Local["Menu_Opt_MaxDelayBetweenIterativeAttacks"], MaxDelayBetweenIterativeAttacks), _labelStyle, GUILayout.ExpandWidth(false));
                 MaxDelayBetweenIterativeAttacks =
                     GUIHelper.RoundedHorizontalSlider(MaxDelayBetweenIterativeAttacks, 1, 0.5f, 3f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                GUILayout.Label("(It's 6 second / attacks count by default)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+                GUILayout.Label(Local["Menu_Cmt_MaxDelayBetweenIterativeAttacks"].Color(RGBA.silver), GUILayout.ExpandWidth(false));
             }
 
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(CastingTimeOfFullRoundSpell != 1f,
-                    $"Casting Time Multiplier Of Full Round Spell: {CastingTimeOfFullRoundSpell:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                    string.Format(Local["Menu_Opt_CastingTimeOfFullRoundSpell"], CastingTimeOfFullRoundSpell), _labelStyle, GUILayout.ExpandWidth(false));
                 CastingTimeOfFullRoundSpell =
                     GUIHelper.RoundedHorizontalSlider(CastingTimeOfFullRoundSpell, 1, 0.5f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                GUILayout.Label("(The animation of casting a full round spell is 6 seconds by default)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+                GUILayout.Label(Local["Menu_Cmt_CastingTimeOfFullRoundSpell"].Color(RGBA.silver), GUILayout.ExpandWidth(false));
             }
 
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(true,
-                    $"Time To Wait For Idle AI: {TimeToWaitForIdleAI:f2}s", _labelStyle, GUILayout.ExpandWidth(false));
+                    string.Format(Local["Menu_Opt_TimeToWaitForIdleAI"], TimeToWaitForIdleAI), _labelStyle, GUILayout.ExpandWidth(false));
                 TimeToWaitForIdleAI =
                     GUIHelper.RoundedHorizontalSlider(TimeToWaitForIdleAI, 1, 0.1f, 3f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
@@ -214,42 +210,42 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(true,
-                    $"Time To Wait For Ending Turn: {TimeToWaitForEndingTurn:f2}s", _labelStyle, GUILayout.ExpandWidth(false));
+                    string.Format(Local["Menu_Opt_TimeToWaitForEndingTurn"], TimeToWaitForEndingTurn), _labelStyle, GUILayout.ExpandWidth(false));
                 TimeToWaitForEndingTurn =
                     GUIHelper.RoundedHorizontalSlider(TimeToWaitForEndingTurn, 1, 0.1f, 3f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
         }
 
-        void OnGUIPause()
+        private void OnGUIPause()
         {
             DoNotPauseOnCombatStart =
                 GUIHelper.ToggleButton(DoNotPauseOnCombatStart,
-                "DO NOT Auto Pause On Combat Start" +
-                " (Ignore the game setting)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_DoNotPauseOnCombatStart"] +
+                Local["Menu_Cmt_DoNotPauseOnCombatStart"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             PauseOnPlayerTurnStart =
                 GUIHelper.ToggleButton(PauseOnPlayerTurnStart,
-                "Pause On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_PauseOnPlayerTurnStart"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             PauseOnPlayerTurnEnd =
                 GUIHelper.ToggleButton(PauseOnPlayerTurnEnd,
-                "Pause On Player's Turn End", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_PauseOnPlayerTurnEnd"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             PauseOnNonPlayerTurnStart =
                 GUIHelper.ToggleButton(PauseOnNonPlayerTurnStart,
-                "Pause On Non-Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_PauseOnNonPlayerTurnStart"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             PauseOnNonPlayerTurnEnd =
                 GUIHelper.ToggleButton(PauseOnNonPlayerTurnEnd,
-                "Pause On Non-Player's Turn End", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_PauseOnNonPlayerTurnEnd"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             PauseOnPlayerFinishFiveFoot =
                 GUIHelper.ToggleButton(PauseOnPlayerFinishFiveFoot,
-                "Pause On Player's Unit Finished The 5-Foot Step", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_PauseOnPlayerFinishFiveFoot"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             PauseOnPlayerFinishFirstMove =
                 GUIHelper.ToggleButton(PauseOnPlayerFinishFirstMove,
-                "Pause On Player's Unit Finished The First Move Action Through Move", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_PauseOnPlayerFinishFirstMove"], _buttonStyle, GUILayout.ExpandWidth(false));
         }
     }
 }

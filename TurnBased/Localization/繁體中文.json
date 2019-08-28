@@ -1,0 +1,637 @@
+{
+  "$id": "1",
+  "Language": "繁體中文",
+  "Version": "1.0.0",
+  "Contributors": "Hsinyu",
+  "HomePage": "https://github.com/hsinyuhcan/KingmakerTurnBasedMod/blob/master/TurnBased/Localization/繁體中文.json",
+  "Strings": [
+    {
+      "Key": "Menu_Tab_Gameplay",
+      "Value": "遊戲"
+    },
+    {
+      "Key": "Menu_Opt_TrunBasedMode",
+      "Value": "回合制模式"
+    },
+    {
+      "Key": "Menu_Btn_ResetSettings",
+      "Value": "重設設定"
+    },
+    {
+      "Key": "Menu_Sub_Rule",
+      "Value": "規則"
+    },
+    {
+      "Key": "Menu_Opt_DistanceOfFiveFootStep",
+      "Value": "五尺快步距離調整: {0:f2} 倍"
+    },
+    {
+      "Key": "Menu_Cmt_DistanceOfFiveFootStep",
+      "Value": " (較大的數值會使較慢的單位無法使用五尺快步)"
+    },
+    {
+      "Key": "Menu_Opt_SurpriseRound",
+      "Value": "突襲輪"
+    },
+    {
+      "Key": "Menu_Cmt_SurpriseRound",
+      "Value": " (所有還沒被看見的單位能在常規輪次之前獲得一個突襲輪)"
+    },
+    {
+      "Key": "Menu_Opt_PreventUnconsciousUnitLeavingCombat",
+      "Value": "防止昏迷的單位立即脫離戰鬥"
+    },
+    {
+      "Key": "Menu_Cmt_PreventUnconsciousUnitLeavingCombat",
+      "Value": " (只有死亡的單位才會立即脫離戰鬥)"
+    },
+    {
+      "Key": "Menu_Opt_FlankingCountAllNearbyOpponents",
+      "Value": "夾擊計入所有威脅範圍內的對手"
+    },
+    {
+      "Key": "Menu_Cmt_FlankingCountAllNearbyOpponents",
+      "Value": " (不考慮單位的當前指令)"
+    },
+    {
+      "Key": "Menu_Opt_RerollPerceptionDiceAgainstStealthOncePerRound",
+      "Value": "每輪重擲一次感知骰子以對抗隱匿"
+    },
+    {
+      "Key": "Menu_Cmt_RerollPerceptionDiceAgainstStealthOncePerRound",
+      "Value": " (而不是每場戰鬥擲骰一次)"
+    },
+    {
+      "Key": "Menu_Sub_Pathfinding",
+      "Value": "尋路"
+    },
+    {
+      "Key": "Menu_Opt_RadiusOfCollision",
+      "Value": "碰撞檢測半徑調整: {0:f2} 倍"
+    },
+    {
+      "Key": "Menu_Cmt_RadiusOfCollision",
+      "Value": " (影響所有單位的尋路, 不影響觸及範圍)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughFriendlyUnit",
+      "Value": "穿越友善的單位"
+    },
+    {
+      "Key": "Menu_Cmt_MovingThroughFriendlyUnit",
+      "Value": " (單位可以穿越盟友)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughNonHostileUnit",
+      "Value": "穿越非敵對單位"
+    },
+    {
+      "Key": "Menu_Cmt_MovingThroughNonHostileUnit",
+      "Value": " (單位可以穿越盟友和中立單位)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToPlayer",
+      "Value": "... 應用於玩家"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToNeutralUnit",
+      "Value": "... 應用於中立單位"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToEnemy",
+      "Value": "... 應用於敵人"
+    },
+    {
+      "Key": "Menu_Opt_AvoidOverlapping",
+      "Value": "穿越時嘗試避免重疊"
+    },
+    {
+      "Key": "Menu_Cmt_AvoidOverlapping",
+      "Value": " (避免穿越將會重疊的單位)"
+    },
+    {
+      "Key": "Menu_Opt_AvoidOverlappingOnCharge",
+      "Value": "衝鋒時嘗試避免重疊"
+    },
+    {
+      "Key": "Menu_Cmt_AvoidOverlappingOnCharge",
+      "Value": " (應用普通尋路規則而不是忽略所有障礙物)"
+    },
+    {
+      "Key": "Menu_Opt_DoNotMovingThroughNonAlly",
+      "Value": "不要穿越非盟友單位"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotMovingThroughNonAlly",
+      "Value": " (停用非盟友單位預設的 \"軟障礙物\" 效果)"
+    },
+    {
+      "Key": "Menu_Sub_Automation",
+      "Value": "自動化"
+    },
+    {
+      "Key": "Menu_Opt_AutoTurnOffAIOnTurnStart",
+      "Value": "當玩家的回合開始時自動關閉單位的 AI"
+    },
+    {
+      "Key": "Menu_Opt_AutoTurnOnAIOnCombatEnd",
+      "Value": "當回合制戰鬥結束時自動開啟隊伍的 AI"
+    },
+    {
+      "Key": "Menu_Opt_AutoSelectUnitOnTurnStart",
+      "Value": "當玩家的回合開始時自動選取當前單位"
+    },
+    {
+      "Key": "Menu_Opt_AutoSelectEntirePartyOnCombatEnd",
+      "Value": "當回合制戰鬥結束時自動選取整支隊伍"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnTurnStart",
+      "Value": "當玩家的回合開始時自動取消動作"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnCombatEnd",
+      "Value": "當回合制戰鬥結束時自動取消動作"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnFiveFootStepFinish",
+      "Value": "當玩家的單位完成五尺快步時自動取消動作"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnFirstMoveFinish",
+      "Value": "當玩家的單位通過移動來完成第一個移動動作時自動取消動作"
+    },
+    {
+      "Key": "Menu_Opt_AutoEnableFiveFootStepOnTurnStart",
+      "Value": "當玩家的回合開始時自動啟用五尺快步"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnWhenActionsAreUsedUp",
+      "Value": "當所有動作用完時自動結束回合"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnExceptSwiftAction",
+      "Value": "... 除了迅捷動作以外"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnWhenPlayerIdle",
+      "Value": "當玩家的單位閒置時自動結束回合"
+    },
+    {
+      "Key": "Menu_Cmt_AutoEndTurnWhenPlayerIdle",
+      "Value": " (可用於自動戰鬥)"
+    },
+    {
+      "Key": "Menu_Tab_Interface",
+      "Value": "介面"
+    },
+    {
+      "Key": "Menu_Opt_DoNotMarkInvisibleUnit",
+      "Value": "不要標記看不見的單位"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotMarkInvisibleUnit",
+      "Value": " (禁用高亮、鏡頭、指示器...等等)"
+    },
+    {
+      "Key": "Menu_Opt_DoNotShowInvisibleUnitOnCombatTracker",
+      "Value": "不要顯示看不見的單位在戰鬥追蹤器上"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotShowInvisibleUnitOnCombatTracker",
+      "Value": " (該單位行動時將其顯示為 \"未知\" )"
+    },
+    {
+      "Key": "Menu_Sub_CombatTracker",
+      "Value": "戰鬥追蹤器"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerScale",
+      "Value": "尺寸調整: {0:f2} 倍"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerWidth",
+      "Value": "寬度: {0:d3}"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerMaxUnits",
+      "Value": "單位上限: {0:d2}"
+    },
+    {
+      "Key": "Menu_Opt_CameraScrollToUnitOnClickUI",
+      "Value": "當左鍵點擊單位時將鏡頭置中"
+    },
+    {
+      "Key": "Menu_Opt_SelectUnitOnClickUI",
+      "Value": "當左鍵點擊單位時選取該單位"
+    },
+    {
+      "Key": "Menu_Opt_InspectOnRightClickUI",
+      "Value": "當右鍵點擊單位時查看該單位"
+    },
+    {
+      "Key": "Menu_Opt_ShowIsFlatFootedIconOnUI",
+      "Value": "當單位失去敏捷防禦加值時顯示黃色驚嘆號圖示"
+    },
+    {
+      "Key": "Menu_Sub_View",
+      "Value": "視野"
+    },
+    {
+      "Key": "Menu_Opt_HighlightCurrentUnit",
+      "Value": "高亮當前單位"
+    },
+    {
+      "Key": "Menu_Opt_CameraScrollToCurrentUnit",
+      "Value": "鏡頭置中到當前單位<color=#c0c0c0ff> (當回合開始時)</color>"
+    },
+    {
+      "Key": "Menu_Opt_CameraLockOnCurrentPlayerUnit",
+      "Value": "鏡頭鎖定到當前玩家的單位"
+    },
+    {
+      "Key": "Menu_Cmt_CameraLockOnCurrentPlayerUnit",
+      "Value": " (當遊戲暫停時自動解鎖)"
+    },
+    {
+      "Key": "Menu_Opt_CameraLockOnCurrentNonPlayerUnit",
+      "Value": "鏡頭鎖定到當前非玩家單位"
+    },
+    {
+      "Key": "Menu_Sub_AttackIndicator",
+      "Value": "攻擊指示器"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorOfCurrentUnit",
+      "Value": "顯示當前單位的攻擊指示器"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorForPlayer",
+      "Value": "... 於玩家的單位"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorForNonPlayer",
+      "Value": "... 於非玩家單位"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorOnHoverUI",
+      "Value": "鼠標懸停時顯示攻擊指示器"
+    },
+    {
+      "Key": "Menu_Opt_ShowAutoCastAbilityRange",
+      "Value": "啟用自動施放時顯示能力範圍而不是攻擊範圍"
+    },
+    {
+      "Key": "Menu_Opt_CheckForObstaclesOnTargeting",
+      "Value": "當確定目標是否在範圍內時檢查是否存在任何障礙"
+    },
+    {
+      "Key": "Menu_Sub_MovementIndicator",
+      "Value": "移動指示器"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorOfCurrentUnit",
+      "Value": "顯示當前單位的移動指示器"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorForPlayer",
+      "Value": "... 於玩家的單位"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorForNonPlayer",
+      "Value": "... 於非玩家單位"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorOnHoverUI",
+      "Value": "鼠標懸停時顯示移動指示器"
+    },
+    {
+      "Key": "Menu_Tab_HotkeyAndTime",
+      "Value": "熱鍵 & 時間"
+    },
+    {
+      "Key": "Menu_Sub_Hotkey",
+      "Value": "熱鍵"
+    },
+    {
+      "Key": "Menu_Btn_Set",
+      "Value": "設定"
+    },
+    {
+      "Key": "Menu_Btn_Clear",
+      "Value": "清除"
+    },
+    {
+      "Key": "Menu_Txt_Duplicated",
+      "Value": "重複!!"
+    },
+    {
+      "Key": "Menu_Opt_ToggleFiveFootStepOnRightClickGround",
+      "Value": "當右鍵點擊地面時切換五尺快步"
+    },
+    {
+      "Key": "Menu_Sub_Time",
+      "Value": "時間"
+    },
+    {
+      "Key": "Menu_Opt_MinimumFPS",
+      "Value": "最小 FPS: {0:f0}"
+    },
+    {
+      "Key": "Menu_Cmt_MinimumFPS",
+      "Value": " (自動降低時間流速以防止 FPS 降至此值以下)"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleBetweenTurns",
+      "Value": "時間流速調整 (於回合間): {0:f2} 倍"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInPlayerTurn",
+      "Value": "時間流速調整 (於玩家的回合): {0:f2} 倍"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInNonPlayerTurn",
+      "Value": "時間流速調整 (於非玩家回合): {0:f2} 倍"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInUnknownTurn",
+      "Value": "時間流速調整 (於未知單位的回合): {0:f2} 倍"
+    },
+    {
+      "Key": "Menu_Opt_MaxDelayBetweenIterativeAttacks",
+      "Value": "迭代攻擊間的最大延遲: {0:f2} 秒"
+    },
+    {
+      "Key": "Menu_Cmt_MaxDelayBetweenIterativeAttacks",
+      "Value": " (預設是 6 秒 / 攻擊次數)"
+    },
+    {
+      "Key": "Menu_Opt_CastingTimeOfFullRoundSpell",
+      "Value": "整輪法術施法時間調整: {0:f2} 倍"
+    },
+    {
+      "Key": "Menu_Cmt_CastingTimeOfFullRoundSpell",
+      "Value": " (整輪法術施法動作預設是 6 秒)"
+    },
+    {
+      "Key": "Menu_Opt_TimeToWaitForIdleAI",
+      "Value": "等待閒置 AI 的延遲時間: {0:f2} 秒"
+    },
+    {
+      "Key": "Menu_Opt_TimeToWaitForEndingTurn",
+      "Value": "結束回合的延遲時間: {0:f2} 秒"
+    },
+    {
+      "Key": "Menu_Sub_Pause",
+      "Value": "暫停"
+    },
+    {
+      "Key": "Menu_Opt_DoNotPauseOnCombatStart",
+      "Value": "不要在戰鬥開始時自動暫停"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotPauseOnCombatStart",
+      "Value": " (忽略遊戲設定)"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerTurnStart",
+      "Value": "當玩家的回合開始時暫停"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerTurnEnd",
+      "Value": "當玩家的回合結束時暫停"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnNonPlayerTurnStart",
+      "Value": "當非玩家回合開始時暫停"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnNonPlayerTurnEnd",
+      "Value": "當非玩家回合結束時暫停"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerFinishFiveFoot",
+      "Value": "當玩家的單位完成五尺快步時暫停"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerFinishFirstMove",
+      "Value": "當玩家的單位通過移動來完成第一個移動動作時暫停"
+    },
+    {
+      "Key": "Menu_Tab_Bugfix",
+      "Value": "錯誤修正"
+    },
+    {
+      "Key": "Menu_Btn_TB",
+      "Value": "回合"
+    },
+    {
+      "Key": "Menu_Btn_RT",
+      "Value": "實時"
+    },
+    {
+      "Key": "Menu_Opt_FixNeverInCombatWithoutMC",
+      "Value": "修正當主要角色不在隊伍中時，遊戲永遠不會認為玩家處於戰鬥中"
+    },
+    {
+      "Key": "Menu_Opt_FixCombatNotEndProperly",
+      "Value": "修正當戰鬥由過場動畫結束時，戰鬥往往無法正確結束"
+    },
+    {
+      "Key": "Menu_Opt_FixUnitNotLeaveCombatWhenNotInGame",
+      "Value": "修正當單位變成非活動狀態時不會脫離戰鬥 (導致召唤凯娜菈 / 召唤凯莉柯時的錯誤)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfBardicPerformance",
+      "Value": "修正開始吟遊演藝的動作類型與歌唱鋼的效果"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfCharge",
+      "Value": "修正衝鋒的動作類型 (標準動作 => 整輪動作)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfOverrun",
+      "Value": "修正闖越的動作類型 (標準動作 => 整輪動作)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfVitalStrike",
+      "Value": "修正要害打擊的動作類型 (整輪動作 => 標準動作)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfAngelicForm",
+      "Value": "修正天使型態的動作類型 (標準動作 => 移動動作)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfKineticBlade",
+      "Value": "修正啟用念刃被視為拔出武器並消耗額外的標準動作"
+    },
+    {
+      "Key": "Menu_Opt_FixKineticistWontStopPriorCommand",
+      "Value": "修正當你在戰鬥前命令操念使以念刃攻擊時，他不會停止前一個動作"
+    },
+    {
+      "Key": "Menu_Opt_FixSpellstrikeOnNeutralUnit",
+      "Value": "修正法術打擊在攻擊中立單位時不會生效"
+    },
+    {
+      "Key": "Menu_Opt_FixSpellstrikeWithMetamagicReach",
+      "Value": "修正法術打擊無法生效於應用了超魔 (法術及遠) 的接觸法術"
+    },
+    {
+      "Key": "Menu_Opt_FixDamageBonusOfBlastRune",
+      "Value": "修正衝擊符文的額外傷害不會隨等級提升 (它是符文領域的第一項能力)"
+    },
+    {
+      "Key": "Menu_Opt_FixFxOfShadowEvocationSirocco",
+      "Value": "修正陰影塑能 (酷熱之風) 的圖像與聲音缺失 (使用普通酷熱之風的效果替代)"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityNotAutoDeactivateIfCombatEnded",
+      "Value": "修正某些能力在戰鬥後不會自動停用 (榮譽頌歌, 英勇頌歌)"
+    },
+    {
+      "Key": "Menu_Opt_FixBlindFightDistance",
+      "Value": "修正盲鬥只能在極短的距離下避免失去防禦加值而非近戰距離"
+    },
+    {
+      "Key": "Menu_Opt_FixConfusedUnitCanAttackDeadUnit",
+      "Value": "修正有時候一個困惑的單位可以正常行動，因為他試圖攻擊一個不可被攻擊的死亡單位"
+    },
+    {
+      "Key": "Menu_Opt_FixHasMotionThisTick",
+      "Value": "修正有時候遊戲不會將被迫移動的單位視為移動中 (造成機會攻擊的行為不一致)"
+    },
+    {
+      "Key": "Menu_Opt_FixCanMakeAttackOfOpportunityToUnmovedTarget",
+      "Value": "修正你可以對沒有移動的單位進行機會攻擊就像他們正在離開威脅範圍一樣 (當換掉長觸及武器時)"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCircleRadius",
+      "Value": "修正某些能力的顯示範圍與實際距離不一致"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCircleNotAppear",
+      "Value": "修正當 (以熱鍵) 首次選擇任何單位的能力時，能力範圍不會正確顯示"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCanTargetUntargetableUnit",
+      "Value": "修正你在使用能力時可以瞄準不可被瞄準的單位"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCanTargetDeadUnit",
+      "Value": "修正你在使用不可施放於死亡單位的能力時可以瞄準死亡單位"
+    },
+    {
+      "Key": "Menu_Tab_Language",
+      "Value": "語言"
+    },
+    {
+      "Key": "Menu_Sub_Current",
+      "Value": "當前"
+    },
+    {
+      "Key": "Menu_Txt_Language",
+      "Value": "語言: {0}"
+    },
+    {
+      "Key": "Menu_Txt_Version",
+      "Value": "版本: {0}"
+    },
+    {
+      "Key": "Menu_Txt_Contributors",
+      "Value": "貢獻: {0}"
+    },
+    {
+      "Key": "Menu_Txt_HomePage",
+      "Value": "網頁:"
+    },
+    {
+      "Key": "Menu_Btn_Export",
+      "Value": "匯出: {0}"
+    },
+    {
+      "Key": "Menu_Btn_SortAndExport",
+      "Value": "排序並匯出: {0}"
+    },
+    {
+      "Key": "Menu_Cmt_SortAndExport",
+      "Value": " (警告: 同時會刪除所有未使用的條目)"
+    },
+    {
+      "Key": "Menu_Txt_FaildToExport",
+      "Value": "匯出失敗: {0}"
+    },
+    {
+      "Key": "Menu_Sub_Import",
+      "Value": "匯入"
+    },
+    {
+      "Key": "Menu_Btn_RefreshFileList",
+      "Value": "更新檔案列表"
+    },
+    {
+      "Key": "Menu_Btn_DefaultLanguage",
+      "Value": "預設語言"
+    },
+    {
+      "Key": "Menu_Txt_FaildToImport",
+      "Value": "匯入失敗: {0}"
+    },
+    {
+      "Key": "Hotkey_Toggle_TurnBasedMode",
+      "Value": "切換回合制模式"
+    },
+    {
+      "Key": "Hotkey_Toggle_AttackIndicator",
+      "Value": "切換攻擊指示器"
+    },
+    {
+      "Key": "Hotkey_Toggle_MovementIndicator",
+      "Value": "切換移動指示器"
+    },
+    {
+      "Key": "Hotkey_Button_EndTurn",
+      "Value": "按鈕: 結束回合"
+    },
+    {
+      "Key": "Hotkey_Button_Delay",
+      "Value": "按鈕: 延遲"
+    },
+    {
+      "Key": "Hotkey_Button_FiveFootStep",
+      "Value": "按鈕: 五尺快步"
+    },
+    {
+      "Key": "UI_Btn_EndTurn",
+      "Value": "结束回合"
+    },
+    {
+      "Key": "UI_Btn_Delay",
+      "Value": "延迟"
+    },
+    {
+      "Key": "UI_Btn_FiveFootStep",
+      "Value": "快步"
+    },
+    {
+      "Key": "UI_Txt_Error",
+      "Value": "错误: 回合制战斗模组"
+    },
+    {
+      "Key": "UI_Txt_TurnBasedMode",
+      "Value": "模式: 回合制"
+    },
+    {
+      "Key": "UI_Txt_RealTimeMode",
+      "Value": "模式: 实时制"
+    },
+    {
+      "Key": "UI_Log_RoundStarted",
+      "Value": "第 {0} 轮开始。"
+    },
+    {
+      "Key": "UI_Log_SurpriseRoundStarted",
+      "Value": "突袭轮开始。"
+    }
+  ]
+}

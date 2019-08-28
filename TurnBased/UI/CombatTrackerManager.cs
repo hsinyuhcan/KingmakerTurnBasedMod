@@ -168,15 +168,15 @@ namespace TurnBased.UI
 
             _buttonEndTurn = new ButtonWrapper(
                 _body.Find("Button_EndTurn").gameObject.GetComponent<ButtonPF>(),
-                "End Turn", HandleClickEndTurn);
+                Local["UI_Btn_EndTurn"], HandleClickEndTurn);
 
             _buttonFiveFoorStep = new ButtonWrapper(
                 _body.Find("SpecialActionButtons/Button_FiveFootStep").gameObject.GetComponent<ButtonPF>(),
-                "5-F. STEP", HandleClickFiveFootStep);
+                Local["UI_Btn_FiveFootStep"], HandleClickFiveFootStep);
 
             _buttonDelay = new ButtonWrapper(
                 _body.Find("SpecialActionButtons/Button_Delay").gameObject.GetComponent<ButtonPF>(),
-                "Delay", HandleClickDelay);
+                Local["UI_Btn_Delay"], HandleClickDelay);
 
             _unitButtons = (RectTransform)_body.Find("UnitButtons");
         }
@@ -493,6 +493,9 @@ namespace TurnBased.UI
                 _button.onClick = new Button.ButtonClickedEvent();
                 _button.onClick.AddListener(new UnityAction(onClick));
                 _textMesh = _button.GetComponentInChildren<TextMeshProUGUI>();
+                _textMesh.fontSize = 20;
+                _textMesh.fontSizeMax = 72;
+                _textMesh.fontSizeMin = 18;
                 _textMesh.text = text;
                 _textMesh.color = _button.interactable ? _enableColor : _disableColor;
                 _image = _button.gameObject.GetComponent<Image>();

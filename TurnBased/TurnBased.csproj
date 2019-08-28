@@ -53,6 +53,11 @@
       <HintPath>..\..\KingmakerLib\DOTween46.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\KingmakerLib\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -106,7 +111,9 @@
     <Compile Include="HarmonyPatches\UI.cs" />
     <Compile Include="HarmonyPatches\Magus.cs" />
     <Compile Include="HarmonyPatches\CombatTrigger.cs" />
+    <Compile Include="DefaultLanguage.cs" />
     <Compile Include="Menus\BugfixOptions.cs" />
+    <Compile Include="Menus\LanguageSelection.cs" />
     <Compile Include="Utility\GUISubScope.cs" />
     <Compile Include="Utility\MiscExtensions.cs" />
     <Compile Include="Utility\NonPublicAccessExtensions.cs" />
@@ -137,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.json" />
+    <None Include="Localization\繁體中文.json" />
     <None Include="Repository.json" />
   </ItemGroup>
   <ItemGroup>
@@ -146,9 +154,12 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions />
   <PropertyGroup>
-    <PostBuildEvent>rd "$(TargetDir)TurnBased"  /s /q
-mkdir "$(TargetDir)TurnBased"
-copy "$(TargetPath)" "$(TargetDir)TurnBased" /y
-copy "$(ProjectDir)\Info.json" "$(TargetDir)TurnBased\Info.json" /y</PostBuildEvent>
+    <PostBuildEvent>set modDir=TurnBased
+rd "$(TargetDir)%25modDir%25"  /s /q
+mkdir "$(TargetDir)%25modDir%25"
+copy "$(TargetPath)" "$(TargetDir)%25modDir%25" /y
+copy "$(ProjectDir)\Info.json" "$(TargetDir)%25modDir%25\Info.json" /y
+mkdir "$(TargetDir)%25modDir%25\Localization"
+copy "$(ProjectDir)\Localization\*" "$(TargetDir)%25modDir%25\Localization" /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

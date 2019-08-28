@@ -9,7 +9,7 @@ namespace TurnBased.HarmonyPatches
 {
     static class Pathfinding
     {
-        // moving through friend feature
+        // moving through ... feature
         [HarmonyPatch(typeof(UnitMovementAgent), nameof(UnitMovementAgent.AvoidanceDisabled), MethodType.Getter)]
         static class UnitMovementAgent_AvoidanceDisabled_Patch
         {
@@ -30,7 +30,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(UnitMovementAgent __instance, ref bool __result)
             {
-                if (IsInCombat() && DoNotMovingThroughNonAllies)
+                if (IsInCombat() && DoNotMovingThroughNonAlly)
                 {
                     __result = !__instance.CombatMode;
                     return false;

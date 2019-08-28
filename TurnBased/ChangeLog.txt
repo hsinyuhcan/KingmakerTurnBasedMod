@@ -1,4 +1,5 @@
 ﻿Version 1.0.0
+	Added localization support
 	Added an option to set the max delay between iterative attacks
 	Added an option to prevent unconscious units from instantly leaving combat
 	Addad an option to fix the damage bonus of Blast Rune
@@ -79,7 +80,7 @@ Version 0.9.34
 	Fixed "Inspect" is broken by the previous update
 
 Version 0.9.33
-	Added the "DO NOT Moving Through Non-Allies" option
+	Added the "DO NOT Moving Through Non-Ally" option
 	Added the "Try To Avoid Overlapping When Charging" option
 	Added the "Auto Cancel Actions On Turn-Based Combat End" option
 	Added the "Do Not Mark Invisible Units" option
@@ -100,7 +101,7 @@ Version 0.9.33
 	Fixed using Charge right after disabling Defensive Stance will waste the action
 
 Version 0.9.32
-    Added the "Try To Avoid Overlapping When Moving Through Friends" option
+    Added the "Try To Avoid Overlapping When Moving Through Ally" option
     Changed the combat tracker won't be shown during a dialogue anymore
     Fixed the "Fix x as y action" options are accidentally broken by the previous update
     Fixed units won't leave combat when their in-game state changes (caused Call Forth Kanerah/Kalikke glitch)
@@ -211,7 +212,7 @@ Version 0.9.16
 Version 0.9.15
     Improved combat UI, better skin and offering more info
     Improved time accuracy
-    Implemented "Moving Through Friends" as an option
+    Implemented "Moving Through ..." as an option
     Changed some code logic, supposed to make it work more properly, but might cause new bugs
     Fixed the turn will be more than 6s if the time goes too fast
     Fixed the confusion effects sometimes does not work properly

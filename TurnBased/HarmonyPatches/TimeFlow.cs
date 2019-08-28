@@ -46,7 +46,7 @@ namespace TurnBased.HarmonyPatches
                     {
                         Mod.Error(e);
                         Game.Instance.IsPaused = true;
-                        EventBus.RaiseEvent<IWarningNotificationUIHandler>(h => h.HandleWarning("Turn-Based Error", false));
+                        EventBus.RaiseEvent<IWarningNotificationUIHandler>(h => h.HandleWarning(Local["UI_Txt_Error"], false));
                     }
                 }
             }
@@ -69,7 +69,7 @@ namespace TurnBased.HarmonyPatches
                     {
                         Mod.Error(e);
                         Game.Instance.IsPaused = true;
-                        EventBus.RaiseEvent<IWarningNotificationUIHandler>(h => h.HandleWarning("Turn-Based Error", false));
+                        EventBus.RaiseEvent<IWarningNotificationUIHandler>(h => h.HandleWarning(Local["UI_Txt_Error"], false));
                     }
                 }
             }

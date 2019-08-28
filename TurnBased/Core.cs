@@ -38,7 +38,7 @@ namespace TurnBased
                     Combat.Reset(value);
 
                     EventBus.RaiseEvent<IWarningNotificationUIHandler>(h =>
-                        h.HandleWarning(value ? "Turn-Based Combat" : "Real-Time with Pause", false));
+                        h.HandleWarning(value ? Local["UI_Txt_TurnBasedMode"] : Local["UI_Txt_RealTimeMode"], false));
                 }
             }
         }
@@ -52,6 +52,10 @@ namespace TurnBased
         public void HandleModEnable()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
+
+            if (LocalizationFileName != null)
+                if (!Local.Import(LocalizationFileName))
+                    LocalizationFileName = null;
 
             Mod.Core.Blueprint.Update();
 

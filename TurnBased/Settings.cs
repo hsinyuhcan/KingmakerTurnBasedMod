@@ -15,13 +15,14 @@ namespace TurnBased
         public bool toggleRerollPerceptionDiceAgainstStealthOncePerRound;
 
         public float radiusOfCollision = 0.9f;
-        public bool toggleMovingThroughFriends = true;
-        public bool toggleMovingThroughNonEnemies;
-        public bool toggleMovingThroughOnlyAffectPlayer;
-        public bool toggleMovingThroughOnlyAffectNonEnemies;
+        public bool toggleMovingThroughFriendlyUnit = true;
+        public bool toggleMovingThroughNonHostileUnit;
+        public bool toggleMovingThroughApplyToPlayer = true;
+        public bool toggleMovingThroughApplyToNeutralUnit = true;
+        public bool toggleMovingThroughApplyToEnemy = true;
         public bool toggleAvoidOverlapping = true;
         public bool toggleAvoidOverlappingOnCharge = true;
-        public bool toggleDoNotMovingThroughNonAllies = true;
+        public bool toggleDoNotMovingThroughNonAlly = true;
 
         public bool toggleAutoTurnOffAIOnTurnStart = true;
         public bool toggleAutoTurnOnAIOnCombatEnd = true;
@@ -33,7 +34,7 @@ namespace TurnBased
         public bool toggleAutoCancelActionsOnFirstMoveFinish = true;
         public bool toggleAutoEnableFiveFootStepOnTurnStart;
         public bool toggleAutoEndTurnWhenActionsAreUsedUp = true;
-        public bool toggleAutoEndTurnIgnoreSwiftAction;
+        public bool toggleAutoEndTurnExceptSwiftAction;
         public bool toggleAutoEndTurnWhenPlayerIdle;
 
         // interface
@@ -43,9 +44,9 @@ namespace TurnBased
         public float combatTrackerScale = 0.9f;
         public float combatTrackerWidth = 350f;
         public int combatTrackerMaxUnits = 15;
-        public bool toggleSelectUnitOnClickUI;
         public bool toggleCameraScrollToUnitOnClickUI = true;
-        public bool toggleShowUnitDescriptionOnRightClickUI = true;
+        public bool toggleSelectUnitOnClickUI = true;
+        public bool toggleInspectOnRightClickUI = true;
         public bool toggleShowIsFlatFootedIconOnUI = true;
 
         public bool toggleHighlightCurrentUnit = true;
@@ -54,15 +55,15 @@ namespace TurnBased
         public bool toggleCameraLockOnCurrentNonPlayerUnit = true;
 
         public bool toggleShowAttackIndicatorOfCurrentUnit = true;
-        public bool toggleShowAttackIndicatorOfPlayer = true;
-        public bool toggleShowAttackIndicatorOfNonPlayer;
+        public bool toggleShowAttackIndicatorForPlayer = true;
+        public bool toggleShowAttackIndicatorForNonPlayer;
         public bool toggleShowAttackIndicatorOnHoverUI = true;
         public bool toggleShowAutoCastAbilityRange = true;
         public bool toggleCheckForObstaclesOnTargeting = true;
 
         public bool toggleShowMovementIndicatorOfCurrentUnit = true;
-        public bool toggleShowMovementIndicatorOfPlayer = true;
-        public bool toggleShowMovementIndicatorOfNonPlayer;
+        public bool toggleShowMovementIndicatorForPlayer = true;
+        public bool toggleShowMovementIndicatorForNonPlayer;
         public bool toggleShowMovementIndicatorOnHoverUI;
 
         // hotkeys
@@ -111,5 +112,8 @@ namespace TurnBased
         public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCanTargetUntargetableUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCanTargetDeadUnit = new BugfixOption(true, false);
+
+        // localization
+        public string localizationFileName;
     }
 }
