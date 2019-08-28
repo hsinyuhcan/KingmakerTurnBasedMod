@@ -97,7 +97,7 @@ namespace TurnBased.Controllers
         {
             ImmuneAttackOfOpportunityOnDisengage = false;
 
-            if (Status == TurnStatus.Preparing && (IsActed() || !Unit.IsAbleToAct()))
+            if (Status == TurnStatus.Preparing && (IsActed() || !Commands.Empty || !Unit.IsAbleToAct()))
             {
                 Status = TurnStatus.Acting;
             }
@@ -399,7 +399,7 @@ namespace TurnBased.Controllers
 
         public bool CanDelay()
         {
-            return Unit.IsDirectlyControllable && Status == TurnStatus.Preparing ;
+            return Unit.IsDirectlyControllable && !IsActed() && !Commands.IsRunning();
         }
 
         public bool CanEndTurn()
@@ -437,11 +437,7 @@ namespace TurnBased.Controllers
 
         public bool IsActed()
         {
-            return TimeMoved > 0f ||
-                Cooldown.StandardAction > 0f ||
-                Cooldown.MoveAction > 0f ||
-                Cooldown.SwiftAction > 0f ||
-                !Commands.Empty;
+            return TimeMoved > 0f || Cooldown.StandardAction > 0f || Cooldown.MoveAction > 0f || Cooldown.SwiftAction > 0f;
         }
 
         private bool ShouldRestrictFiveFootStep()

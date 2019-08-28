@@ -7,6 +7,7 @@
 	Added an option to fix that you can somehow make an AoO to an unmoved unit just as it's leaving the threatened range
 	Changed to mark the units who can act in current round instead of who cannot act
 	Fixed a confused player unit is still uncontrollable on turn start even if it should act normally this turn
+	Fixed you can't delay after just trying to do something but failing at the beginning of turn
 
 Version 0.9.40
 	Added round number to the combat log
