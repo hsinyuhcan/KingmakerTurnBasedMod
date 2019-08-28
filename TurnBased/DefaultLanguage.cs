@@ -176,6 +176,7 @@ namespace TurnBased
             { "UI_Btn_EndTurn", "End Turn" },
             { "UI_Btn_Delay", "Delay" },
             { "UI_Btn_FiveFootStep", "5-FT Step" },
+            { "UI_Txt_Unknown", "Unknown" },
             { "UI_Txt_Error", "Error: Turn-Based Combat Mod" },
             { "UI_Txt_TurnBasedMode", "Mode: Turn-Based" },
             { "UI_Txt_RealTimeMode", "Mode: Real Time" },

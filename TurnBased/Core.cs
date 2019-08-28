@@ -25,6 +25,8 @@ namespace TurnBased
 
         public HotkeyController Hotkeys { get; internal set; }
 
+        public int Priority => 300;
+
         public UIController UI { get; internal set; }
 
         public bool Enabled {
@@ -77,10 +79,12 @@ namespace TurnBased
 
         public void OnAreaDidLoad()
         {
-            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
+            Mod.Debug(MethodBase.GetCurrentMethod());
 
             Mod.Core.Blueprint.Update();
             Mod.Core.LastTickTimeOfAbilityExecutionProcess.Clear();
+
+            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
         }
     }
 }

@@ -11,7 +11,6 @@ namespace TurnBased.Controllers
 {
     public class UIController :
         IModEventHandler,
-        //IPartyCombatHandler,
         ISceneHandler
     {
         public CombatTrackerManager CombatTracker { get; private set; }
@@ -19,6 +18,8 @@ namespace TurnBased.Controllers
         public AttackIndicatorManager AttackIndicator { get; private set; }
 
         public MovementIndicatorManager MovementIndicator { get; private set; }
+
+        public int Priority => 900;
 
         public void Attach()
         {
@@ -53,45 +54,24 @@ namespace TurnBased.Controllers
 #if DEBUG
         public void Clear()
         {
-            while (true)
+            Transform combatTracker;
+            while (combatTracker = Game.Instance.UI.Common.transform.Find("HUDLayout/TurnBasedCombatTracker"))
             {
-                Transform combatTracker = Game.Instance.UI.Common.transform.Find("HUDLayout/TurnBasedCombatTracker");
-                if (combatTracker)
-                {
-                    UnityEngine.Object.DestroyImmediate(combatTracker.gameObject);
-                }
-                else
-                {
-                    break;
-                }
+                UnityEngine.Object.DestroyImmediate(combatTracker.gameObject);
             }
             CombatTracker = null;
 
-            while (true)
+            Transform attackIndicator;
+            while (attackIndicator = Game.Instance.UI.Common.transform.Find("AbilityTargetSelect/TurnBasedAttackIndicator"))
             {
-                Transform attackIndicator = Game.Instance.UI.Common.transform.Find("AbilityTargetSelect/TurnBasedAttackIndicator");
-                if (attackIndicator)
-                {
-                    UnityEngine.Object.DestroyImmediate(attackIndicator.gameObject);
-                }
-                else
-                {
-                    break;
-                }
+                UnityEngine.Object.DestroyImmediate(attackIndicator.gameObject);
             }
             AttackIndicator = null;
 
-            while (true)
+            Transform movementIndicator;
+            while (movementIndicator = Game.Instance.UI.Common.transform.Find("AbilityTargetSelect/TurnBasedMovementIndicator"))
             {
-                Transform movementIndicator = Game.Instance.UI.Common.transform.Find("AbilityTargetSelect/TurnBasedMovementIndicator");
-                if (movementIndicator)
-                {
-                    UnityEngine.Object.DestroyImmediate(movementIndicator.gameObject);
-                }
-                else
-                {
-                    break;
-                }
+                UnityEngine.Object.DestroyImmediate(movementIndicator.gameObject);
             }
             MovementIndicator = null;
         }

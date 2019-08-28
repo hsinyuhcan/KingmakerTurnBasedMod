@@ -614,6 +614,10 @@
       "Value": "快步"
     },
     {
+      "Key": "UI_Txt_Unknown",
+      "Value": "未知"
+    },
+    {
       "Key": "UI_Txt_Error",
       "Value": "错误: 回合制战斗模组"
     },

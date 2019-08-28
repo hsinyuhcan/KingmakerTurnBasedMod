@@ -68,6 +68,8 @@ namespace TurnBased.Controllers
 
         public bool Initialized { get; private set; }
 
+        public int Priority => 600;
+
         public IEnumerable<UnitEntityData> SortedUnits {
             get {
                 UpdateUnitsInfo();

@@ -18,6 +18,8 @@ namespace TurnBased.Controllers
     {
         public IDictionary<string, BindingKeysData> BindingKeys => Mod.Settings.hotkeys;
 
+        public int Priority => 0;
+
         private void Initialize()
         {
             Dictionary<string, BindingKeysData> hotkeys = new Dictionary<string, BindingKeysData>()
