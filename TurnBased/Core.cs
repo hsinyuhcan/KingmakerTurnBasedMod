@@ -15,8 +15,6 @@ namespace TurnBased
         IModEventHandler,
         ISceneHandler
     {
-        private bool _enabled = true;
-
         internal Dictionary<AbilityExecutionProcess, TimeSpan> LastTickTimeOfAbilityExecutionProcess = new Dictionary<AbilityExecutionProcess, TimeSpan>();
 
         public BlueprintController Blueprint { get; } = new BlueprintController();
@@ -30,13 +28,13 @@ namespace TurnBased
         public UIController UI { get; internal set; }
 
         public bool Enabled {
-            get => _enabled;
+            get => Mod.Settings.toggleTurnBasedMode;
             set {
-                if (_enabled != value)
+                if (Mod.Settings.toggleTurnBasedMode != value)
                 {
                     Mod.Debug(MethodBase.GetCurrentMethod(), value);
 
-                    _enabled = value;
+                    Mod.Settings.toggleTurnBasedMode = value;
                     Combat.Reset(value);
 
                     EventBus.RaiseEvent<IWarningNotificationUIHandler>(h =>

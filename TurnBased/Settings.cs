@@ -7,6 +7,8 @@ namespace TurnBased
 {
     public class Settings : UnityModManager.ModSettings
     {
+        public bool toggleTurnBasedMode = true;
+
         // gameplay
         public float distanceOfFiveFootStep = 1.5f;
         public bool toggleSurpriseRound = true;
