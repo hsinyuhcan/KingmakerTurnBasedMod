@@ -72,6 +72,8 @@ namespace TurnBased.Controllers
             }
         }
 
+        public bool EnabledFullAttack { get; private set; } = true;
+
         public bool ImmuneAttackOfOpportunityOnDisengage { get; private set; }
 
         #endregion
@@ -199,6 +201,14 @@ namespace TurnBased.Controllers
                 command.Executor.UpdateCooldowns(command);
             }
 
+            // reset the counter of AOO - UnitCombatCooldownsController.TickOnUnit()
+            if (CombatState.AttackOfOpportunityPerRound > 0 &&
+                CombatState.AttackOfOpportunityCount <= CombatState.AttackOfOpportunityPerRound)
+            {
+                CombatState.AttackOfOpportunityCount = CombatState.AttackOfOpportunityPerRound;
+                CombatState.DisengageAttackTargets.Clear();
+            }
+
             // reset AI data - UnitCombatCooldownsController.TickOnUnit()
             CombatState.OnNewRound();
             EventBus.RaiseEvent<IUnitNewCombatRoundHandler>(handler => handler.HandleNewCombatRound(Unit));
@@ -210,18 +220,8 @@ namespace TurnBased.Controllers
             // update confusion effects
             new UnitConfusionController().Tick();
 
-            // reset the counter of AOO - UnitCombatCooldownsController.TickOnUnit()
-            if (CombatState.AttackOfOpportunityPerRound > 0 &&
-                CombatState.AttackOfOpportunityCount <= CombatState.AttackOfOpportunityPerRound)
-            {
-                CombatState.AttackOfOpportunityCount = CombatState.AttackOfOpportunityPerRound;
-                CombatState.DisengageAttackTargets.Clear();
-            }
-
             // QoLs
-            bool isDirectlyControllable = Unit.IsDirectlyControllable;
-
-            if (isDirectlyControllable)
+            if (Unit.IsDirectlyControllable)
             {
                 if (AutoTurnOffAIOnTurnStart)
                     Unit.IsAIEnabled = false;
@@ -250,12 +250,16 @@ namespace TurnBased.Controllers
             if (CameraScrollToCurrentUnit)
                 Unit.ScrollTo();
 
+            // toggle full attack
+            TryAutoToggleFullAttack();
+
             // set turn status
-            Status = isDirectlyControllable ? TurnStatus.Preparing : TurnStatus.Acting;
+            Status = Unit.IsDirectlyControllable ? TurnStatus.Preparing : TurnStatus.Acting;
         }
 
         private bool ContinueActing()
         {
+            TryAutoToggleFullAttack();
             TryAutoToggleFiveFootStep();
 
             bool hasRunningAction = Commands.IsRunning() || Unit.View.IsGetUp;
@@ -307,32 +311,37 @@ namespace TurnBased.Controllers
             return true;
         }
 
+        private void TryAutoToggleFullAttack()
+        {
+            if (EnabledFullAttack && !Unit.HasFullRoundAction() && !Unit.PreparedSpellCombat())
+            {
+                EnabledFullAttack = false;
+            }
+        }
+
         private void TryAutoToggleFiveFootStep()
         {
             if (EnabledFiveFootStep)
             {
                 EnabledFiveFootStep = HasFiveFootStep();
             }
-            else
+            else if (HasFiveFootStep())
             {
-                if (HasFiveFootStep())
+                // the unit can use 5-foot step
+                if (!HasNormalMovement())
                 {
-                    // the unit can use 5-foot step
-                    if (!HasNormalMovement())
+                    // the unit has no remaining normal movement
+                    EnabledFiveFootStep = true;
+                }
+                else if (!Unit.IsDirectlyControllable)
+                {
+                    UnitCommand command = Commands.Standard;
+                    if (command != null && !command.IsStarted && command.Target != null &&
+                        Unit.DistanceTo(command.Target.Point) < command.ApproachRadius + MetersOfFiveFootStep)
                     {
-                        // the unit has no remaining normal movement
+                        // the AI unit can approach target with 5-foot step
                         EnabledFiveFootStep = true;
-                    }
-                    else if (!Unit.IsDirectlyControllable)
-                    {
-                        UnitCommand command = Commands.Standard;
-                        if (command != null && !command.IsStarted && command.Target != null &&
-                            Unit.DistanceTo(command.Target.Point) < command.ApproachRadius + MetersOfFiveFootStep)
-                        {
-                            // the AI unit can approach target with 5-foot step
-                            EnabledFiveFootStep = true;
-                            _aiUsedFiveFootStep = true;
-                        }
+                        _aiUsedFiveFootStep = true;
                     }
                 }
             }
@@ -391,9 +400,15 @@ namespace TurnBased.Controllers
 
         #region Special Actions
 
+        public bool CanToggleFullAttack()
+        {
+            return Unit.IsDirectlyControllable && (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) &&
+                Unit.HasFullRoundAction();
+        }
+
         public bool CanToggleFiveFootStep()
         {
-            return Unit.IsDirectlyControllable &&  (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) && 
+            return Unit.IsDirectlyControllable && (Status == TurnStatus.Preparing || Status == TurnStatus.Acting) &&
                 (EnabledFiveFootStep ? HasNormalMovement() : HasFiveFootStep());
         }
 
@@ -405,6 +420,14 @@ namespace TurnBased.Controllers
         public bool CanEndTurn()
         {
             return Unit.IsDirectlyControllable && (Status == TurnStatus.Preparing || Status == TurnStatus.Acting);
+        }
+
+        public void CommandToggleFullAttack()
+        {
+            if (CanToggleFullAttack())
+            {
+                EnabledFullAttack = !EnabledFullAttack;
+            }
         }
 
         public void CommandToggleFiveFootStep()
@@ -534,6 +557,10 @@ namespace TurnBased.Controllers
                 if (command.IsActed && !command.IsIgnoreCooldown && unitAttack.IsFullAttack && unitAttack.GetAttackIndex() == 1)
                 {
                     Cooldown.MoveAction -= TIME_MOVE_ACTION;
+                    if (!_aiUsedFiveFootStep && HasNormalMovement())
+                    {
+                        EnabledFiveFootStep = false;
+                    }
                 }
             }
         }

@@ -30,7 +30,8 @@ namespace TurnBased.Controllers
                 {HOTKEY_FOR_END_TURN, new BindingKeysData() { IsAltDown = true, Key = KeyCode.E } },
                 {HOTKEY_FOR_DELAY, new BindingKeysData() { IsAltDown = true, Key = KeyCode.D }},
                 {HOTKEY_FOR_FIVE_FOOT_STEP, new BindingKeysData() { IsAltDown = true, Key = KeyCode.F } },
-            };
+                {HOTKEY_FOR_FULL_ATTACK, new BindingKeysData() { IsAltDown = true, Key = KeyCode.A } }
+           };
 
             // remove invalid keys from the settings
             foreach (string name in Hotkeys.Keys.ToList())

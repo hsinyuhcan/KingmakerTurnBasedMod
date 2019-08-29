@@ -70,7 +70,7 @@ namespace TurnBased.Menus
                 GUIHelper.ToggleButton(true,
                     string.Format(Local["Menu_Opt_CombatTrackerWidth"], (int)CombatTrackerWidth), _labelStyle, GUILayout.ExpandWidth(false));
                 CombatTrackerWidth =
-                    GUIHelper.RoundedHorizontalSlider(CombatTrackerWidth, -1, 250f, 500f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+                    GUIHelper.RoundedHorizontalSlider(CombatTrackerWidth, -1, 300f, 500f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
 
             using (new GUILayout.HorizontalScope())

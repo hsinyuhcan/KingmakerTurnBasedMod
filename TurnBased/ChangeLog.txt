@@ -1,6 +1,7 @@
 ﻿Version 1.0.0
 	Added a check to reset all settings when upgrading from beta version
 	Added localization support
+	Added a button to enable / disable full attack (plus a hotkey)
 	Added an option to set the max delay between iterative attacks
 	Added an option to prevent unconscious units from instantly leaving combat
 	Addad an option to fix the damage bonus of Blast Rune
@@ -8,6 +9,7 @@
 	Added an option to fix that you can somehow make an AoO to an unmoved unit just as it's leaving the threatened range
 	Changed to mark the units who can act in current round instead of who cannot act
 	Changed the "Turn-Based Mode" toggle will be saved in the settings now
+	Changed 5-foot step will be auto turned off (if possible) if you get a returned move action after attack
 	Fixed a confused player unit is still uncontrollable on turn start even if it should act normally this turn
 	Fixed you can't delay after just trying to do something but failing at the beginning of turn
 

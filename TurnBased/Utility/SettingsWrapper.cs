@@ -20,12 +20,13 @@ namespace TurnBased.Utility
         public const string HOTKEY_FOR_END_TURN = HOTKEY_PREFIX + "Button_EndTurn";
         public const string HOTKEY_FOR_DELAY = HOTKEY_PREFIX + "Button_Delay";
         public const string HOTKEY_FOR_FIVE_FOOT_STEP = HOTKEY_PREFIX + "Button_FiveFootStep";
+        public const string HOTKEY_FOR_FULL_ATTACK = HOTKEY_PREFIX + "Button_FullAttack";
 
         // combat tracker
         public const float UNIT_BUTTON_HEIGHT = 32.5f;
         public const float UNIT_BUTTON_SPACE = 2.5f;
-        public static readonly Vector2 DEFAULT_BLOCK_SIZE = new Vector2(415f, 730f);
-        public static readonly Vector2 DEFAULT_BLOCK_PADDING = new Vector2(80f, 60f);
+        public const float PADDING_X_PERCENT = 0.18f;
+        public const float PADDING_Y_PERCENT = 0.08f;
 
         #endregion
 

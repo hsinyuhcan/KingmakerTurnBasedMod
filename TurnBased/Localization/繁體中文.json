@@ -595,11 +595,15 @@
     },
     {
       "Key": "Hotkey_Button_Delay",
-      "Value": "按鈕: 延遲"
+      "Value": "按鈕: 延遲回合"
     },
     {
       "Key": "Hotkey_Button_FiveFootStep",
       "Value": "按鈕: 五尺快步"
+    },
+    {
+      "Key": "Hotkey_Button_FullAttack",
+      "Value": "按鈕: 整輪攻擊"
     },
     {
       "Key": "UI_Btn_EndTurn",
@@ -607,11 +611,15 @@
     },
     {
       "Key": "UI_Btn_Delay",
-      "Value": "延迟"
+      "Value": "延迟回合"
     },
     {
       "Key": "UI_Btn_FiveFootStep",
-      "Value": "快步"
+      "Value": "五尺快步"
+    },
+    {
+      "Key": "UI_Btn_FullAttack",
+      "Value": "整轮攻击"
     },
     {
       "Key": "UI_Txt_Unknown",

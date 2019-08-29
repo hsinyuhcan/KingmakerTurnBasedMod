@@ -3,9 +3,17 @@ using Kingmaker;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
+using ModMaker.Utility;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using TurnBased.Controllers;
 using TurnBased.Utility;
+using static ModMaker.Utility.ReflectionCache;
+using static TurnBased.Main;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -76,10 +84,78 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && __instance.Unit.IsInCombat)
                 {
-                    __result = __instance.Unit.UsedOneMoveAction();
+                    TurnController currentTurn;
+                    __result = __instance.Unit.UsedOneMoveAction() ||
+                        (__instance.Unit == (currentTurn = Mod.Core.Combat.CurrentTurn)?.Unit && !currentTurn.EnabledFullAttack);
                     return false;
                 }
                 return true;
+            }
+        }
+
+        // fix some abilities (e.g. Pounce) could be restricted by move action even if they should ignore action cooldowns
+        [HarmonyPatch(typeof(UnitAttack), "InitAttacks")]
+        static class UnitAttack_InitAttacks_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // !base.Executor.CombatState.IsFullAttackRestrictedBecauseOfMoveAction
+                // ---------------- after  ----------------
+                // IsFullAttackRestricted(!base.Executor.CombatState.IsFullAttackRestrictedBecauseOfMoveAction, this)
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Call,
+                        GetPropertyInfo<UnitCommand, UnitEntityData>(nameof(UnitCommand.Executor)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<UnitEntityData, UnitCombatState>(nameof(UnitEntityData.CombatState)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<UnitCombatState, bool>(nameof(UnitCombatState.IsFullAttackRestrictedBecauseOfMoveAction)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Brtrue),
+                };
+                int startIndex = codes.FindCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Ldarg_0),
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<bool, UnitAttack, bool>(IsFullAttackRestricted).Method)
+                    };
+                    return codes.InsertRange(startIndex + 4, patchingCodes, true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static bool IsFullAttackRestricted(bool isFullAttackRestrictedBecauseOfMoveAction, UnitAttack command)
+            {
+                if (IsInCombat() && command.Executor.IsInCombat)
+                {
+                    if (command.Executor.IsMoveActionRestricted())
+                        return true;
+                    else if (command.IsIgnoreCooldown)
+                        return false;
+                }
+                return isFullAttackRestrictedBecauseOfMoveAction;
+            }
+        }
+
+        // fix action cooldown doesn't advance when fail the concentration check
+        [HarmonyPatch(typeof(UnitCommand), "ForceFinish", typeof(UnitCommand.ResultType))]
+        static class UnitCommand_ForceFinish_Patch
+        {
+            [HarmonyPrefix]
+            static void Prefix(UnitCommand __instance)
+            {
+                if (IsInCombat() && __instance.Executor.IsInCombat && !__instance.IsActed)
+                {
+                    __instance.SetIsActed(true);
+                }
             }
         }
 
@@ -96,20 +172,6 @@ namespace TurnBased.HarmonyPatches
                     return false;
                 }
                 return true;
-            }
-        }
-
-        // fix action cooldown doesn't advance when fail the concentration check
-        [HarmonyPatch(typeof(UnitCommand), "ForceFinish", typeof(UnitCommand.ResultType))]
-        static class UnitCommand_ForceFinish_Patch
-        {
-            [HarmonyPrefix]
-            static void Prefix(UnitCommand __instance)
-            {
-                if (IsInCombat() && __instance.Executor.IsInCombat && !__instance.IsActed)
-                {
-                    __instance.SetIsActed(true);
-                }
             }
         }
 
