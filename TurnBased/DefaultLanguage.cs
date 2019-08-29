@@ -1,4 +1,5 @@
-﻿using ModMaker;
+﻿using Kingmaker.EntitySystem.Persistence.JsonUtility;
+using ModMaker;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -183,16 +184,18 @@ namespace TurnBased
             { "UI_Txt_TurnBasedMode", "Mode: Turn-Based" },
             { "UI_Txt_RealTimeMode", "Mode: Real Time" },
             { "UI_Log_RoundStarted", "Round {0} started." },
-            { "UI_Log_SurpriseRoundStarted", "Surprise round started." },
+            { "UI_Log_SurpriseRoundStarted", "Surprise round started." }
         };
 
         public T Deserialize<T>(TextReader reader)
         {
+            DefaultJsonSettings.Initialize();
             return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
         }
 
         public void Serialize<T>(TextWriter writer, T obj)
         {
+            DefaultJsonSettings.Initialize();
             writer.Write(JsonConvert.SerializeObject(obj, Formatting.Indented));
         }
     }

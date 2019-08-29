@@ -69,7 +69,7 @@ namespace TurnBased.Menus
 
             void Export()
             {
-                _exportMessage = Local.Export(fileName) ? null : string.Format(Local["Menu_Txt_FaildToExport"], fileName);
+                _exportMessage = Local.Export(fileName, e => Mod.Error(e)) ? null : string.Format(Local["Menu_Txt_FaildToExport"], fileName);
             }
 
             if (GUILayout.Button(string.Format(Local["Menu_Btn_Export"], fileName), _buttonStyle, GUILayout.ExpandWidth(false)))
@@ -108,7 +108,7 @@ namespace TurnBased.Menus
             {
                 if (GUILayout.Button(Path.GetFileNameWithoutExtension(fileName), _buttonStyle, GUILayout.ExpandWidth(false)))
                 {
-                    _importMessage = Local.Import(fileName) ? null : string.Format(Local["Menu_Txt_FaildToImport"], fileName);
+                    _importMessage = Local.Import(fileName, e => Mod.Error(e)) ? null : string.Format(Local["Menu_Txt_FaildToImport"], fileName);
                     LocalizationFileName = Local.FileName;
                 }
             }

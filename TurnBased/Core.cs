@@ -65,7 +65,7 @@ namespace TurnBased
 
             if (LocalizationFileName != null)
             {
-                Local.Import(LocalizationFileName);
+                Local.Import(LocalizationFileName, e => Mod.Error(e));
                 LocalizationFileName = Local.FileName;
             }
 
