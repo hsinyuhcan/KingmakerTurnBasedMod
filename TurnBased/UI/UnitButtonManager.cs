@@ -188,6 +188,7 @@ namespace TurnBased.UI
         {
             EventBus.Unsubscribe(this);
 
+            OnExit(Unit);
             Unit?.SetHighlight(false);
             Unit = null;
         }

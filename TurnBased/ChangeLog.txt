@@ -12,6 +12,7 @@
 	Changed 5-foot step will be auto turned off (if possible) if you get a returned move action after attack
 	Fixed a confused player unit is still uncontrollable on turn start even if it should act normally this turn
 	Fixed you can't delay after just trying to do something but failing at the beginning of turn
+	Fixed the circle of indicators won't disappear when the unit dies if the mouse is hovering on it
 
 Version 0.9.40
 	Added round number to the combat log
