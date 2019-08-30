@@ -1,4 +1,8 @@
-﻿Version 1.0.0
+﻿Version 1.0.1
+	Fixed missing the "Localization" folder causes a critical error
+	Fixed if you set more than one of "Ctrl", "Alt" or "Shift" in a hotkey, it won't be displayed properly
+
+Version 1.0.0
 	Added a check to reset all settings when upgrading from beta version
 	Added localization support
 	Added a button to enable / disable full attack (plus a hotkey)
