@@ -63,7 +63,7 @@ namespace TurnBased
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            if (LocalizationFileName != null)
+            if (!string.IsNullOrEmpty(LocalizationFileName))
             {
                 Local.Import(LocalizationFileName, e => Mod.Error(e));
                 LocalizationFileName = Local.FileName;
