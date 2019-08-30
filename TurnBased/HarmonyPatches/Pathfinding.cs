@@ -1,7 +1,6 @@
 ﻿using Harmony12;
 using Kingmaker.View;
 using TurnBased.Utility;
-using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -9,7 +8,7 @@ namespace TurnBased.HarmonyPatches
 {
     static class Pathfinding
     {
-        // moving through friend feature
+        // moving through ... feature
         [HarmonyPatch(typeof(UnitMovementAgent), nameof(UnitMovementAgent.AvoidanceDisabled), MethodType.Getter)]
         static class UnitMovementAgent_AvoidanceDisabled_Patch
         {
@@ -18,7 +17,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && !__result)
                 {
-                    __result = (Mod.Core.Combat.CurrentTurn?.Unit).CanMoveThrough(__instance.Unit?.EntityData);
+                    __result = CurrentUnit().CanMoveThrough(__instance.Unit?.EntityData);
                 }
             }
         }
@@ -30,7 +29,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(UnitMovementAgent __instance, ref bool __result)
             {
-                if (IsInCombat() && DoNotMovingThroughNonAllies)
+                if (IsInCombat() && DoNotMovingThroughNonAlly)
                 {
                     __result = !__instance.CombatMode;
                     return false;

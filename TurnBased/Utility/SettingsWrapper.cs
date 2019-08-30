@@ -13,19 +13,20 @@ namespace TurnBased.Utility
         public const float TIME_SWIFT_ACTION = 6f;
 
         // hotkeys
-        public const string HOTKEY_PREFIX = "TurnBasedHotkey";
-        public const string HOTKEY_FOR_TOGGLE_MODE = HOTKEY_PREFIX + "ToggleTurnBasedMode";
-        public const string HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR = HOTKEY_PREFIX + "ToggleMovementIndicator";
-        public const string HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR = HOTKEY_PREFIX + "ToggleAttackIndicator";
-        public const string HOTKEY_FOR_FIVE_FOOT_STEP = HOTKEY_PREFIX + "5FootStep";
-        public const string HOTKEY_FOR_DELAY = HOTKEY_PREFIX + "Delay";
-        public const string HOTKEY_FOR_END_TURN = HOTKEY_PREFIX + "EndTurn";
+        public const string HOTKEY_PREFIX = "Hotkey_";
+        public const string HOTKEY_FOR_TOGGLE_MODE = HOTKEY_PREFIX + "Toggle_TurnBasedMode";
+        public const string HOTKEY_FOR_TOGGLE_ATTACK_INDICATOR = HOTKEY_PREFIX + "Toggle_AttackIndicator";
+        public const string HOTKEY_FOR_TOGGLE_MOVEMENT_INDICATOR = HOTKEY_PREFIX + "Toggle_MovementIndicator";
+        public const string HOTKEY_FOR_END_TURN = HOTKEY_PREFIX + "Button_EndTurn";
+        public const string HOTKEY_FOR_DELAY = HOTKEY_PREFIX + "Button_Delay";
+        public const string HOTKEY_FOR_FIVE_FOOT_STEP = HOTKEY_PREFIX + "Button_FiveFootStep";
+        public const string HOTKEY_FOR_FULL_ATTACK = HOTKEY_PREFIX + "Button_FullAttack";
 
         // combat tracker
         public const float UNIT_BUTTON_HEIGHT = 32.5f;
         public const float UNIT_BUTTON_SPACE = 2.5f;
-        public static readonly Vector2 DEFAULT_BLOCK_SIZE = new Vector2(415f, 730f);
-        public static readonly Vector2 DEFAULT_BLOCK_PADDING = new Vector2(80f, 60f);
+        public const float PADDING_X_PERCENT = 0.18f;
+        public const float PADDING_Y_PERCENT = 0.08f;
 
         #endregion
 
@@ -41,9 +42,14 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleSurpriseRound = value;
         }
 
-        public static bool FlankingCountAllOpponents {
-            get => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange;
-            set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenRange = value;
+        public static bool PreventUnconsciousUnitLeavingCombat {
+            get => Mod.Settings.togglePreventUnconsciousUnitLeavingCombat;
+            set => Mod.Settings.togglePreventUnconsciousUnitLeavingCombat = value;
+        }
+
+        public static bool FlankingCountAllNearbyOpponents {
+            get => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenedRange;
+            set => Mod.Settings.toggleFlankingCountAllOpponentsWithinThreatenedRange = value;
         }
 
         public static bool RerollPerceptionDiceAgainstStealthOncePerRound {
@@ -56,60 +62,47 @@ namespace TurnBased.Utility
             set => Mod.Settings.radiusOfCollision = value;
         }
 
-        public static bool MovingThroughFriends {
-            get => Mod.Settings.toggleMovingThroughFriends;
+        public static bool MovingThroughFriendlyUnit {
+            get => Mod.Settings.toggleMovingThroughFriendlyUnit;
             set {
-                if (Mod.Settings.toggleMovingThroughFriends != value)
+                if (Mod.Settings.toggleMovingThroughFriendlyUnit != value)
                 {
-                    Mod.Settings.toggleMovingThroughFriends = value;
+                    Mod.Settings.toggleMovingThroughFriendlyUnit = value;
                     if (value)
                     {
-                        MovingThroughNonEnemies = false;
+                        MovingThroughNonHostileUnit = false;
                     }
                 }
             }
         }
 
-        public static bool MovingThroughNonEnemies {
-            get => Mod.Settings.toggleMovingThroughNonEnemies;
+        public static bool MovingThroughNonHostileUnit {
+            get => Mod.Settings.toggleMovingThroughNonHostileUnit;
             set {
-                if (Mod.Settings.toggleMovingThroughNonEnemies != value)
+                if (Mod.Settings.toggleMovingThroughNonHostileUnit != value)
                 {
-                    Mod.Settings.toggleMovingThroughNonEnemies = value;
+                    Mod.Settings.toggleMovingThroughNonHostileUnit = value;
                     if (value)
                     {
-                        MovingThroughFriends = false;
+                        MovingThroughFriendlyUnit = false;
                     }
                 }
             }
         }
 
-        public static bool MovingThroughOnlyAffectPlayer {
-            get => Mod.Settings.toggleMovingThroughOnlyAffectPlayer;
-            set {
-                if (Mod.Settings.toggleMovingThroughOnlyAffectPlayer != value)
-                {
-                    Mod.Settings.toggleMovingThroughOnlyAffectPlayer = value;
-                    if (value)
-                    {
-                        MovingThroughOnlyAffectNonEnemies = false;
-                    }
-                }
-            }
+        public static bool MovingThroughApplyToPlayer {
+            get => Mod.Settings.toggleMovingThroughApplyToPlayer;
+            set => Mod.Settings.toggleMovingThroughApplyToPlayer = value;
         }
 
-        public static bool MovingThroughOnlyAffectNonEnemies {
-            get => Mod.Settings.toggleMovingThroughOnlyAffectNonEnemies;
-            set {
-                if (Mod.Settings.toggleMovingThroughOnlyAffectNonEnemies != value)
-                {
-                    Mod.Settings.toggleMovingThroughOnlyAffectNonEnemies = value;
-                    if (value)
-                    {
-                        MovingThroughOnlyAffectPlayer = false;
-                    }
-                }
-            }
+        public static bool MovingThroughApplyToNeutralUnit {
+            get => Mod.Settings.toggleMovingThroughApplyToNeutralUnit;
+            set => Mod.Settings.toggleMovingThroughApplyToNeutralUnit = value;
+        }
+
+        public static bool MovingThroughApplyToEnemy {
+            get => Mod.Settings.toggleMovingThroughApplyToEnemy;
+            set => Mod.Settings.toggleMovingThroughApplyToEnemy = value;
         }
 
         public static bool AvoidOverlapping {
@@ -122,9 +115,9 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAvoidOverlappingOnCharge = value;
         }
 
-        public static bool DoNotMovingThroughNonAllies {
-            get => Mod.Settings.toggleDoNotMovingThroughNonAllies;
-            set => Mod.Settings.toggleDoNotMovingThroughNonAllies = value;
+        public static bool DoNotMovingThroughNonAlly {
+            get => Mod.Settings.toggleDoNotMovingThroughNonAlly;
+            set => Mod.Settings.toggleDoNotMovingThroughNonAlly = value;
         }
 
         public static bool AutoTurnOffAIOnTurnStart {
@@ -177,9 +170,9 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleAutoEndTurnWhenActionsAreUsedUp = value;
         }
 
-        public static bool AutoEndTurnIgnoreSwiftAction {
-            get => Mod.Settings.toggleAutoEndTurnIgnoreSwiftAction;
-            set => Mod.Settings.toggleAutoEndTurnIgnoreSwiftAction = value;
+        public static bool AutoEndTurnExceptSwiftAction {
+            get => Mod.Settings.toggleAutoEndTurnExceptSwiftAction;
+            set => Mod.Settings.toggleAutoEndTurnExceptSwiftAction = value;
         }
 
         public static bool AutoEndTurnWhenPlayerIdle {
@@ -216,19 +209,19 @@ namespace TurnBased.Utility
             set => Mod.Settings.combatTrackerMaxUnits = value;
         }
 
-        public static bool SelectUnitOnClickUI {
-            get => Mod.Settings.toggleSelectUnitOnClickUI;
-            set => Mod.Settings.toggleSelectUnitOnClickUI = value;
-        }
-
         public static bool CameraScrollToUnitOnClickUI {
             get => Mod.Settings.toggleCameraScrollToUnitOnClickUI;
             set => Mod.Settings.toggleCameraScrollToUnitOnClickUI = value;
         }
 
-        public static bool ShowUnitDescriptionOnRightClickUI {
-            get => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI;
-            set => Mod.Settings.toggleShowUnitDescriptionOnRightClickUI = value;
+        public static bool SelectUnitOnClickUI {
+            get => Mod.Settings.toggleSelectUnitOnClickUI;
+            set => Mod.Settings.toggleSelectUnitOnClickUI = value;
+        }
+
+        public static bool InspectOnRightClickUI {
+            get => Mod.Settings.toggleInspectOnRightClickUI;
+            set => Mod.Settings.toggleInspectOnRightClickUI = value;
         }
 
         public static bool ShowIsFlatFootedIconOnUI {
@@ -261,14 +254,14 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleShowAttackIndicatorOfCurrentUnit = value;
         }
 
-        public static bool ShowAttackIndicatorOfPlayer {
-            get => Mod.Settings.toggleShowAttackIndicatorOfPlayer;
-            set => Mod.Settings.toggleShowAttackIndicatorOfPlayer = value;
+        public static bool ShowAttackIndicatorForPlayer {
+            get => Mod.Settings.toggleShowAttackIndicatorForPlayer;
+            set => Mod.Settings.toggleShowAttackIndicatorForPlayer = value;
         }
 
-        public static bool ShowAttackIndicatorOfNonPlayer {
-            get => Mod.Settings.toggleShowAttackIndicatorOfNonPlayer;
-            set => Mod.Settings.toggleShowAttackIndicatorOfNonPlayer = value;
+        public static bool ShowAttackIndicatorForNonPlayer {
+            get => Mod.Settings.toggleShowAttackIndicatorForNonPlayer;
+            set => Mod.Settings.toggleShowAttackIndicatorForNonPlayer = value;
         }
 
         public static bool ShowAttackIndicatorOnHoverUI {
@@ -291,14 +284,14 @@ namespace TurnBased.Utility
             set => Mod.Settings.toggleShowMovementIndicatorOfCurrentUnit = value;
         }
 
-        public static bool ShowMovementIndicatorOfPlayer {
-            get => Mod.Settings.toggleShowMovementIndicatorOfPlayer;
-            set => Mod.Settings.toggleShowMovementIndicatorOfPlayer = value;
+        public static bool ShowMovementIndicatorForPlayer {
+            get => Mod.Settings.toggleShowMovementIndicatorForPlayer;
+            set => Mod.Settings.toggleShowMovementIndicatorForPlayer = value;
         }
 
-        public static bool ShowMovementIndicatorOfNonPlayer {
-            get => Mod.Settings.toggleShowMovementIndicatorOfNonPlayer;
-            set => Mod.Settings.toggleShowMovementIndicatorOfNonPlayer = value;
+        public static bool ShowMovementIndicatorForNonPlayer {
+            get => Mod.Settings.toggleShowMovementIndicatorForNonPlayer;
+            set => Mod.Settings.toggleShowMovementIndicatorForNonPlayer = value;
         }
 
         public static bool ShowMovementIndicatorOnHoverUI {
@@ -343,7 +336,12 @@ namespace TurnBased.Utility
             get => Mod.Settings.timeScaleInUnknownTurn;
             set => Mod.Settings.timeScaleInUnknownTurn = value;
         }
-        
+
+        public static float MaxDelayBetweenIterativeAttacks {
+            get => Mod.Settings.maxDelayBetweenIterativeAttacks;
+            set => Mod.Settings.maxDelayBetweenIterativeAttacks = value;
+        }
+
         public static float CastingTimeOfFullRoundSpell {
             get => Mod.Settings.castingTimeOfFullRoundSpell;
             set => Mod.Settings.castingTimeOfFullRoundSpell = value;
@@ -421,15 +419,21 @@ namespace TurnBased.Utility
         public static BugfixOption FixSpellstrikeOnNeutralUnit => Mod.Settings.toggleFixSpellstrikeOnNeutralUnit;
 
         public static BugfixOption FixSpellstrikeWithMetamagicReach => Mod.Settings.toggleFixSpellstrikeWithMetamagicReach;
+        
+        public static BugfixOption FixDamageBonusOfBlastRune => Mod.Settings.toggleFixDamageBonusOfBlastRune;
+
+        public static BugfixOption FixFxOfShadowEvocationSirocco => Mod.Settings.toggleFixFxOfShadowEvocationSirocco;
 
         public static BugfixOption FixAbilityNotAutoDeactivateIfCombatEnded => Mod.Settings.toggleFixAbilityNotAutoDeactivateIfCombatEnded;
 
         public static BugfixOption FixBlindFightDistance => Mod.Settings.toggleFixBlindFightDistance;
 
         public static BugfixOption FixConfusedUnitCanAttackDeadUnit => Mod.Settings.toggleFixConfusedUnitCanAttackDeadUnit;
-        
+
         public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
 
+        public static BugfixOption FixCanMakeAttackOfOpportunityToUnmovedTarget => Mod.Settings.toggleFixCanMakeAttackOfOpportunityToUnmovedTarget;
+        
         public static BugfixOption FixAbilityCircleRadius => Mod.Settings.toggleFixAbilityCircleRadius;
 
         public static BugfixOption FixAbilityCircleNotAppear => Mod.Settings.toggleFixAbilityCircleNotAppear;
@@ -437,7 +441,16 @@ namespace TurnBased.Utility
         public static BugfixOption FixAbilityCanTargetUntargetableUnit => Mod.Settings.toggleFixAbilityCanTargetUntargetableUnit;
 
         public static BugfixOption FixAbilityCanTargetDeadUnit => Mod.Settings.toggleFixAbilityCanTargetDeadUnit;
-        
+
+        #endregion
+
+        #region Localization
+
+        public static string LocalizationFileName {
+            get => Mod.Settings.localizationFileName;
+            set => Mod.Settings.localizationFileName = value;
+        }
+
         #endregion
     }
 }

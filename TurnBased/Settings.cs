@@ -7,20 +7,25 @@ namespace TurnBased
 {
     public class Settings : UnityModManager.ModSettings
     {
+        public string lastModVersion;
+        public bool toggleTurnBasedMode = true;
+
         // gameplay
         public float distanceOfFiveFootStep = 1.5f;
         public bool toggleSurpriseRound = true;
-        public bool toggleFlankingCountAllOpponentsWithinThreatenRange = true;
+        public bool togglePreventUnconsciousUnitLeavingCombat = true;
+        public bool toggleFlankingCountAllOpponentsWithinThreatenedRange = true;
         public bool toggleRerollPerceptionDiceAgainstStealthOncePerRound;
 
         public float radiusOfCollision = 0.9f;
-        public bool toggleMovingThroughFriends = true;
-        public bool toggleMovingThroughNonEnemies;
-        public bool toggleMovingThroughOnlyAffectPlayer;
-        public bool toggleMovingThroughOnlyAffectNonEnemies;
+        public bool toggleMovingThroughFriendlyUnit = true;
+        public bool toggleMovingThroughNonHostileUnit;
+        public bool toggleMovingThroughApplyToPlayer = true;
+        public bool toggleMovingThroughApplyToNeutralUnit = true;
+        public bool toggleMovingThroughApplyToEnemy = true;
         public bool toggleAvoidOverlapping = true;
         public bool toggleAvoidOverlappingOnCharge = true;
-        public bool toggleDoNotMovingThroughNonAllies = true;
+        public bool toggleDoNotMovingThroughNonAlly = true;
 
         public bool toggleAutoTurnOffAIOnTurnStart = true;
         public bool toggleAutoTurnOnAIOnCombatEnd = true;
@@ -32,7 +37,7 @@ namespace TurnBased
         public bool toggleAutoCancelActionsOnFirstMoveFinish = true;
         public bool toggleAutoEnableFiveFootStepOnTurnStart;
         public bool toggleAutoEndTurnWhenActionsAreUsedUp = true;
-        public bool toggleAutoEndTurnIgnoreSwiftAction;
+        public bool toggleAutoEndTurnExceptSwiftAction;
         public bool toggleAutoEndTurnWhenPlayerIdle;
 
         // interface
@@ -42,9 +47,9 @@ namespace TurnBased
         public float combatTrackerScale = 0.9f;
         public float combatTrackerWidth = 350f;
         public int combatTrackerMaxUnits = 15;
-        public bool toggleSelectUnitOnClickUI;
         public bool toggleCameraScrollToUnitOnClickUI = true;
-        public bool toggleShowUnitDescriptionOnRightClickUI = true;
+        public bool toggleSelectUnitOnClickUI = true;
+        public bool toggleInspectOnRightClickUI = true;
         public bool toggleShowIsFlatFootedIconOnUI = true;
 
         public bool toggleHighlightCurrentUnit = true;
@@ -53,16 +58,16 @@ namespace TurnBased
         public bool toggleCameraLockOnCurrentNonPlayerUnit = true;
 
         public bool toggleShowAttackIndicatorOfCurrentUnit = true;
-        public bool toggleShowAttackIndicatorOfPlayer = true;
-        public bool toggleShowAttackIndicatorOfNonPlayer;
+        public bool toggleShowAttackIndicatorForPlayer = true;
+        public bool toggleShowAttackIndicatorForNonPlayer;
         public bool toggleShowAttackIndicatorOnHoverUI = true;
         public bool toggleShowAutoCastAbilityRange = true;
         public bool toggleCheckForObstaclesOnTargeting = true;
 
         public bool toggleShowMovementIndicatorOfCurrentUnit = true;
-        public bool toggleShowMovementIndicatorOfPlayer = true;
-        public bool toggleShowMovementIndicatorOfNonPlayer;
-        public bool toggleShowMovementIndicatorOnHoverUI = true;
+        public bool toggleShowMovementIndicatorForPlayer = true;
+        public bool toggleShowMovementIndicatorForNonPlayer;
+        public bool toggleShowMovementIndicatorOnHoverUI;
 
         // hotkeys
         public SerializableDictionary<string, BindingKeysData> hotkeys = new SerializableDictionary<string, BindingKeysData>();
@@ -74,6 +79,7 @@ namespace TurnBased
         public float timeScaleInPlayerTurn = 1f;
         public float timeScaleInNonPlayerTurn = 2f;
         public float timeScaleInUnknownTurn = 3f;
+        public float maxDelayBetweenIterativeAttacks = 1.5f;
         public float castingTimeOfFullRoundSpell = 0.5f;
         public float timeToWaitForIdleAI = 0.5f;
         public float timeToWaitForEndingTurn = 0.1f;
@@ -98,13 +104,19 @@ namespace TurnBased
         public BugfixOption toggleFixKineticistWontStopPriorCommand = new BugfixOption(true, false);
         public BugfixOption toggleFixSpellstrikeOnNeutralUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixSpellstrikeWithMetamagicReach = new BugfixOption(true, false);
+        public BugfixOption toggleFixDamageBonusOfBlastRune = new BugfixOption(true, false);
+        public BugfixOption toggleFixFxOfShadowEvocationSirocco = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityNotAutoDeactivateIfCombatEnded = new BugfixOption(true, false);
         public BugfixOption toggleFixBlindFightDistance = new BugfixOption(true, false);
         public BugfixOption toggleFixConfusedUnitCanAttackDeadUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
+        public BugfixOption toggleFixCanMakeAttackOfOpportunityToUnmovedTarget = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleRadius = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCanTargetUntargetableUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCanTargetDeadUnit = new BugfixOption(true, false);
+
+        // localization
+        public string localizationFileName;
     }
 }

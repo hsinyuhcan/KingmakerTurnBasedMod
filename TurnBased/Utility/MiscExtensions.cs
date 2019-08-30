@@ -8,6 +8,7 @@ using Kingmaker.UnitLogic.Abilities.Blueprints;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Groups;
 using Kingmaker.Utility;
+using System;
 using System.Linq;
 
 namespace TurnBased.Utility
@@ -41,6 +42,25 @@ namespace TurnBased.Utility
                 return meters;
             }
             return 0f;
+        }
+
+        public static T[] AddToArray<T>(this T[] array, T value)
+        {
+            int length = array.Length;
+            T[] result = new T[length + 1];
+            Array.Copy(array, result, length);
+            result[length] = value;
+            return result;
+        }
+
+        public static T[] AddToArray<T>(this T[] array, params T[] values)
+        {
+            int length = array.Length;
+            int valueLength = values.Length;
+            T[] result = new T[length + valueLength];
+            Array.Copy(array, result, length);
+            Array.Copy(values, 0, result, length, valueLength);
+            return result;
         }
 
         public static void Clear(this UnitCombatState.Cooldowns cooldown)

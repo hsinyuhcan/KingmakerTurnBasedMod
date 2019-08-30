@@ -5,9 +5,14 @@ using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UI.SettingsUI;
 using Kingmaker.UnitLogic.Commands;
+using ModMaker.Utility;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using TurnBased.Utility;
 using UnityEngine;
-using static TurnBased.Main;
+using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -24,10 +29,52 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && ToggleFiveFootStepOnRightClickGround && button == 1)
                 {
-                    Mod.Core.Combat.CurrentTurn?.CommandToggleFiveFootStep();
+                    CurrentTurn()?.CommandToggleFiveFootStep();
                     return false;
                 }
                 return true;
+            }
+        }
+
+        // speed up iterative attacks
+        [HarmonyPatch(typeof(UnitAttack), "OnTick")]
+        static class UnitAttack_OnTick_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // m_AnimationsDuration / (float)m_AllAttacks.Count
+                // ---------------- after  ----------------
+                // ModifyDelay(m_AnimationsDuration / (float)m_AllAttacks.Count)
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Ldfld,
+                        GetFieldInfo<UnitAttack, float>("m_AnimationsDuration")),
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Ldfld,
+                        GetFieldInfo<UnitAttack, List<AttackHandInfo>>("m_AllAttacks")),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<List<AttackHandInfo>, int>(nameof(List<AttackHandInfo>.Count)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Conv_R4),
+                    new CodeInstruction(OpCodes.Div),
+               };
+                int startIndex = codes.FindCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    return codes.Insert(startIndex + findingCodes.Count, new CodeInstruction(OpCodes.Call,
+                        new Func<float, float>(ModifyDelay).Method), true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static float ModifyDelay(float delay)
+            {
+                return IsInCombat() && delay > MaxDelayBetweenIterativeAttacks ? MaxDelayBetweenIterativeAttacks : delay;
             }
         }
 
@@ -56,7 +103,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix(UnitCombatState __instance, ref bool __result)
             {
-                if (IsInCombat() && __instance.Unit.IsInCombat && FlankingCountAllOpponents)
+                if (IsInCombat() && __instance.Unit.IsInCombat && FlankingCountAllNearbyOpponents)
                 {
                     __result = __instance.EngagedBy.Count > 1 && !__instance.Unit.Descriptor.State.Features.CannotBeFlanked;
                     return false;

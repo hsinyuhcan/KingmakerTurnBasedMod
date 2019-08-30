@@ -33,10 +33,10 @@ namespace TurnBased.UI
         private Color[] _colors;
         private Image _mask;
         private Image _maskActive;
-        private GameObject _markIsNextRound;
-        private GameObject _iconCanNotPerformAction;
-        private GameObject _iconIsSurprising;
+        private GameObject _markIsThisRound;
         private GameObject _iconIsFlatFooted;
+        private GameObject _iconIsUnableToAct;
+        private GameObject _iconIsSurprising;
         private GameObject _iconStandardAction;
         private GameObject _iconMoveAction;
         private GameObject _iconSwiftAction;
@@ -88,43 +88,43 @@ namespace TurnBased.UI
 
             Vector2 iconSize = new Vector2(UNIT_BUTTON_HEIGHT, UNIT_BUTTON_HEIGHT);
 
-            GameObject canNotPerformAction = buttonUnit.transform.Find("Failed").gameObject;
-            canNotPerformAction.name = "CanNotPerformAction";
-            ((RectTransform)canNotPerformAction.transform).sizeDelta = iconSize;
-
-            GameObject isSurprising = buttonUnit.transform.Find("NeedToAttention").gameObject;
-            isSurprising.name = "IsSurprising";
-            isSurprising.transform.localPosition = canNotPerformAction.transform.localPosition;
-            RectTransform rectIsSurprising = (RectTransform)isSurprising.transform;
-            rectIsSurprising.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT, 0.4f);
-            rectIsSurprising.sizeDelta = new Vector2(UNIT_BUTTON_HEIGHT, 0f);
-
             GameObject isFlatFooted = buttonUnit.transform.Find("New").gameObject;
             isFlatFooted.name = "IsFlatFooted";
             ((RectTransform)isFlatFooted.transform).sizeDelta = iconSize;
 
-            GameObject standardAction = Instantiate(canNotPerformAction, buttonUnit.transform);
+            GameObject isUnableToAct = buttonUnit.transform.Find("Failed").gameObject;
+            isUnableToAct.name = "IsUnableToAct";
+            ((RectTransform)isUnableToAct.transform).sizeDelta = iconSize;
+
+            GameObject isSurprising = buttonUnit.transform.Find("NeedToAttention").gameObject;
+            isSurprising.name = "IsSurprising";
+            isSurprising.transform.localPosition = isUnableToAct.transform.localPosition;
+            RectTransform rectIsSurprising = (RectTransform)isSurprising.transform;
+            rectIsSurprising.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT, 0.4f);
+            rectIsSurprising.sizeDelta = new Vector2(UNIT_BUTTON_HEIGHT, 0f);
+
+            GameObject standardAction = Instantiate(isUnableToAct, buttonUnit.transform);
             standardAction.name = "StandardAction";
             standardAction.transform.Find("Icon").gameObject.GetComponent<Image>().sprite = overtip.AttackSprite;
             RectTransform rectStandardAction = (RectTransform)standardAction.transform;
             rectStandardAction.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT * 2, 0.4f);
             rectStandardAction.sizeDelta = iconSize;
 
-            GameObject moveAction = Instantiate(canNotPerformAction, buttonUnit.transform);
+            GameObject moveAction = Instantiate(isUnableToAct, buttonUnit.transform);
             moveAction.name = "MoveAction";
             moveAction.transform.Find("Icon").gameObject.GetComponent<Image>().sprite = overtip.WalkSprite;
             RectTransform rectMoveAction = (RectTransform)moveAction.transform;
             rectMoveAction.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT, 0.4f);
             rectMoveAction.sizeDelta = iconSize;
 
-            GameObject swiftAction = Instantiate(canNotPerformAction, buttonUnit.transform);
+            GameObject swiftAction = Instantiate(isUnableToAct, buttonUnit.transform);
             swiftAction.name = "SwiftAction";
             swiftAction.transform.Find("Icon").gameObject.GetComponent<Image>().sprite = overtip.InteractSprite;
             ((RectTransform)swiftAction.transform).sizeDelta = iconSize;
 
-            isSurprising.transform.SetAsLastSibling();
             isFlatFooted.transform.SetAsLastSibling();
-            canNotPerformAction.transform.SetAsLastSibling();
+            isUnableToAct.transform.SetAsLastSibling();
+            isSurprising.transform.SetAsLastSibling();
 
             TextMeshProUGUI label = buttonUnit.transform.Find("HeaderInActive").gameObject.GetComponent<TextMeshProUGUI>();
             label.enableWordWrapping = false;
@@ -150,18 +150,18 @@ namespace TurnBased.UI
             {
                 UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.None).AddendumColor.linear,
                 UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Completed).AddendumColor.linear,
-                UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Failed).AddendumColor.linear,
-                UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Started).AddendumColor.linear
+                UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Started).AddendumColor.linear,
+                UIRoot.Instance.GetQuestNotificationObjectiveColor(QuestObjectiveState.Failed).AddendumColor.linear
             };
 
             _mask = gameObject.transform.Find("BackgroundInActive/Highlight").gameObject.GetComponent<Image>();
             _maskActive = gameObject.transform.Find("BackgroundActive/Highlight").gameObject.GetComponent<Image>();
 
-            _markIsNextRound = gameObject.transform.Find("BackgroundInActive/Decal").gameObject;
+            _markIsThisRound = gameObject.transform.Find("BackgroundInActive/Decal").gameObject;
 
-            _iconCanNotPerformAction = gameObject.transform.Find("CanNotPerformAction").gameObject;
-            _iconIsSurprising = gameObject.transform.Find("IsSurprising").gameObject;
             _iconIsFlatFooted = gameObject.transform.Find("IsFlatFooted").gameObject;
+            _iconIsUnableToAct = gameObject.transform.Find("IsUnableToAct").gameObject;
+            _iconIsSurprising = gameObject.transform.Find("IsSurprising").gameObject;
             _iconStandardAction = gameObject.transform.Find("StandardAction").gameObject;
             _iconMoveAction = gameObject.transform.Find("MoveAction").gameObject;
             _iconSwiftAction = gameObject.transform.Find("SwiftAction").gameObject;
@@ -188,6 +188,7 @@ namespace TurnBased.UI
         {
             EventBus.Unsubscribe(this);
 
+            OnExit(Unit);
             Unit?.SetHighlight(false);
             Unit = null;
         }
@@ -235,7 +236,7 @@ namespace TurnBased.UI
 
         private void HandleOnRightClick()
         {
-            if (ShowUnitDescriptionOnRightClickUI)
+            if (InspectOnRightClickUI)
                 Unit.Inspect();
         }
 
@@ -296,46 +297,38 @@ namespace TurnBased.UI
 
         private void UpdateTimeBar()
         {
-            _maskActive.rectTransform.anchorMax = 
-                new Vector2(_isCurrent ? Mod.Core.Combat.CurrentTurn.GetRemainingTime() / 6f : 1f, 1f);
+            _maskActive.rectTransform.anchorMax = new Vector2(_isCurrent ? CurrentTurn().GetRemainingTime() / 6f : 1f, 1f);
         }
 
         private void UpdateActionIcons()
         {
-            bool canActive = _isCurrent && Unit.CanPerformAction();
-            _iconStandardAction.SetActive(canActive && Unit.HasStandardAction());
-            _iconMoveAction.SetActive(canActive && !Unit.UsedOneMoveAction());
-            _iconSwiftAction.SetActive(canActive && Unit.CombatState.Cooldown.SwiftAction == 0f);
+            bool isAbleToAct = _isCurrent && Unit.IsAbleToAct();
+            _iconStandardAction.SetActive(isAbleToAct && Unit.HasStandardAction());
+            _iconMoveAction.SetActive(isAbleToAct && !Unit.UsedOneMoveAction());
+            _iconSwiftAction.SetActive(isAbleToAct && Unit.CombatState.Cooldown.SwiftAction == 0f);
         }
 
         private void UpdateStateIcons()
         {
             UnitEntityData currentUnit;
-            _markIsNextRound.SetActive(Unit != null && !_isCurrent && Unit.GetTimeToNextTurn() >= Mod.Core.Combat.TimeToNextRound);
-            _iconIsSurprising.SetActive(Unit != null && !_isCurrent && Unit.IsSurprising());
+            _markIsThisRound.SetActive(Unit != null && !_isCurrent && Unit.GetTimeToNextTurn() < Mod.Core.Combat.TimeToNextRound);
             _iconIsFlatFooted.SetActive(ShowIsFlatFootedIconOnUI &&
-                Unit != null && !_isCurrent && (currentUnit = Mod.Core.Combat.CurrentTurn?.Unit) != null &&
+                Unit != null && !_isCurrent && (currentUnit = CurrentUnit()) != null &&
                 Rulebook.Trigger(new RuleCheckTargetFlatFooted(currentUnit, Unit)).IsFlatFooted);
-            _iconCanNotPerformAction.SetActive(Unit != null && !Unit.CanPerformAction());
+            _iconIsUnableToAct.SetActive(Unit != null && !Unit.IsAbleToAct());
+            _iconIsSurprising.SetActive(Unit != null && !_isCurrent && Unit.IsSurprising());
         }
 
         private void UpdateColorMask()
         {
-            if (Unit == null)
-                _mask.color = _colors[0];
-            else if (Game.Instance.Player.ControllableCharacters.Contains(Unit))
-                _mask.color = _colors[1];
-            else if (Unit.Group.IsEnemy(Game.Instance.Player.Group))
-                _mask.color = _colors[2];
-            else
-                _mask.color = _colors[3];
+            _mask.color = Unit == null ? _colors[0] : Unit.StatusSwitch(_colors[1], _colors[2], _colors[3]);
         }
 
         private void UpdateText()
         {
             TextMeshProUGUI label = _isCurrent ? _labelActive : _label;
             string text = Unit == null ? string.Empty : 
-                (!DoNotShowInvisibleUnitOnCombatTracker || Unit.IsVisibleForPlayer) ? Unit.CharacterName : "Unknown";
+                (!DoNotShowInvisibleUnitOnCombatTracker || Unit.IsVisibleForPlayer) ? Unit.CharacterName : Local["UI_Txt_Unknown"];
 
             if (text != _previousText || _width != label.rectTransform.rect.width)
             {

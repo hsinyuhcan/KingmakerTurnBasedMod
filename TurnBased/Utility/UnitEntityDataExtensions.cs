@@ -22,6 +22,7 @@ using System.Linq;
 using UnityEngine;
 using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
+using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.Utility
 {
@@ -73,7 +74,7 @@ namespace TurnBased.Utility
             return unit.GetAllCommands().Any(command => command.IsOffensiveCommand() && (pred == null || pred(command)));
         }
 
-        public static bool CanPerformAction(this UnitEntityData unit)
+        public static bool IsAbleToAct(this UnitEntityData unit)
         {
             UnitState state = unit.Descriptor.State;
             UnitAnimationManager animationManager = unit.View?.AnimationManager;
@@ -196,14 +197,13 @@ namespace TurnBased.Utility
 
         #endregion
 
-        #region Move Through
+        #region Pathfinding
 
         public static bool CanMoveThrough(this UnitEntityData unit, UnitEntityData target)
         {
             return unit != null && target != null && unit != target &&
-                (!MovingThroughOnlyAffectPlayer || Game.Instance.Player.ControllableCharacters.Contains(unit)) &&
-                (!MovingThroughOnlyAffectNonEnemies || !unit.Group.IsEnemy(Game.Instance.Player.Group)) &&
-                ((MovingThroughNonEnemies && !unit.IsEnemy(target)) || (MovingThroughFriends && unit.IsAlly(target))) &&
+                unit.StatusSwitch(MovingThroughApplyToPlayer, MovingThroughApplyToNeutralUnit, MovingThroughApplyToEnemy) &&
+                ((MovingThroughFriendlyUnit && unit.IsAlly(target)) || (MovingThroughNonHostileUnit && !unit.IsEnemy(target))) &&
                 (!AvoidOverlapping || !unit.JustOverlapping(target));
         }
 
@@ -227,7 +227,7 @@ namespace TurnBased.Utility
 
             // if the unit doesn't have enough movement to go through the target, forbid it from going through
             if (unit.IsCurrentUnit() && !agentASP.GetIsInForceMode())
-                return Mod.Core.Combat.CurrentTurn.GetRemainingMovementRange(true) <
+                return CurrentTurn().GetRemainingMovementRange(true) <
                     Math.Min(unit.DistanceTo(target) + minDistance, unit.DistanceTo(destination.Value));
 
             return false;
@@ -239,7 +239,7 @@ namespace TurnBased.Utility
 
         public static bool IsCurrentUnit(this UnitEntityData unit)
         {
-            return unit != null && unit == Mod.Core.Combat.CurrentTurn?.Unit;
+            return unit != null && unit == CurrentUnit();
         }
 
         public static bool IsSurprising(this UnitEntityData unit)
@@ -256,6 +256,12 @@ namespace TurnBased.Utility
         public static bool IsUnseen(this UnitEntityData unit)
         {
             return !Game.Instance.UnitGroups.Any(group => group.IsEnemy(unit) && group.Memory.ContainsVisible(unit));
+        }
+
+        public static T StatusSwitch<T>(this UnitEntityData unit, T player, T neutral, T enemy)
+        {
+            Player p = Game.Instance.Player;
+            return p.ControllableCharacters.Contains(unit) ? player : unit.Group.IsEnemy(p.Group) ? enemy : neutral;
         }
 
         #endregion
@@ -311,20 +317,12 @@ namespace TurnBased.Utility
                 UIRoot uiRoot = UIRoot.Instance;
                 Player player = Game.Instance.Player;
                 highlighter.BaseColor =
-                    // clear
-                    !highlight ?
-                    Color.clear :
+                    // none
+                    !highlight ? Color.clear :
                     // loot
-                    unit.Descriptor.State.IsDead ?
-                    (unit.LootViewed ? uiRoot.VisitedLootColor : uiRoot.StandartUnitLootColor) :
-                    // player
-                    player.ControllableCharacters.Contains(unit) ?
-                    uiRoot.AllyHighlightColor :
-                    // enemy
-                    unit.Group.IsEnemy(player.Group) ?
-                    uiRoot.EnemyHighlightColor :
-                    // neutral
-                    uiRoot.NeutralHighlightColor;
+                    unit.Descriptor.State.IsDead ? (unit.LootViewed ? uiRoot.VisitedLootColor : uiRoot.StandartUnitLootColor) :
+                    // player, neutral, enemy
+                    unit.StatusSwitch(uiRoot.AllyHighlightColor, uiRoot.NeutralHighlightColor, uiRoot.EnemyHighlightColor);
             }
         }
 

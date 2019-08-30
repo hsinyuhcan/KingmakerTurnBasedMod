@@ -10,6 +10,7 @@ using Kingmaker.UI.Log;
 using Kingmaker.UnitLogic;
 using Kingmaker.View;
 using ModMaker;
+using ModMaker.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,6 +67,8 @@ namespace TurnBased.Controllers
         }
 
         public bool Initialized { get; private set; }
+
+        public int Priority => 600;
 
         public IEnumerable<UnitEntityData> SortedUnits {
             get {
@@ -171,6 +174,7 @@ namespace TurnBased.Controllers
                 CurrentTurn = new TurnController(unit);
                 CurrentTurn.OnDelay += HandleDelayTurn;
                 CurrentTurn.OnEnd += HandleEndTurn;
+                CurrentTurn.Start();
                 _isUnitsChanged = true;
             }
         }
@@ -278,7 +282,7 @@ namespace TurnBased.Controllers
         private void LogRound()
         {
             Game.Instance.UI.BattleLogManager.LogView.AddLogEntry(
-                RoundNumber > 0 ? string.Format("<b>Round {0} started.</b>", RoundNumber) : "<b>Surprise round started.</b>",
+                (RoundNumber > 0 ? string.Format(Local["UI_Log_RoundStarted"], RoundNumber) : Local["UI_Log_SurpriseRoundStarted"]).Bold(),
                 new Color(0.5f, 0.1f, 0.1f, 1f), LogChannel.Combat);
         }
 

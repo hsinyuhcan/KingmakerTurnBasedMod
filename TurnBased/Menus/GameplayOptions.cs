@@ -14,7 +14,7 @@ namespace TurnBased.Menus
         GUIStyle _buttonStyle;
         GUIStyle _labelStyle;
 
-        public string Name => "Gameplay";
+        public string Name => Local["Menu_Tab_Gameplay"];
 
         public int Priority => 0;
 
@@ -35,24 +35,22 @@ namespace TurnBased.Menus
                 {
                     Mod.Core.Enabled =
                     GUIHelper.ToggleButton(Mod.Core.Enabled,
-                    "Turn-Based Mode", _buttonStyle, GUILayout.ExpandWidth(false));
+                    Local["Menu_Opt_TrunBasedMode"], _buttonStyle, GUILayout.ExpandWidth(false));
 
-                    if (GUILayout.Button($"Reset Settings", _buttonStyle, GUILayout.ExpandWidth(false)))
+                    if (GUILayout.Button(Local["Menu_Btn_ResetSettings"], _buttonStyle, GUILayout.ExpandWidth(false)))
                     {
-                        Mod.ResetSettings();
-                        Mod.Core.Blueprint.Update();
-                        Mod.Core.Hotkeys.Update();
+                        Mod.Core.ResetSettings();
                     }
                 }
             }
 
-            using (new GUISubScope("Rule"))
+            using (new GUISubScope(Local["Menu_Sub_Rule"]))
                 OnGUIRule();
 
-            using (new GUISubScope("Pathfinding"))
+            using (new GUISubScope(Local["Menu_Sub_Pathfinding"]))
                 OnGUIPathfinding();
 
-            using (new GUISubScope("Automation"))
+            using (new GUISubScope(Local["Menu_Sub_Automation"]))
                 OnGUIAutomation();
         }
 
@@ -60,28 +58,32 @@ namespace TurnBased.Menus
         {
             using (new GUILayout.HorizontalScope())
             {
-                GUIHelper.ToggleButton(DistanceOfFiveFootStep != 1f, 
-                    $"Distance Modifier Of 5-Foot Step: {DistanceOfFiveFootStep:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                GUIHelper.ToggleButton(DistanceOfFiveFootStep != 1f,
+                    string.Format(Local["Menu_Opt_DistanceOfFiveFootStep"], DistanceOfFiveFootStep), _labelStyle, GUILayout.ExpandWidth(false));
                 DistanceOfFiveFootStep =
                    GUIHelper.RoundedHorizontalSlider(DistanceOfFiveFootStep, 1, 1f, 2f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                GUILayout.Label("(Larger value will make slower units unable to take a 5-foot step)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+                GUILayout.Label(Local["Menu_Cmt_DistanceOfFiveFootStep"].Color(RGBA.silver), GUILayout.ExpandWidth(false));
             }
 
             SurpriseRound =
                 GUIHelper.ToggleButton(SurpriseRound,
-                "Surprise Round" +
-                " (All unseen units get a surprise round before regular rounds)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_SurpriseRound"] +
+                Local["Menu_Cmt_SurpriseRound"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
-            FlankingCountAllOpponents =
-                GUIHelper.ToggleButton(FlankingCountAllOpponents,
-                "Flanking Count All Opponents Within Threaten Range" +
-                " (Regardless opponents' current command)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+            PreventUnconsciousUnitLeavingCombat =
+                GUIHelper.ToggleButton(PreventUnconsciousUnitLeavingCombat,
+                Local["Menu_Opt_PreventUnconsciousUnitLeavingCombat"] +
+                Local["Menu_Cmt_PreventUnconsciousUnitLeavingCombat"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+
+            FlankingCountAllNearbyOpponents =
+                GUIHelper.ToggleButton(FlankingCountAllNearbyOpponents,
+                Local["Menu_Opt_FlankingCountAllNearbyOpponents"] +
+                Local["Menu_Cmt_FlankingCountAllNearbyOpponents"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             RerollPerceptionDiceAgainstStealthOncePerRound =
                 GUIHelper.ToggleButton(RerollPerceptionDiceAgainstStealthOncePerRound,
-                "Re-roll Perception Dice Against Stealth Once Per Round" +
-                " (Instead of rolling once per combat)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_RerollPerceptionDiceAgainstStealthOncePerRound"] +
+                Local["Menu_Cmt_RerollPerceptionDiceAgainstStealthOncePerRound"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
         }
 
         private void OnGUIPathfinding()
@@ -89,97 +91,106 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(RadiusOfCollision != 1f, 
-                    $"Radius Modifier Of Collision Detection: {RadiusOfCollision:f2}x", _labelStyle, GUILayout.ExpandWidth(false));
+                    string.Format(Local["Menu_Opt_RadiusOfCollision"], RadiusOfCollision), _labelStyle, GUILayout.ExpandWidth(false));
                 RadiusOfCollision =
                     GUIHelper.RoundedHorizontalSlider(RadiusOfCollision, 1, 0.5f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-                GUILayout.Space(5f);
-                GUILayout.Label($"(A modifier affects all units' pathfinding, NOT AFFECT REACH)".Color(RGBA.silver), GUILayout.ExpandWidth(false));
+                GUILayout.Label(Local["Menu_Cmt_RadiusOfCollision"].Color(RGBA.silver), GUILayout.ExpandWidth(false));
             }
 
-            MovingThroughFriends =
-                GUIHelper.ToggleButton(MovingThroughFriends,
-                "Moving Through Friends" +
-                " (Units can move through allies)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+            MovingThroughFriendlyUnit =
+                GUIHelper.ToggleButton(MovingThroughFriendlyUnit,
+                Local["Menu_Opt_MovingThroughFriendlyUnit"] +
+                Local["Menu_Cmt_MovingThroughFriendlyUnit"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
-            MovingThroughNonEnemies =
-                GUIHelper.ToggleButton(MovingThroughNonEnemies,
-                "Moving Through Non-Enemies" +
-                " (Units can move through allies and neutral units)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+            MovingThroughNonHostileUnit =
+                GUIHelper.ToggleButton(MovingThroughNonHostileUnit,
+                Local["Menu_Opt_MovingThroughNonHostileUnit"] +
+                Local["Menu_Cmt_MovingThroughNonHostileUnit"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
-            MovingThroughOnlyAffectPlayer =
-                GUIHelper.ToggleButton(MovingThroughOnlyAffectPlayer,
-                "Moving Through ... Only Affect Player", _buttonStyle, GUILayout.ExpandWidth(false));
+            using (new GUILayout.HorizontalScope())
+            {
+                MovingThroughApplyToPlayer =
+                    GUIHelper.ToggleButton(MovingThroughApplyToPlayer,
+                    Local["Menu_Opt_MovingThroughApplyToPlayer"], _buttonStyle, GUILayout.ExpandWidth(false));
 
-            MovingThroughOnlyAffectNonEnemies =
-                GUIHelper.ToggleButton(MovingThroughOnlyAffectNonEnemies,
-                "Moving Through ... Only Affect Non-Enemies", _buttonStyle, GUILayout.ExpandWidth(false));
+                MovingThroughApplyToNeutralUnit =
+                    GUIHelper.ToggleButton(MovingThroughApplyToNeutralUnit,
+                    Local["Menu_Opt_MovingThroughApplyToNeutralUnit"], _buttonStyle, GUILayout.ExpandWidth(false));
+
+                MovingThroughApplyToEnemy =
+                    GUIHelper.ToggleButton(MovingThroughApplyToEnemy,
+                    Local["Menu_Opt_MovingThroughApplyToEnemy"], _buttonStyle, GUILayout.ExpandWidth(false));
+            }
 
             AvoidOverlapping =
                 GUIHelper.ToggleButton(AvoidOverlapping,
-                "Try To Avoid Overlapping When Moving Through Friends" +
-                " (Forbid moving through a unit if they will overlap each other)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AvoidOverlapping"] +
+                Local["Menu_Cmt_AvoidOverlapping"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             AvoidOverlappingOnCharge =
                 GUIHelper.ToggleButton(AvoidOverlappingOnCharge,
-                "Try To Avoid Overlapping When Charging" +
-                " (Try to avoid obstacles and be blocked while no valid path)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AvoidOverlappingOnCharge"]  +
+                Local["Menu_Cmt_AvoidOverlappingOnCharge"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
-            DoNotMovingThroughNonAllies =
-                GUIHelper.ToggleButton(DoNotMovingThroughNonAllies,
-                "DO NOT Moving Through Non-Allies" +
-                " (Disable the default \"soft obstacle\" effect on non-ally units)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+            DoNotMovingThroughNonAlly =
+                GUIHelper.ToggleButton(DoNotMovingThroughNonAlly,
+                Local["Menu_Opt_DoNotMovingThroughNonAlly"] +
+                Local["Menu_Cmt_DoNotMovingThroughNonAlly"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
         }
 
         private void OnGUIAutomation()
         {
             AutoTurnOffAIOnTurnStart =
                 GUIHelper.ToggleButton(AutoTurnOffAIOnTurnStart,
-                "Auto Turn Off Unit's AI On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AutoTurnOffAIOnTurnStart"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoTurnOnAIOnCombatEnd =
                 GUIHelper.ToggleButton(AutoTurnOnAIOnCombatEnd,
-                "Auto Turn On Unit's AI On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AutoTurnOnAIOnCombatEnd"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoSelectUnitOnTurnStart =
                 GUIHelper.ToggleButton(AutoSelectUnitOnTurnStart,
-                "Auto Select Current Unit On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AutoSelectUnitOnTurnStart"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoSelectEntirePartyOnCombatEnd =
                 GUIHelper.ToggleButton(AutoSelectEntirePartyOnCombatEnd,
-                "Auto Select The Entire Party On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AutoSelectEntirePartyOnCombatEnd"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoCancelActionsOnTurnStart =
                 GUIHelper.ToggleButton(AutoCancelActionsOnTurnStart,
-                "Auto Cancel Actions On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AutoCancelActionsOnTurnStart"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoCancelActionsOnCombatEnd =
                 GUIHelper.ToggleButton(AutoCancelActionsOnCombatEnd,
-                "Auto Cancel Actions On Turn-Based Combat End", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AutoCancelActionsOnCombatEnd"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoCancelActionsOnFiveFootStepFinish =
                 GUIHelper.ToggleButton(AutoCancelActionsOnFiveFootStepFinish,
-                "Auto Cancel Actions On Player's Unit Finished The 5-Foot Step", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AutoCancelActionsOnFiveFootStepFinish"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoCancelActionsOnFirstMoveFinish =
                 GUIHelper.ToggleButton(AutoCancelActionsOnFirstMoveFinish,
-                "Auto Cancel Actions On Player's Unit Finished The First Move Action Through Move", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AutoCancelActionsOnFirstMoveFinish"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             AutoEnableFiveFootStepOnTurnStart =
                 GUIHelper.ToggleButton(AutoEnableFiveFootStepOnTurnStart,
-                "Auto Enable 5-Foot Step On Player's Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AutoEnableFiveFootStepOnTurnStart"], _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoEndTurnWhenActionsAreUsedUp =
-                GUIHelper.ToggleButton(AutoEndTurnWhenActionsAreUsedUp,
-                "Auto End Turn If All Actions Are Used Up", _buttonStyle, GUILayout.ExpandWidth(false));
+            using (new GUILayout.HorizontalScope())
+            {
+                AutoEndTurnWhenActionsAreUsedUp =
+                    GUIHelper.ToggleButton(AutoEndTurnWhenActionsAreUsedUp,
+                    Local["Menu_Opt_AutoEndTurnWhenActionsAreUsedUp"], _buttonStyle, GUILayout.ExpandWidth(false));
 
-            AutoEndTurnIgnoreSwiftAction =
-                GUIHelper.ToggleButton(AutoEndTurnIgnoreSwiftAction,
-                "Auto End Turn If All Actions ... Except Swift Action", _buttonStyle, GUILayout.ExpandWidth(false));
+                AutoEndTurnExceptSwiftAction =
+                    GUIHelper.ToggleButton(AutoEndTurnExceptSwiftAction,
+                    Local["Menu_Opt_AutoEndTurnExceptSwiftAction"], _buttonStyle, GUILayout.ExpandWidth(false));
+            }
 
             AutoEndTurnWhenPlayerIdle =
                 GUIHelper.ToggleButton(AutoEndTurnWhenPlayerIdle,
-                "Auto End Turn If Player's Unit Is Idle" +
-                " (Can be used for auto combat)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_AutoEndTurnWhenPlayerIdle"] +
+                Local["Menu_Cmt_AutoEndTurnWhenPlayerIdle"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
         }
     }
 }

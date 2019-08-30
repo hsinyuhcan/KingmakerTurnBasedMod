@@ -25,8 +25,9 @@ namespace TurnBased.UI
         private RectTransform _body;
         private VerticalLayoutGroup _bodyLayoutGroup;
         private ButtonWrapper _buttonEndTurn;
-        private ButtonWrapper _buttonFiveFoorStep;
         private ButtonWrapper _buttonDelay;
+        private ButtonWrapper _buttonFiveFoorStep;
+        private ButtonWrapper _buttonFullAttack;
         private RectTransform _unitButtons;
         private UnitButtonManager _unitButtonTemplate;
 
@@ -56,19 +57,21 @@ namespace TurnBased.UI
             rectCombatTracker.anchorMin = new Vector2(0f, 0f);
             rectCombatTracker.anchorMax = new Vector2(1f, 1f);
             rectCombatTracker.pivot = new Vector2(1f, 1f);
-            rectCombatTracker.position = Camera.current.ScreenToWorldPoint(new Vector3(
-                Screen.width, Screen.height, Camera.current.WorldToScreenPoint(hudLayout.transform.position).z));
-            rectCombatTracker.position = rectCombatTracker.position - rectCombatTracker.forward;
+            rectCombatTracker.position = Camera.current.ScreenToWorldPoint
+                (new Vector3(Screen.width, Screen.height, Camera.current.WorldToScreenPoint(hudLayout.transform.position).z));
+            rectCombatTracker.position -= rectCombatTracker.forward;
             rectCombatTracker.rotation = Quaternion.identity;
 
-            // initialize button block
+            // initialize body
             GameObject body = Instantiate(escMenuButtonBlock, combatTracker.transform, false);
             body.name = "Body";
 
             Image imgBody = body.GetComponent<Image>();
             Image imgMetamagic = uiCommon.transform.Find("ServiceWindow/SpellBook/ContainerNoBook/Background")?.gameObject.GetComponent<Image>();
             if (imgMetamagic)
+            {
                 imgBody.sprite = imgMetamagic.sprite;
+            }
 
             RectTransform rectBody = (RectTransform)body.transform;
             rectBody.anchorMin = new Vector2(1f, 1f);
@@ -88,49 +91,43 @@ namespace TurnBased.UI
             verticalLayoutGroup.childForceExpandWidth = true;
             verticalLayoutGroup.childForceExpandHeight = false;
 
-            // initialize end turn button
-            ButtonPF buttonEndTurn = body.transform.Find("Btn_Quit").gameObject.GetComponent<ButtonPF>();
-            buttonEndTurn.name = "Button_EndTurn";
-
-            RectTransform rectButtonEndTurn = (RectTransform)buttonEndTurn.transform;
-            rectButtonEndTurn.pivot = new Vector2(1f, 1f);
-            rectButtonEndTurn.sizeDelta = new Vector2(0f, UNIT_BUTTON_HEIGHT);
-            rectButtonEndTurn.SetSiblingIndex(0);
-
             // initialize special action buttons
             GameObject actionButtons = new GameObject("SpecialActionButtons", typeof(RectTransform));
 
             RectTransform rectActionButtons = (RectTransform)actionButtons.transform;
             rectActionButtons.SetParent(rectBody, false);
             rectActionButtons.pivot = new Vector2(1f, 1f);
-            rectActionButtons.sizeDelta = new Vector2(0f, UNIT_BUTTON_HEIGHT);
-            rectActionButtons.SetSiblingIndex(1);
+            rectActionButtons.sizeDelta = new Vector2(0f, UNIT_BUTTON_HEIGHT * 2);
+            rectActionButtons.SetSiblingIndex(0);
 
-            // initialize 5-foot step button
-            ButtonPF buttonFFS = body.transform.Find("Btn_Save").gameObject.GetComponent<ButtonPF>();
-            buttonFFS.name = "Button_FiveFootStep";
-            buttonFFS.transform.SetParent(rectActionButtons, false);
+            void SetActionButton(ButtonPF button, string name, float left, float buttom, float right, float top)
+            {
+                button.name = name;
+                button.transform.SetParent(rectActionButtons, false);
+                RectTransform rect = (RectTransform)button.transform;
+                rect.anchoredPosition = new Vector2(0f, 0f);
+                rect.anchorMin = new Vector2(left, buttom);
+                rect.anchorMax = new Vector2(right, top);
+                rect.pivot = new Vector2(1f, 1f);
+                rect.rotation = Quaternion.identity;
+                rect.sizeDelta = new Vector2(0f, 0f);
+            }
 
-            RectTransform rectButtonFFS = (RectTransform)buttonFFS.transform;
-            rectButtonFFS.anchorMin = new Vector2(0f, 0f);
-            rectButtonFFS.anchorMax = new Vector2(0.5f, 1f);
-            rectButtonFFS.pivot = new Vector2(1f, 1f);
-            rectButtonFFS.localPosition = new Vector3(0f, 0f, 0f);
-            rectButtonFFS.rotation = Quaternion.identity;
-            rectButtonFFS.sizeDelta = new Vector2(0f, 0f);
+            // ... end turn button
+            ButtonPF buttonEndTurn = body.transform.Find("Btn_Quit").gameObject.GetComponent<ButtonPF>();
+            SetActionButton(buttonEndTurn, "Button_EndTurn", 0.5f, 0.5f, 1f, 1f);
 
-            // initialize delay turn button
-            ButtonPF buttonDelay = body.transform.Find("Btn_Load").gameObject.GetComponent<ButtonPF>();
-            buttonDelay.name = "Button_Delay";
-            buttonDelay.transform.SetParent(rectActionButtons, false);
+            // ... delay turn button
+            ButtonPF buttonDelay = body.transform.Find("Btn_Save").gameObject.GetComponent<ButtonPF>();
+            SetActionButton(buttonDelay, "Button_Delay", 0.5f, 0f, 1f, 0.5f);
 
-            RectTransform rectButtonDelay = (RectTransform)buttonDelay.transform;
-            rectButtonDelay.anchorMin = new Vector2(0.5f, 0f);
-            rectButtonDelay.anchorMax = new Vector2(1f, 1f);
-            rectButtonDelay.pivot = new Vector2(1f, 1f);
-            rectButtonDelay.localPosition = new Vector3(0f, 0f, 0f);
-            rectButtonDelay.rotation = Quaternion.identity;
-            rectButtonDelay.sizeDelta = new Vector2(0f, 0f);
+            // ... 5-foot step button
+            ButtonPF buttonFiveFoorStep = body.transform.Find("Btn_Load").gameObject.GetComponent<ButtonPF>();
+            SetActionButton(buttonFiveFoorStep, "Button_FiveFootStep", 0f, 0f, 0.5f, 0.5f);
+
+            // ... full-attack button
+            ButtonPF buttonFullAttack = body.transform.Find("Btn_Options").gameObject.GetComponent<ButtonPF>();
+            SetActionButton(buttonFullAttack, "Button_FullAttack", 0f, 0.5f, 0.5f, 1f);
 
             // initialize separator
             RectTransform rectSeparator = body.transform.Find("Separator") as RectTransform;
@@ -138,13 +135,12 @@ namespace TurnBased.UI
             rectSeparator.sizeDelta = new Vector2(0f, UNIT_BUTTON_SPACE);
 
             // clear unused buttons
-            for (int i = 0; i < body.transform.childCount; i++)
+            for (int i = body.transform.childCount - 1; i >= 0; i--)
             {
                 GameObject child = body.transform.GetChild(i).gameObject;
-                if (child.name != "Button_EndTurn" && child.name != "SpecialActionButtons" && child.name != "Separator")
+                if (child.name != "SpecialActionButtons" && child.name != "Separator")
                 {
                     child.SafeDestroy();
-                    i--;
                 }
             }
 
@@ -167,16 +163,20 @@ namespace TurnBased.UI
             _bodyLayoutGroup = _body.GetComponent<VerticalLayoutGroup>();
 
             _buttonEndTurn = new ButtonWrapper(
-                _body.Find("Button_EndTurn").gameObject.GetComponent<ButtonPF>(),
-                "End Turn", HandleClickEndTurn);
-
-            _buttonFiveFoorStep = new ButtonWrapper(
-                _body.Find("SpecialActionButtons/Button_FiveFootStep").gameObject.GetComponent<ButtonPF>(),
-                "5-F. STEP", HandleClickFiveFootStep);
+                _body.Find("SpecialActionButtons/Button_EndTurn").gameObject.GetComponent<ButtonPF>(),
+                Local["UI_Btn_EndTurn"], HandleClickEndTurn);
 
             _buttonDelay = new ButtonWrapper(
                 _body.Find("SpecialActionButtons/Button_Delay").gameObject.GetComponent<ButtonPF>(),
-                "Delay", HandleClickDelay);
+                Local["UI_Btn_Delay"], HandleClickDelay);
+
+            _buttonFiveFoorStep = new ButtonWrapper(
+                _body.Find("SpecialActionButtons/Button_FiveFootStep").gameObject.GetComponent<ButtonPF>(),
+                Local["UI_Btn_FiveFootStep"], HandleClickFiveFootStep);
+
+            _buttonFullAttack = new ButtonWrapper(
+                _body.Find("SpecialActionButtons/Button_FullAttack").gameObject.GetComponent<ButtonPF>(),
+                Local["UI_Btn_FullAttack"], HandleClickFullAttack);
 
             _unitButtons = (RectTransform)_body.Find("UnitButtons");
         }
@@ -185,18 +185,20 @@ namespace TurnBased.UI
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            HotkeyHelper.Bind(HOTKEY_FOR_FIVE_FOOT_STEP, HandleClickFiveFootStep);
-            HotkeyHelper.Bind(HOTKEY_FOR_DELAY, HandleClickDelay);
             HotkeyHelper.Bind(HOTKEY_FOR_END_TURN, HandleClickEndTurn);
+            HotkeyHelper.Bind(HOTKEY_FOR_DELAY, HandleClickDelay);
+            HotkeyHelper.Bind(HOTKEY_FOR_FIVE_FOOT_STEP, HandleClickFiveFootStep);
+            HotkeyHelper.Bind(HOTKEY_FOR_FULL_ATTACK, HandleClickFullAttack);
         }
 
         void OnDisable()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            HotkeyHelper.Unbind(HOTKEY_FOR_FIVE_FOOT_STEP, HandleClickFiveFootStep);
-            HotkeyHelper.Unbind(HOTKEY_FOR_DELAY, HandleClickDelay);
             HotkeyHelper.Unbind(HOTKEY_FOR_END_TURN, HandleClickEndTurn);
+            HotkeyHelper.Unbind(HOTKEY_FOR_DELAY, HandleClickDelay);
+            HotkeyHelper.Unbind(HOTKEY_FOR_FIVE_FOOT_STEP, HandleClickFiveFootStep);
+            HotkeyHelper.Unbind(HOTKEY_FOR_FULL_ATTACK, HandleClickFullAttack);
 
             ClearUnits();
             HoveringUnit = null;
@@ -240,9 +242,9 @@ namespace TurnBased.UI
             }
         }
 
-        private void HandleClickFiveFootStep()
+        private void HandleClickEndTurn()
         {
-            Mod.Core.Combat.CurrentTurn?.CommandToggleFiveFootStep();
+            CurrentTurn()?.CommandEndTurn();
         }
 
         private void HandleClickDelay()
@@ -250,16 +252,21 @@ namespace TurnBased.UI
             _buttonDelay.IsPressed = !_buttonDelay.IsPressed;
         }
 
-        private void HandleClickEndTurn()
+        private void HandleClickFiveFootStep()
         {
-            Mod.Core.Combat.CurrentTurn?.CommandEndTurn();
+            CurrentTurn()?.CommandToggleFiveFootStep();
+        }
+
+        private void HandleClickFullAttack()
+        {
+            CurrentTurn()?.CommandToggleFullAttack();
         }
 
         private bool HandleClickUnitButton(UnitEntityData unit)
         {
             if (_buttonDelay.IsPressed)
             {
-                Mod.Core.Combat.CurrentTurn?.CommandDelay(unit);
+                CurrentTurn()?.CommandDelay(unit);
                 _buttonDelay.IsPressed = false;
                 return false;
             }
@@ -284,7 +291,21 @@ namespace TurnBased.UI
 
         private void UpdateButtons()
         {
-            TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
+            TurnController currentTurn = CurrentTurn();
+
+            // end button
+            _buttonEndTurn.IsInteractable = currentTurn != null && currentTurn.CanEndTurn();
+
+            // delay button
+            if (currentTurn != null && currentTurn.CanDelay())
+            {
+                _buttonDelay.IsInteractable = true;
+            }
+            else
+            {
+                _buttonDelay.IsInteractable = false;
+                _buttonDelay.IsPressed = false;
+            }
 
             // 5-foot step button
             if (currentTurn != null)
@@ -298,24 +319,22 @@ namespace TurnBased.UI
                 _buttonFiveFoorStep.IsPressed = false;
             }
 
-            // delay button
-            if (currentTurn != null && currentTurn.CanDelay())
+            // full attack button
+            if (currentTurn != null)
             {
-                _buttonDelay.IsInteractable = true;
+                _buttonFullAttack.IsInteractable = currentTurn.CanToggleFullAttack();
+                _buttonFullAttack.IsPressed = currentTurn.EnabledFullAttack;
             }
             else
             {
-                _buttonDelay.IsInteractable = false;
-                _buttonDelay.IsPressed = false;
+                _buttonFullAttack.IsInteractable = false;
+                _buttonFullAttack.IsPressed = false;
             }
-
-            // end button
-            _buttonEndTurn.IsInteractable = currentTurn != null && currentTurn.CanEndTurn();
         }
 
         private void UpdateUnits()
         {
-            UnitEntityData currentUnit = Mod.Core.Combat.CurrentTurn?.Unit;
+            UnitEntityData currentUnit = CurrentUnit();
             int oldCount = _unitButtonDic.Count;
             int newCount = 0;
             List<UnitButtonManager> newUnitButtons = new List<UnitButtonManager>();
@@ -421,9 +440,7 @@ namespace TurnBased.UI
             {
                 _width = width;
                 _body.sizeDelta = new Vector2(width, _body.sizeDelta.y);
-                SetPadding(
-                    (int)(width * DEFAULT_BLOCK_PADDING.x / DEFAULT_BLOCK_SIZE.x / 2f),
-                    _bodyLayoutGroup.padding.top);
+                SetPadding((int)(width * PADDING_X_PERCENT / 2f), _bodyLayoutGroup.padding.top);
             }
         }
 
@@ -433,8 +450,7 @@ namespace TurnBased.UI
             _unitButtons.sizeDelta = new Vector2(_unitButtons.sizeDelta.x, height);
             SetPadding(
                 _bodyLayoutGroup.padding.right, 
-                (int)((height + UNIT_BUTTON_HEIGHT * 2 + UNIT_BUTTON_SPACE) * 
-                DEFAULT_BLOCK_PADDING.y / (DEFAULT_BLOCK_SIZE.y - DEFAULT_BLOCK_PADDING.y) / 2f));
+                (int)((UNIT_BUTTON_HEIGHT * 2 + UNIT_BUTTON_SPACE + height) * PADDING_Y_PERCENT / (1f - PADDING_Y_PERCENT) / 2f));
         }
 
         private void SetPadding(int x, int y)
@@ -493,6 +509,9 @@ namespace TurnBased.UI
                 _button.onClick = new Button.ButtonClickedEvent();
                 _button.onClick.AddListener(new UnityAction(onClick));
                 _textMesh = _button.GetComponentInChildren<TextMeshProUGUI>();
+                _textMesh.fontSize = 20;
+                _textMesh.fontSizeMax = 72;
+                _textMesh.fontSizeMin = 18;
                 _textMesh.text = text;
                 _textMesh.color = _button.interactable ? _enableColor : _disableColor;
                 _image = _button.gameObject.GetComponent<Image>();

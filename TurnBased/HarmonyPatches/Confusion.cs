@@ -6,7 +6,6 @@ using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Parts;
 using System;
 using TurnBased.Utility;
-using static TurnBased.Main;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -33,7 +32,7 @@ namespace TurnBased.HarmonyPatches
                     }
                     else
                     {
-                        return !unit.IsInCombat;
+                        return IsPassing() && !unit.IsInCombat;
                     }
                 }
                 return true;
@@ -50,7 +49,7 @@ namespace TurnBased.HarmonyPatches
                 if (IsInCombat() && __instance.Executor.IsCurrentUnit())
                 {
                     __instance.SetTimeSinceStart(6f);
-                    Mod.Core.Combat.CurrentTurn.ForceToEnd();
+                    CurrentTurn().ForceToEnd();
                 }
             }
         }
@@ -64,7 +63,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && __instance.Executor.IsCurrentUnit())
                 {
-                    Mod.Core.Combat.CurrentTurn.ForceToEnd();
+                    CurrentTurn().ForceToEnd();
                 }
             }
         }

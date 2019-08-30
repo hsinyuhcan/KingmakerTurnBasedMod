@@ -83,9 +83,8 @@ namespace TurnBased.UI
                 }
                 else
                 {
-                    TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
-                    if (ShowAttackIndicatorOfCurrentUnit && (unit = currentTurn?.Unit) != null && 
-                        (unit.IsDirectlyControllable ? ShowAttackIndicatorOfPlayer : ShowAttackIndicatorOfNonPlayer))
+                    if (ShowAttackIndicatorOfCurrentUnit && (unit = CurrentUnit(out TurnController currentTurn)) != null && 
+                        (unit.IsDirectlyControllable ? ShowAttackIndicatorForPlayer : ShowAttackIndicatorForNonPlayer))
                     {
                         GetRadius();
 

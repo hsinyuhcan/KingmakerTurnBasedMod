@@ -3,6 +3,7 @@ using Harmony12;
 using Kingmaker;
 using Kingmaker.Blueprints;
 using Kingmaker.Controllers.Clicks.Handlers;
+using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.EntitySystem.Entities;
@@ -182,7 +183,7 @@ namespace TurnBased.HarmonyPatches
                 return codes.ReplaceAll(
                     new CodeInstruction(OpCodes.Callvirt,
                         GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
-                    new CodeInstruction(OpCodes.Callvirt,
+                    new CodeInstruction(OpCodes.Call,
                         new Func<UnitEntityData, UnitEntityData, bool>(IsTarget).Method),
                     true);
             }
@@ -341,6 +342,22 @@ namespace TurnBased.HarmonyPatches
             {
                 return (Mod.Enabled && FixHasMotionThisTick) ? 
                     awakeUnit.View?.transform.position ?? awakeUnit.Position : awakeUnit.Position;
+            }
+        }
+
+        // fix that you can make an AoO to an unmoved unit just as it's leaving the threatened range (when switching from reach weapon)
+        [HarmonyPatch(typeof(UnitCombatState), "ShouldAttackOnDisengage", typeof(UnitEntityData))]
+        static class UnitCombatState_ShouldAttackOnDisengage_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityData target, ref bool __result)
+            {
+                if (Mod.Enabled && FixCanMakeAttackOfOpportunityToUnmovedTarget && !target.HasMotionThisTick)
+                {
+                    __result = false;
+                    return false;
+                }
+                return true;
             }
         }
 

@@ -14,7 +14,7 @@ namespace TurnBased.Menus
         GUIStyle _buttonStyle;
         GUIStyle _labelStyle;
 
-        public string Name => "Interface";
+        public string Name => Local["Menu_Tab_Interface"];
 
         public int Priority => 200;
 
@@ -33,25 +33,25 @@ namespace TurnBased.Menus
             {
                 DoNotMarkInvisibleUnit =
                     GUIHelper.ToggleButton(DoNotMarkInvisibleUnit,
-                    "DO NOT Mark Invisible Units" +
-                    " (Disable highlight, camera, indicators... etc)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+                    Local["Menu_Opt_DoNotMarkInvisibleUnit"] +
+                    Local["Menu_Cmt_DoNotMarkInvisibleUnit"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
                 DoNotShowInvisibleUnitOnCombatTracker =
                     GUIHelper.ToggleButton(DoNotShowInvisibleUnitOnCombatTracker,
-                    "DO NOT Show Invisible Units On The Combat Tracker" +
-                    " (Display them as \"Unknown\" when they're acting)".Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
+                    Local["Menu_Opt_DoNotShowInvisibleUnitOnCombatTracker"] +
+                    Local["Menu_Cmt_DoNotShowInvisibleUnitOnCombatTracker"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
             }
 
-            using (new GUISubScope("Combat Tracker"))
+            using (new GUISubScope(Local["Menu_Sub_CombatTracker"]))
                 OnGUICombatTracker();
 
-            using (new GUISubScope("View"))
+            using (new GUISubScope(Local["Menu_Sub_View"]))
                 OnGUIView();
 
-            using (new GUISubScope("Attack Indicator"))
+            using (new GUISubScope(Local["Menu_Sub_AttackIndicator"]))
                 OnGUIAttackIndicator();
 
-            using (new GUISubScope("Movement Indicator"))
+            using (new GUISubScope(Local["Menu_Sub_MovementIndicator"]))
                 OnGUIMovementIndicator();
         }
 
@@ -60,107 +60,114 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(CombatTrackerScale != 1f,
-                  $"Size Scale: {CombatTrackerScale:f2}", _labelStyle, GUILayout.ExpandWidth(false));
+                    string.Format(Local["Menu_Opt_CombatTrackerScale"], CombatTrackerScale), _labelStyle, GUILayout.ExpandWidth(false));
                 CombatTrackerScale =
                     GUIHelper.RoundedHorizontalSlider(CombatTrackerScale, 2, 0.8f, 1f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
 
             using (new GUILayout.HorizontalScope())
             {
-                GUIHelper.ToggleButton(true, 
-                    $"Width: {(int)CombatTrackerWidth:d3}", _labelStyle, GUILayout.ExpandWidth(false));
+                GUIHelper.ToggleButton(true,
+                    string.Format(Local["Menu_Opt_CombatTrackerWidth"], (int)CombatTrackerWidth), _labelStyle, GUILayout.ExpandWidth(false));
                 CombatTrackerWidth =
-                    GUIHelper.RoundedHorizontalSlider(CombatTrackerWidth, 0, 250f, 500f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
+                    GUIHelper.RoundedHorizontalSlider(CombatTrackerWidth, -1, 300f, 500f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
 
             using (new GUILayout.HorizontalScope())
             {
-                GUIHelper.ToggleButton(true, 
-                    $"Units: {CombatTrackerMaxUnits:d2}", _labelStyle, GUILayout.ExpandWidth(false));
+                GUIHelper.ToggleButton(true,
+                    string.Format(Local["Menu_Opt_CombatTrackerMaxUnits"], CombatTrackerMaxUnits), _labelStyle, GUILayout.ExpandWidth(false));
                 CombatTrackerMaxUnits =
                     (int)GUIHelper.RoundedHorizontalSlider(CombatTrackerMaxUnits, 0, 5f, 25f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
 
-            SelectUnitOnClickUI =
-                GUIHelper.ToggleButton(SelectUnitOnClickUI,
-                "Select Unit On Click", _buttonStyle, GUILayout.ExpandWidth(false));
-
             CameraScrollToUnitOnClickUI =
                 GUIHelper.ToggleButton(CameraScrollToUnitOnClickUI,
-                "Camera Scroll To Unit On Click", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_CameraScrollToUnitOnClickUI"], _buttonStyle, GUILayout.ExpandWidth(false));
 
-            ShowUnitDescriptionOnRightClickUI =
-                GUIHelper.ToggleButton(ShowUnitDescriptionOnRightClickUI,
-                "Show Unit Description On Right Click", _buttonStyle, GUILayout.ExpandWidth(false));
+            SelectUnitOnClickUI =
+                GUIHelper.ToggleButton(SelectUnitOnClickUI,
+                Local["Menu_Opt_SelectUnitOnClickUI"], _buttonStyle, GUILayout.ExpandWidth(false));
+
+            InspectOnRightClickUI =
+                GUIHelper.ToggleButton(InspectOnRightClickUI,
+                Local["Menu_Opt_InspectOnRightClickUI"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             ShowIsFlatFootedIconOnUI =
                 GUIHelper.ToggleButton(ShowIsFlatFootedIconOnUI,
-                "Show An Icon To Indicate If The Unit Lost Dexterity Bonus To AC", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_ShowIsFlatFootedIconOnUI"], _buttonStyle, GUILayout.ExpandWidth(false));
         }
 
         private void OnGUIView()
         {
             HighlightCurrentUnit =
                 GUIHelper.ToggleButton(HighlightCurrentUnit,
-                "Highlight Current Unit", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_HighlightCurrentUnit"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             CameraScrollToCurrentUnit =
                 GUIHelper.ToggleButton(CameraScrollToCurrentUnit,
-                "Camera Scroll To Current Unit On Turn Start", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_CameraScrollToCurrentUnit"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             CameraLockOnCurrentPlayerUnit =
                 GUIHelper.ToggleButton(CameraLockOnCurrentPlayerUnit,
-                "Camera Lock On Current Player Unit", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_CameraLockOnCurrentPlayerUnit"] +
+                Local["Menu_Cmt_CameraLockOnCurrentPlayerUnit"].Color(RGBA.silver), _buttonStyle, GUILayout.ExpandWidth(false));
 
             CameraLockOnCurrentNonPlayerUnit =
                 GUIHelper.ToggleButton(CameraLockOnCurrentNonPlayerUnit,
-                "Camera Lock On Current Non-Player Unit", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_CameraLockOnCurrentNonPlayerUnit"], _buttonStyle, GUILayout.ExpandWidth(false));
         }
 
         private void OnGUIAttackIndicator()
         {
-            ShowAttackIndicatorOfCurrentUnit =
-               GUIHelper.ToggleButton(ShowAttackIndicatorOfCurrentUnit,
-               "Show Attack Indicator Of Current Unit", _buttonStyle, GUILayout.ExpandWidth(false));
+            using (new GUILayout.HorizontalScope())
+            {
+                ShowAttackIndicatorOfCurrentUnit =
+                    GUIHelper.ToggleButton(ShowAttackIndicatorOfCurrentUnit,
+                    Local["Menu_Opt_ShowAttackIndicatorOfCurrentUnit"], _buttonStyle, GUILayout.ExpandWidth(false));
 
-            ShowAttackIndicatorOfPlayer =
-                GUIHelper.ToggleButton(ShowAttackIndicatorOfPlayer,
-                "Show Attack Indicator ... For Player", _buttonStyle, GUILayout.ExpandWidth(false));
+                ShowAttackIndicatorForPlayer =
+                    GUIHelper.ToggleButton(ShowAttackIndicatorForPlayer,
+                    Local["Menu_Opt_ShowAttackIndicatorForPlayer"], _buttonStyle, GUILayout.ExpandWidth(false));
 
-            ShowAttackIndicatorOfNonPlayer =
-                GUIHelper.ToggleButton(ShowAttackIndicatorOfNonPlayer,
-                "Show Attack Indicator ... For Non-Player", _buttonStyle, GUILayout.ExpandWidth(false));
+                ShowAttackIndicatorForNonPlayer =
+                    GUIHelper.ToggleButton(ShowAttackIndicatorForNonPlayer,
+                    Local["Menu_Opt_ShowAttackIndicatorForNonPlayer"], _buttonStyle, GUILayout.ExpandWidth(false));
+            }
 
             ShowAttackIndicatorOnHoverUI =
                 GUIHelper.ToggleButton(ShowAttackIndicatorOnHoverUI,
-                "Show Attack Indicator On Hover", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_ShowAttackIndicatorOnHoverUI"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             ShowAutoCastAbilityRange =
                 GUIHelper.ToggleButton(ShowAutoCastAbilityRange,
-                "Show Ability Range Instead Of Attack Range When Using Auto Cast", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_ShowAutoCastAbilityRange"], _buttonStyle, GUILayout.ExpandWidth(false));
 
             CheckForObstaclesOnTargeting =
                 GUIHelper.ToggleButton(CheckForObstaclesOnTargeting,
-                "Check For Obstacles When Determining Whether The Enemy Is Within Range", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_CheckForObstaclesOnTargeting"], _buttonStyle, GUILayout.ExpandWidth(false));
         }
 
         private void OnGUIMovementIndicator()
         {
-            ShowMovementIndicatorOfCurrentUnit =
-                GUIHelper.ToggleButton(ShowMovementIndicatorOfCurrentUnit,
-                "Show Movement Indicator Of Current Unit", _buttonStyle, GUILayout.ExpandWidth(false));
+            using (new GUILayout.HorizontalScope())
+            {
+                ShowMovementIndicatorOfCurrentUnit =
+                    GUIHelper.ToggleButton(ShowMovementIndicatorOfCurrentUnit,
+                    Local["Menu_Opt_ShowMovementIndicatorOfCurrentUnit"], _buttonStyle, GUILayout.ExpandWidth(false));
 
-            ShowMovementIndicatorOfPlayer =
-                GUIHelper.ToggleButton(ShowMovementIndicatorOfPlayer,
-                "Show Movement Indicator ... For Player", _buttonStyle, GUILayout.ExpandWidth(false));
+                ShowMovementIndicatorForPlayer =
+                    GUIHelper.ToggleButton(ShowMovementIndicatorForPlayer,
+                    Local["Menu_Opt_ShowMovementIndicatorForPlayer"], _buttonStyle, GUILayout.ExpandWidth(false));
 
-            ShowMovementIndicatorOfNonPlayer =
-                GUIHelper.ToggleButton(ShowMovementIndicatorOfNonPlayer,
-                "Show Movement Indicator ... For Non-Player", _buttonStyle, GUILayout.ExpandWidth(false));
+                ShowMovementIndicatorForNonPlayer =
+                    GUIHelper.ToggleButton(ShowMovementIndicatorForNonPlayer,
+                    Local["Menu_Opt_ShowMovementIndicatorForNonPlayer"], _buttonStyle, GUILayout.ExpandWidth(false));
+            }
 
             ShowMovementIndicatorOnHoverUI =
                 GUIHelper.ToggleButton(ShowMovementIndicatorOnHoverUI,
-                "Show Movement Indicator On Hover", _buttonStyle, GUILayout.ExpandWidth(false));
+                Local["Menu_Opt_ShowMovementIndicatorOnHoverUI"], _buttonStyle, GUILayout.ExpandWidth(false));
         }
     }
 }

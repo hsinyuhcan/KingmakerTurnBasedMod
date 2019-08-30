@@ -15,45 +15,64 @@ namespace TurnBased
         IModEventHandler,
         ISceneHandler
     {
-        private bool _enabled = true;
-
         internal Dictionary<AbilityExecutionProcess, TimeSpan> LastTickTimeOfAbilityExecutionProcess = new Dictionary<AbilityExecutionProcess, TimeSpan>();
 
-        public BlueprintController Blueprint { get; } = new BlueprintController();
+        public BlueprintController Blueprints { get; internal set; }
 
         public CombatController Combat { get; internal set; }
 
         public HotkeyController Hotkeys { get; internal set; }
 
+        public int Priority => 200;
+
         public UIController UI { get; internal set; }
 
         public bool Enabled {
-            get => _enabled;
+            get => Mod.Settings.toggleTurnBasedMode;
             set {
-                if (_enabled != value)
+                if (Mod.Settings.toggleTurnBasedMode != value)
                 {
                     Mod.Debug(MethodBase.GetCurrentMethod(), value);
 
-                    _enabled = value;
+                    Mod.Settings.toggleTurnBasedMode = value;
+                    Blueprints.Update(true);
                     Combat.Reset(value);
-
-                    EventBus.RaiseEvent<IWarningNotificationUIHandler>(h =>
-                        h.HandleWarning(value ? "Turn-Based Combat" : "Real-Time with Pause", false));
+                    EventBus.RaiseEvent<IWarningNotificationUIHandler>
+                        (h => h.HandleWarning(value ? Local["UI_Txt_TurnBasedMode"] : Local["UI_Txt_RealTimeMode"], false));
                 }
             }
+        }
+
+        public void ResetSettings()
+        {
+            Mod.Debug(MethodBase.GetCurrentMethod());
+
+            Mod.ResetSettings();
+            Mod.Settings.lastModVersion = Mod.Version.ToString();
+            LocalizationFileName = Local.FileName;
+            Hotkeys?.Update(true, true);
+            Blueprints?.Update(true);
         }
 
         private void HandleToggleTurnBasedMode()
         {
             Enabled = !Enabled;
-            Mod.Core.Blueprint.Update();
         }
 
         public void HandleModEnable()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Mod.Core.Blueprint.Update();
+            if (LocalizationFileName != null)
+            {
+                Local.Import(LocalizationFileName, e => Mod.Error(e));
+                LocalizationFileName = Local.FileName;
+            }
+
+            if (!Version.TryParse(Mod.Settings.lastModVersion, out Version version) || version < new Version(1, 0, 0))
+                ResetSettings();
+            else
+                Mod.Settings.lastModVersion = Mod.Version.ToString();
 
             HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
             EventBus.Subscribe(this);
@@ -65,18 +84,17 @@ namespace TurnBased
             
             EventBus.Unsubscribe(this);
             HotkeyHelper.Unbind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
-
-            Mod.Core.Blueprint.Update(false);
         }
 
         public void OnAreaBeginUnloading() { }
 
         public void OnAreaDidLoad()
         {
-            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
+            Mod.Debug(MethodBase.GetCurrentMethod());
 
-            Mod.Core.Blueprint.Update();
-            Mod.Core.LastTickTimeOfAbilityExecutionProcess.Clear();
+            LastTickTimeOfAbilityExecutionProcess.Clear();
+
+            HotkeyHelper.Bind(HOTKEY_FOR_TOGGLE_MODE, HandleToggleTurnBasedMode);
         }
     }
 }
