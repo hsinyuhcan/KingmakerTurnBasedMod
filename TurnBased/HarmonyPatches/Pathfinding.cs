@@ -1,7 +1,6 @@
 ﻿using Harmony12;
 using Kingmaker.View;
 using TurnBased.Utility;
-using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -18,7 +17,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && !__result)
                 {
-                    __result = (Mod.Core.Combat.CurrentTurn?.Unit).CanMoveThrough(__instance.Unit?.EntityData);
+                    __result = CurrentUnit().CanMoveThrough(__instance.Unit?.EntityData);
                 }
             }
         }

@@ -244,7 +244,7 @@ namespace TurnBased.UI
 
         private void HandleClickEndTurn()
         {
-            Mod.Core.Combat.CurrentTurn?.CommandEndTurn();
+            CurrentTurn()?.CommandEndTurn();
         }
 
         private void HandleClickDelay()
@@ -254,19 +254,19 @@ namespace TurnBased.UI
 
         private void HandleClickFiveFootStep()
         {
-            Mod.Core.Combat.CurrentTurn?.CommandToggleFiveFootStep();
+            CurrentTurn()?.CommandToggleFiveFootStep();
         }
 
         private void HandleClickFullAttack()
         {
-            Mod.Core.Combat.CurrentTurn?.CommandToggleFullAttack();
+            CurrentTurn()?.CommandToggleFullAttack();
         }
 
         private bool HandleClickUnitButton(UnitEntityData unit)
         {
             if (_buttonDelay.IsPressed)
             {
-                Mod.Core.Combat.CurrentTurn?.CommandDelay(unit);
+                CurrentTurn()?.CommandDelay(unit);
                 _buttonDelay.IsPressed = false;
                 return false;
             }
@@ -291,7 +291,7 @@ namespace TurnBased.UI
 
         private void UpdateButtons()
         {
-            TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
+            TurnController currentTurn = CurrentTurn();
 
             // end button
             _buttonEndTurn.IsInteractable = currentTurn != null && currentTurn.CanEndTurn();
@@ -334,7 +334,7 @@ namespace TurnBased.UI
 
         private void UpdateUnits()
         {
-            UnitEntityData currentUnit = Mod.Core.Combat.CurrentTurn?.Unit;
+            UnitEntityData currentUnit = CurrentUnit();
             int oldCount = _unitButtonDic.Count;
             int newCount = 0;
             List<UnitButtonManager> newUnitButtons = new List<UnitButtonManager>();

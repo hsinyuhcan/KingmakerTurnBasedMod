@@ -57,21 +57,21 @@ namespace TurnBased.Controllers
             Transform combatTracker;
             while (combatTracker = Game.Instance.UI.Common.transform.Find("HUDLayout/TurnBasedCombatTracker"))
             {
-                UnityEngine.Object.DestroyImmediate(combatTracker.gameObject);
+                combatTracker.SafeDestroy();
             }
             CombatTracker = null;
 
             Transform attackIndicator;
             while (attackIndicator = Game.Instance.UI.Common.transform.Find("AbilityTargetSelect/TurnBasedAttackIndicator"))
             {
-                UnityEngine.Object.DestroyImmediate(attackIndicator.gameObject);
+                attackIndicator.gameObject.SafeDestroy();
             }
             AttackIndicator = null;
 
             Transform movementIndicator;
             while (movementIndicator = Game.Instance.UI.Common.transform.Find("AbilityTargetSelect/TurnBasedMovementIndicator"))
             {
-                UnityEngine.Object.DestroyImmediate(movementIndicator.gameObject);
+                movementIndicator.SafeDestroy();
             }
             MovementIndicator = null;
         }

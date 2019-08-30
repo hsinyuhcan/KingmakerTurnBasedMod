@@ -164,7 +164,7 @@ namespace TurnBased.HarmonyPatches
 
                         if (canMove)
                         {
-                            Mod.Core.Combat.CurrentTurn.TickMovement(ref deltaTime, isInForceMode);
+                            CurrentTurn().TickMovement(ref deltaTime, isInForceMode);
 
                             if (deltaTime <= 0f)
                             {

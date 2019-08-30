@@ -13,7 +13,6 @@ using System.Reflection.Emit;
 using TurnBased.Utility;
 using UnityEngine;
 using static ModMaker.Utility.ReflectionCache;
-using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -30,7 +29,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && ToggleFiveFootStepOnRightClickGround && button == 1)
                 {
-                    Mod.Core.Combat.CurrentTurn?.CommandToggleFiveFootStep();
+                    CurrentTurn()?.CommandToggleFiveFootStep();
                     return false;
                 }
                 return true;

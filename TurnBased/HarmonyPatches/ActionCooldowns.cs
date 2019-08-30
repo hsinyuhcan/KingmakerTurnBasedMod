@@ -10,10 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using TurnBased.Controllers;
 using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
-using static TurnBased.Main;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -84,9 +82,7 @@ namespace TurnBased.HarmonyPatches
             {
                 if (IsInCombat() && __instance.Unit.IsInCombat)
                 {
-                    TurnController currentTurn;
-                    __result = __instance.Unit.UsedOneMoveAction() ||
-                        (__instance.Unit == (currentTurn = Mod.Core.Combat.CurrentTurn)?.Unit && !currentTurn.EnabledFullAttack);
+                    __result = __instance.Unit.UsedOneMoveAction() || (__instance.Unit.IsCurrentUnit() && !CurrentTurn().EnabledFullAttack);
                     return false;
                 }
                 return true;

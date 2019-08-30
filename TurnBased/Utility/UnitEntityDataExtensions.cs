@@ -22,6 +22,7 @@ using System.Linq;
 using UnityEngine;
 using static TurnBased.Main;
 using static TurnBased.Utility.SettingsWrapper;
+using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.Utility
 {
@@ -226,7 +227,7 @@ namespace TurnBased.Utility
 
             // if the unit doesn't have enough movement to go through the target, forbid it from going through
             if (unit.IsCurrentUnit() && !agentASP.GetIsInForceMode())
-                return Mod.Core.Combat.CurrentTurn.GetRemainingMovementRange(true) <
+                return CurrentTurn().GetRemainingMovementRange(true) <
                     Math.Min(unit.DistanceTo(target) + minDistance, unit.DistanceTo(destination.Value));
 
             return false;
@@ -238,7 +239,7 @@ namespace TurnBased.Utility
 
         public static bool IsCurrentUnit(this UnitEntityData unit)
         {
-            return unit != null && unit == Mod.Core.Combat.CurrentTurn?.Unit;
+            return unit != null && unit == CurrentUnit();
         }
 
         public static bool IsSurprising(this UnitEntityData unit)

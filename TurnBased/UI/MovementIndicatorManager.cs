@@ -75,8 +75,7 @@ namespace TurnBased.UI
                 }
                 else
                 {
-                    TurnController currentTurn = Mod.Core.Combat.CurrentTurn;
-                    if (ShowMovementIndicatorOfCurrentUnit && (unit = currentTurn?.Unit) != null &&
+                    if (ShowMovementIndicatorOfCurrentUnit && (unit = CurrentUnit(out TurnController currentTurn)) != null &&
                         (unit.IsDirectlyControllable ? ShowMovementIndicatorForPlayer : ShowMovementIndicatorForNonPlayer))
                     {
                         radiusInner = currentTurn.GetRemainingMovementRange();

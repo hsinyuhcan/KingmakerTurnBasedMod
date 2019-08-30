@@ -159,18 +159,20 @@ namespace TurnBased.Controllers
                 if (_assetGuid == null)
                     return false;
 
-                LibraryScriptableObject library = 
-                    typeof(ResourcesLibrary).GetFieldValue<LibraryScriptableObject>("s_LibraryObject");
+                LibraryScriptableObject library = typeof(ResourcesLibrary).GetFieldValue<LibraryScriptableObject>("s_LibraryObject");
                 if (library != null && library.GetInitialized())
                 {
                     try
                     {
+                        int length = _assetGuid.Length;
                         _blueprints = _assetGuid.Select(guid => library.Get<TBlueprint>(guid)).ToArray();
                         _backup = _blueprints.Select(blueprint => _getter(blueprint)).ToArray();
-                        int length = _assetGuid.Length;
                         _value = new TValue[length];
                         for (int i = 0; i < length; i++)
+                        {
                             _value[i] = _modifier(library, _backup[i]);
+                        }
+
                         _assetGuid = null;
                         _getter = null;
                         _modifier = null;

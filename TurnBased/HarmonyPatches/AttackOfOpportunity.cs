@@ -2,7 +2,6 @@
 using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
 using TurnBased.Utility;
-using static TurnBased.Main;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -22,7 +21,7 @@ namespace TurnBased.HarmonyPatches
                     __state = __instance.LastTarget;
                     __instance.LastTarget = target;
 
-                    if (target.IsCurrentUnit() && Mod.Core.Combat.CurrentTurn.ImmuneAttackOfOpportunityOnDisengage)
+                    if (target.IsCurrentUnit() && CurrentTurn().ImmuneAttackOfOpportunityOnDisengage)
                     {
                         __result = false;
                         return false;

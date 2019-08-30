@@ -297,8 +297,7 @@ namespace TurnBased.UI
 
         private void UpdateTimeBar()
         {
-            _maskActive.rectTransform.anchorMax = 
-                new Vector2(_isCurrent ? Mod.Core.Combat.CurrentTurn.GetRemainingTime() / 6f : 1f, 1f);
+            _maskActive.rectTransform.anchorMax = new Vector2(_isCurrent ? CurrentTurn().GetRemainingTime() / 6f : 1f, 1f);
         }
 
         private void UpdateActionIcons()
@@ -314,7 +313,7 @@ namespace TurnBased.UI
             UnitEntityData currentUnit;
             _markIsThisRound.SetActive(Unit != null && !_isCurrent && Unit.GetTimeToNextTurn() < Mod.Core.Combat.TimeToNextRound);
             _iconIsFlatFooted.SetActive(ShowIsFlatFootedIconOnUI &&
-                Unit != null && !_isCurrent && (currentUnit = Mod.Core.Combat.CurrentTurn?.Unit) != null &&
+                Unit != null && !_isCurrent && (currentUnit = CurrentUnit()) != null &&
                 Rulebook.Trigger(new RuleCheckTargetFlatFooted(currentUnit, Unit)).IsFlatFooted);
             _iconIsUnableToAct.SetActive(Unit != null && !Unit.IsAbleToAct());
             _iconIsSurprising.SetActive(Unit != null && !_isCurrent && Unit.IsSurprising());
