@@ -15,9 +15,8 @@ namespace TurnBased.Utility
 
         public static bool IsInCombat()
         {
-            CombatController combat;
             GameModeType currentMode;
-            return Mod.Enabled && (combat = Mod.Core.Combat).Initialized && combat.HasEnemyInCombat &&
+            return Mod.Enabled && Mod.Core.Combat.Initialized &&
                 ((currentMode = Game.Instance.CurrentMode) == GameModeType.Default || currentMode == GameModeType.Pause);
         }
 
