@@ -48,7 +48,7 @@ namespace TurnBased
             { "Menu_Cmt_MovingThroughNonHostileUnit", " (Units can move through ally and neutral units)" },
             { "Menu_Opt_MovingThroughApplyToPlayer", "... Apply To Player" },
             { "Menu_Opt_MovingThroughApplyToNeutralUnit", "... Apply To Neutral Units" },
-            { "Menu_Opt_MovingThroughApplyToEnemy", "... Apply To For Enemy" },
+            { "Menu_Opt_MovingThroughApplyToEnemy", "... Apply To Enemy" },
             { "Menu_Opt_AvoidOverlapping", "Try To Avoid Overlapping When Moving Through" },
             { "Menu_Cmt_AvoidOverlapping", " (Avoid moving through a unit if they will overlap each other)" },
             { "Menu_Opt_AvoidOverlappingOnCharge", "Try To Avoid Overlapping When Charging" },

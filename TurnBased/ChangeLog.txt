@@ -1,4 +1,7 @@
-﻿Version 1.0.1
+﻿Version 1.0.2
+	Fixed a typo
+
+Version 1.0.1
 	Fixed missing the "Localization" folder causes a critical error
 	Fixed if you set more than one of "Ctrl", "Alt" or "Shift" in a hotkey, it won't be displayed properly
 
