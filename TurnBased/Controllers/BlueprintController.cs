@@ -110,11 +110,15 @@ namespace TurnBased.Controllers
 
             Mod.Core.Blueprints = this;
             Update(true);
+
+            EventBus.Subscribe(this);
         }
 
         public void HandleModDisable()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());
+
+            EventBus.Unsubscribe(this);
 
             Update(false);
             Mod.Core.Blueprints = null;

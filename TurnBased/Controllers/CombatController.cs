@@ -91,17 +91,6 @@ namespace TurnBased.Controllers
 
         internal void Tick()
         {
-            // fix if combat is ended by a cutscene, HandlePartyCombatStateChanged will not be triggered
-            if (_units.Count == 0 || !Game.Instance.Player.IsInCombat)
-            {
-                foreach (UnitEntityData allCharacter in Game.Instance.Player.AllCharacters)
-                {
-                    allCharacter.Buffs.OnCombatEnded();
-                }
-                EventBus.RaiseEvent<IPartyCombatHandler>(h => h.HandlePartyCombatStateChanged(false));
-                return;
-            }
-
             // advance the turn status
             CurrentTurn?.Tick();
 
@@ -323,6 +312,16 @@ namespace TurnBased.Controllers
                 HasEnemyInCombat = Game.Instance.Player.Group.HasEnemyInCombat();
                 _units = _units.OrderBy(unit => unit, _unitsOrderComaprer).ToList();    // stable sort
                 _isUnitsChanged = false;
+
+                // fix if combat is ended by a cutscene, HandlePartyCombatStateChanged will not be triggered
+                if (_units.Count == 0 || !Game.Instance.Player.IsInCombat)
+                {
+                    foreach (UnitEntityData allCharacter in Game.Instance.Player.AllCharacters)
+                    {
+                        allCharacter.Buffs.OnCombatEnded();
+                    }
+                    EventBus.RaiseEvent<IPartyCombatHandler>(h => h.HandlePartyCombatStateChanged(false));
+                }
             }
         }
 

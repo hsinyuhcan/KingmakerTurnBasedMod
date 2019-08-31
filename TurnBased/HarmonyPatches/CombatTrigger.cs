@@ -159,9 +159,16 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPrefix]
             static bool Prefix()
             {
-                if (IsInCombat() && !IsPassing())
+                if (IsInCombat())
                 {
-                    return !Mod.Core.Combat.HasEnemyInCombat;
+                    if (!Mod.Core.Combat.HasEnemyInCombat)
+                    {
+                        Game.Instance.Player.Group.LeaveCombatTimer = 3f;
+                    }
+                    else if (!IsPassing())
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
