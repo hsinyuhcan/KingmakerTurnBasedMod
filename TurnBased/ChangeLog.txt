@@ -1,5 +1,6 @@
 ﻿Version 1.0.2
 	Changed to exit combat as soon as possible when there is no enemy
+	Fixed some bugfix options do not take effect unless re-enabling turn-based mode
 	Fixed a typo
 
 Version 1.0.1
