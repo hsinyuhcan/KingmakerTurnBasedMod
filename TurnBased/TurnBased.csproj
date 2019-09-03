@@ -113,7 +113,6 @@
     <Compile Include="DefaultLanguage.cs" />
     <Compile Include="Menus\BugfixOptions.cs" />
     <Compile Include="Menus\LanguageSelection.cs" />
-    <Compile Include="Utility\GUISubScope.cs" />
     <Compile Include="Utility\MiscExtensions.cs" />
     <Compile Include="Utility\NonPublicAccessExtensions.cs" />
     <Compile Include="Utility\BugfixOption.cs" />

@@ -1,6 +1,5 @@
 ﻿using ModMaker;
 using ModMaker.Utility;
-using TurnBased.Utility;
 using UnityEngine;
 using UnityModManagerNet;
 using static ModMaker.Utility.RichTextExtensions;
@@ -34,8 +33,8 @@ namespace TurnBased.Menus
                 using (new GUILayout.HorizontalScope())
                 {
                     Mod.Core.Enabled =
-                    GUIHelper.ToggleButton(Mod.Core.Enabled,
-                    Local["Menu_Opt_TrunBasedMode"], _buttonStyle, GUILayout.ExpandWidth(false));
+                        GUIHelper.ToggleButton(Mod.Core.Enabled,
+                        Local["Menu_Opt_TrunBasedMode"], _buttonStyle, GUILayout.ExpandWidth(false));
 
                     if (GUILayout.Button(Local["Menu_Btn_ResetSettings"], _buttonStyle, GUILayout.ExpandWidth(false)))
                     {
