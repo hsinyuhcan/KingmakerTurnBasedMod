@@ -144,6 +144,7 @@ namespace TurnBased
             { "Menu_Opt_FixSpellstrikeOnNeutralUnit", "Fix Spellstrike does not take effect when attacking a neutral target" },
             { "Menu_Opt_FixSpellstrikeWithMetamagicReach", "Fix Spellstrike does not take effect when using Metamagic (Reach) on a touch spell" },
             { "Menu_Opt_FixDamageBonusOfBlastRune", "Fix the damage bonus of Blast Rune isn't increased with class level (it's the first ability of Rune Domain)" },
+            { "Menu_Opt_FixOnePlusDiv2ToDiv2", "Fix the damage bonus of some abilities (level / 2 + 1 => level / 2) (Blast Rune, Moonfire)" },
             { "Menu_Opt_FixFxOfShadowEvocationSirocco", "Fix the Fx effect of Shadow Evocation (Sirocco) is missing (use normal Sirocco to replace it)" },
             { "Menu_Opt_FixAbilityNotAutoDeactivateIfCombatEnded", "Fix some abilities will not be auto deactivated after combat (Inspire Greatness, Inspire Heroics)" },
             { "Menu_Opt_FixBlindFightDistance", "Fix Blind-Fight needs a extreme close distance to prevent from losing AC instead of melee distance" },
