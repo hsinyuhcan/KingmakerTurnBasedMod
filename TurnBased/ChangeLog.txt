@@ -1,4 +1,5 @@
 ﻿Version 1.0.3
+	Added Deutsch translation (much thanks to michalnh)
 	Changed combat tracker and indicators can be hidden with other HUDs (using the hotkey in UI Extensions mod)
 	Fixed a path issue for Linux
 
