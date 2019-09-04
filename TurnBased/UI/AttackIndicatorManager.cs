@@ -70,7 +70,7 @@ namespace TurnBased.UI
 
         void Update()
         {
-            if (IsInCombat() && !_isAbilityHovered && !_isAbilitySelected)
+            if (IsInCombat() && IsHUDShown() && !_isAbilityHovered && !_isAbilitySelected)
             {
                 UnitEntityData unit = null;
                 float radius = 0f;
