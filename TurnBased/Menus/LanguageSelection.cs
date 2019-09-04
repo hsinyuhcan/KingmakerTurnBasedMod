@@ -1,7 +1,6 @@
 ﻿using ModMaker;
 using ModMaker.Utility;
 using System.IO;
-using TurnBased.Utility;
 using UnityEngine;
 using UnityModManagerNet;
 using static ModMaker.Utility.RichTextExtensions;
@@ -102,6 +101,7 @@ namespace TurnBased.Menus
                 Local.Reset();
                 _importMessage = null;
                 LocalizationFileName = Local.FileName;
+                Mod.Core.UI.Update();
             }
 
             foreach (string fileName in _files)
@@ -110,6 +110,7 @@ namespace TurnBased.Menus
                 {
                     _importMessage = Local.Import(fileName, e => Mod.Error(e)) ? null : string.Format(Local["Menu_Txt_FaildToImport"], fileName);
                     LocalizationFileName = Local.FileName;
+                    Mod.Core.UI.Update();
                 }
             }
 

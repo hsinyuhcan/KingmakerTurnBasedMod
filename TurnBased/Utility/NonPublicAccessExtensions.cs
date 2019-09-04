@@ -9,6 +9,7 @@ using Kingmaker.UnitLogic.Abilities.Blueprints;
 using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
+using Kingmaker.UnitLogic.Mechanics.Components;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.View;
 using Kingmaker.Visual;
@@ -32,6 +33,16 @@ namespace TurnBased.Utility
             blueprintAbility.SetFieldValue("m_ActivateWithUnitCommand", value);
         }
 
+        public static ContextRankProgression GetProgression(this ContextRankConfig contextRankConfig)
+        {
+            return contextRankConfig.GetFieldValue<ContextRankConfig, ContextRankProgression>("m_Progression");
+        }
+
+        public static void SetProgression(this ContextRankConfig contextRankConfig, ContextRankProgression value)
+        {
+            contextRankConfig.SetFieldValue("m_Progression", value);
+        }
+        
         public static bool GetInitialized(this LibraryScriptableObject library)
         {
             return library.GetFieldValue<LibraryScriptableObject, bool>("m_Initialized");

@@ -1,9 +1,9 @@
 {
   "$id": "1",
   "Language": "繁體中文",
-  "Version": "1.0.0",
+  "Version": "1.0.3",
   "Contributors": "Hsinyu",
-  "HomePage": "https://github.com/hsinyuhcan/KingmakerTurnBasedMod/blob/master/TurnBased/Localization/繁體中文.json",
+  "HomePage": "https://github.com/hsinyuhcan/KingmakerTurnBasedMod/blob/master/TurnBased/Localization/Chinese (zh-tw).json",
   "Strings": [
     {
       "Key": "Menu_Tab_Gameplay",
@@ -480,6 +480,10 @@
     {
       "Key": "Menu_Opt_FixDamageBonusOfBlastRune",
       "Value": "修正衝擊符文的額外傷害不會隨等級提升 (它是符文領域的第一項能力)"
+    },
+    {
+      "Key": "Menu_Opt_FixOnePlusDiv2ToDiv2",
+      "Value": "修正某些能力的額外傷害 (等級 / 2 + 1 => 等級 / 2) (衝擊符文, 月火)"
     },
     {
       "Key": "Menu_Opt_FixFxOfShadowEvocationSirocco",

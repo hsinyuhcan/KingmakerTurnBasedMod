@@ -1,6 +1,7 @@
 ﻿using Kingmaker;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.GameModes;
+using Kingmaker.UI.Common;
 using TurnBased.Controllers;
 using static TurnBased.Main;
 
@@ -15,9 +16,25 @@ namespace TurnBased.Utility
 
         public static bool IsInCombat()
         {
-            GameModeType currentMode;
-            return Mod.Enabled && Mod.Core.Combat.Initialized &&
-                ((currentMode = Game.Instance.CurrentMode) == GameModeType.Default || currentMode == GameModeType.Pause);
+            return Mod.Enabled && Mod.Core.Combat.Initialized && IsValidMode(Game.Instance.CurrentMode);
+        }
+
+        public static bool IsValidMode(GameModeType mode)
+        {
+            switch (mode)
+            {
+                case GameModeType.Default:
+                case GameModeType.Pause:
+                case GameModeType.EscMode:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static bool IsHUDShown()
+        {
+            return Game.Instance.UI.Canvas?.HUDController.CurrentState == UISectionHUDController.HUDState.AllVisible;
         }
 
         public static bool IsPreparing()

@@ -214,7 +214,7 @@ namespace TurnBased.UI
 
         void Update()
         {
-            if (IsInCombat())
+            if (IsInCombat() && IsHUDShown())
             {
                 UpdateUnits();
                 UpdateButtons();

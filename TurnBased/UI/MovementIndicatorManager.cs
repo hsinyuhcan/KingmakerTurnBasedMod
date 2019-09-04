@@ -62,7 +62,7 @@ namespace TurnBased.UI
 
         void Update()
         {
-            if (IsInCombat())
+            if (IsInCombat() && IsHUDShown())
             {
                 UnitEntityData unit = null;
                 float radiusInner = 0f;

@@ -422,6 +422,8 @@ namespace TurnBased.Utility
         
         public static BugfixOption FixDamageBonusOfBlastRune => Mod.Settings.toggleFixDamageBonusOfBlastRune;
 
+        public static BugfixOption FixOnePlusDiv2ToDiv2 => Mod.Settings.toggleFixOnePlusDiv2ToDiv2;
+
         public static BugfixOption FixFxOfShadowEvocationSirocco => Mod.Settings.toggleFixFxOfShadowEvocationSirocco;
 
         public static BugfixOption FixAbilityNotAutoDeactivateIfCombatEnded => Mod.Settings.toggleFixAbilityNotAutoDeactivateIfCombatEnded;

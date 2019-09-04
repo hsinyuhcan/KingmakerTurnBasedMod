@@ -81,6 +81,10 @@ namespace TurnBased.Menus
                 Local["Menu_Opt_FixDamageBonusOfBlastRune"], true, true,
                 () => blueprint.DamageBonusOfBlastRune.Update());
 
+            BugfixToggle(FixOnePlusDiv2ToDiv2,
+                Local["Menu_Opt_FixOnePlusDiv2ToDiv2"], true, true,
+                () => blueprint.OnePlusDiv2ToDiv2.Update());
+            
             BugfixToggle(FixFxOfShadowEvocationSirocco,
                 Local["Menu_Opt_FixFxOfShadowEvocationSirocco"], true, true,
                 () => blueprint.FxOfShadowEvocationSirocco.Update());

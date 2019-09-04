@@ -1,4 +1,11 @@
-﻿Version 1.0.2
+﻿Version 1.0.3
+	Added Deutsch translation (much thanks to michalnh)
+	Added an option to fix the damage bonus of certain abilities (Blast Rune, Moonfire)
+	Changed combat tracker and indicators can be hidden with other HUDs (using the hotkey in UI Extensions mod)
+	Fixed a path issue for Linux
+	Fixed combat tracker isn't refreshed instantly when changing language
+
+Version 1.0.2
 	Changed to exit combat as soon as possible when there is no enemy
 	Fixed some bugfix options do not take effect unless re-enabling turn-based mode
 	Fixed a typo

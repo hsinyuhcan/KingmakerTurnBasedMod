@@ -57,7 +57,7 @@ namespace TurnBased.Controllers
                 (blueprint, value) => blueprint.SetActivateWithUnitCommand(value),
                 UnitCommand.CommandType.Move);
 
-        // RuneDomainBaseAbilityAcidArea
+        // RuneDomainBaseAbilityAcidArea (Blast Rune)
         // RuneDomainBaseAbilityColdArea
         // RuneDomainBaseAbilityElectricityArea
         // RuneDomainBaseAbilityFireArea
@@ -69,6 +69,23 @@ namespace TurnBased.Controllers
                 (lib, coms) => coms.AddToArray(
                     lib.Get<BlueprintAbility>("92c821ecc8d73564bad15a8a07ed40f2")   // RuneDomainBaseAbilityAcid
                     .GetComponents<ContextRankConfig>().ToArray()));
+
+        // RuneDomainBaseAbilityAcid (Blast Rune)
+        // RuneDomainBaseAbilityCold
+        // RuneDomainBaseAbilityElectricity
+        // RuneDomainBaseAbilityFire
+        // DarknessDomainGreaterAbility (Moonfire)
+        public ValueModifier<BlueprintAbility, ContextRankProgression> OnePlusDiv2ToDiv2
+            = new ValueModifier<BlueprintAbility, ContextRankProgression>(
+                () => FixOnePlusDiv2ToDiv2,
+                new string[] { "92c821ecc8d73564bad15a8a07ed40f2", "2b81ff42fcbe9434eaf00fb0a873f579",
+                    "b67978e3d5a6c9247a393237bc660339", "eddfe26a8a3892b47add3cb08db7069d",
+                    "31acd268039966940872c916782ae018" },
+                (blueprint) => blueprint.GetComponents<ContextRankConfig>()
+                    .First(crc => crc.GetProgression() != ContextRankProgression.AsIs).GetProgression(),
+                (blueprint, value) => blueprint.GetComponents<ContextRankConfig>()
+                    .First(crc => crc.GetProgression() != ContextRankProgression.AsIs).SetProgression(value),
+                ContextRankProgression.Div2);
 
         // ShadowEvocationGreaterSiroccoArea
         public ValueModifier<BlueprintAbilityAreaEffect, string> FxOfShadowEvocationSirocco
@@ -100,6 +117,7 @@ namespace TurnBased.Controllers
             ActionTypeOfVitalStrike.Update(modify);
             ActionTypeOfAngelicForm.Update(modify);
             DamageBonusOfBlastRune.Update(modify);
+            OnePlusDiv2ToDiv2.Update(modify);
             FxOfShadowEvocationSirocco.Update(modify);
             AbilityNotDeactivateIfCombatEnded.Update(modify);
         }
@@ -135,10 +153,10 @@ namespace TurnBased.Controllers
 
         public class BlueprintModifier<TBlueprint, TValue> where TBlueprint : BlueprintScriptableObject
         {
-            private Func<bool> _option;
+            private readonly Func<bool> _option;
             private string[] _assetGuid;
             private Func<TBlueprint, TValue> _getter;
-            private Action<TBlueprint, TValue> _setter;
+            private readonly Action<TBlueprint, TValue> _setter;
             private Func<LibraryScriptableObject, TValue, TValue> _modifier;
             private TBlueprint[] _blueprints;
             private TValue[] _backup;
@@ -185,6 +203,8 @@ namespace TurnBased.Controllers
                     catch (Exception e)
                     {
                         Mod.Error(e);
+                        foreach (string guid in _assetGuid)
+                            Mod.Error("Blueprint GUID: " + guid);
                     }
                 }
                 return false;

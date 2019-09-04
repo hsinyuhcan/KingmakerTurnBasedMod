@@ -113,7 +113,6 @@
     <Compile Include="DefaultLanguage.cs" />
     <Compile Include="Menus\BugfixOptions.cs" />
     <Compile Include="Menus\LanguageSelection.cs" />
-    <Compile Include="Utility\GUISubScope.cs" />
     <Compile Include="Utility\MiscExtensions.cs" />
     <Compile Include="Utility\NonPublicAccessExtensions.cs" />
     <Compile Include="Utility\BugfixOption.cs" />
@@ -143,7 +142,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.json" />
-    <None Include="Localization\繁體中文.json" />
+    <None Include="Localization\Chinese %28zh-tw%29.json" />
+    <None Include="Localization\Deutsch.json" />
     <None Include="Repository.json" />
   </ItemGroup>
   <ItemGroup>

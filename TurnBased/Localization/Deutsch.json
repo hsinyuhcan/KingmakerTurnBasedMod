@@ -1,0 +1,649 @@
+﻿{
+  "$id": "1",
+  "Language": "Deutsch",
+  "Version": "1.0.0",
+  "Contributors": "michalnh",
+  "HomePage": "1887er@arcor.de",
+  "Strings": [
+    {
+      "Key": "Menu_Tab_Gameplay",
+      "Value": "Spielmechanik"
+    },
+    {
+      "Key": "Menu_Opt_TrunBasedMode",
+      "Value": "Rundenbasierter Modus"
+    },
+    {
+      "Key": "Menu_Btn_ResetSettings",
+      "Value": "Einstellungen zurücksetzen"
+    },
+    {
+      "Key": "Menu_Sub_Rule",
+      "Value": "Regeln"
+    },
+    {
+      "Key": "Menu_Opt_DistanceOfFiveFootStep",
+      "Value": "Entfernungs Modifikator 1,50 m-Schritt: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Cmt_DistanceOfFiveFootStep",
+      "Value": " (Größere Werte verhindern bei langsameren Einheiten die Möglichkeit für einen 1,50 m-Schritt)"
+    },
+    {
+      "Key": "Menu_Opt_SurpriseRound",
+      "Value": "Überraschungsrunde"
+    },
+    {
+      "Key": "Menu_Cmt_SurpriseRound",
+      "Value": " (Alle unentdeckten Einheiten erhalten eine Überraschungsrunde vor der regulären Runde)"
+    },
+    {
+      "Key": "Menu_Opt_PreventUnconsciousUnitLeavingCombat",
+      "Value": "Verhindert das bewustlose Einheiten direkt den Kampf verlassen"
+    },
+    {
+      "Key": "Menu_Cmt_PreventUnconsciousUnitLeavingCombat",
+      "Value": " (Nur tote Einheiten verlassen direkt den Kampf)"
+    },
+    {
+      "Key": "Menu_Opt_FlankingCountAllNearbyOpponents",
+      "Value": "In die Zange nehmen zählt für alle Gegner in der Bedrohungsreichweite"
+    },
+    {
+      "Key": "Menu_Cmt_FlankingCountAllNearbyOpponents",
+      "Value": "(Ungeachtet des aktuellen Einheitenbefehls)"
+    },
+    {
+      "Key": "Menu_Opt_RerollPerceptionDiceAgainstStealthOncePerRound",
+      "Value": "Jede Runde einmal Entdeckungswurf gegen Schleichen würfeln"
+    },
+    {
+      "Key": "Menu_Cmt_RerollPerceptionDiceAgainstStealthOncePerRound",
+      "Value": "(Anstelle einmal pro Kampf)"
+    },
+    {
+      "Key": "Menu_Sub_Pathfinding",
+      "Value": "Wegfindung"
+    },
+    {
+      "Key": "Menu_Opt_RadiusOfCollision",
+      "Value": "Umkreis Modifikator der Kollisionserkennung: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Cmt_RadiusOfCollision",
+      "Value": " (Ein Modifikator betrifft die Wegfindung für alle Einheiten, Betrifft nicht die Reichweite)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughFriendlyUnit",
+      "Value": "Sich durch befreundete Einheiten bewegen"
+    },
+    {
+      "Key": "Menu_Cmt_MovingThroughFriendlyUnit",
+      "Value": " (Einheiten können sich durch Verbündete bewegen)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughNonHostileUnit",
+      "Value": "Sich durch nicht feindselige Einheiten bewegen"
+    },
+    {
+      "Key": "Menu_Cmt_MovingThroughNonHostileUnit",
+      "Value": " (Einheiten können sich durch verbündete und neutrale Einheiten bewegen)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToPlayer",
+      "Value": "... Betrifft den Spieler"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToNeutralUnit",
+      "Value": "... Betrifft Neutrale Einheiten"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToEnemy",
+      "Value": "... Betrifft Feinde"
+    },
+    {
+      "Key": "Menu_Opt_AvoidOverlapping",
+      "Value": "Versuche Überlappen beim Durchbewegen zu verhinden"
+    },
+    {
+      "Key": "Menu_Cmt_AvoidOverlapping",
+      "Value": " (Vermeide Durchbewegen wenn sich Einheiten überlappen würden)"
+    },
+    {
+      "Key": "Menu_Opt_AvoidOverlappingOnCharge",
+      "Value": "Versuche Überlappen zu verhindern beim Sturmangriff"
+    },
+    {
+      "Key": "Menu_Cmt_AvoidOverlappingOnCharge",
+      "Value": " (Wende normale Wegfindung an anstelle Hindernisse zu ignorieren)"
+    },
+    {
+      "Key": "Menu_Opt_DoNotMovingThroughNonAlly",
+      "Value": "Bewege Dich NICHT durch Nichtverbündete Einheiten"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotMovingThroughNonAlly",
+      "Value": " (Deaktivieren den Standard \"leichte Hinternisse\" Effekt bei Nichtverbündete Einheiten)"
+    },
+    {
+      "Key": "Menu_Sub_Automation",
+      "Value": "Automatisierung"
+    },
+    {
+      "Key": "Menu_Opt_AutoTurnOffAIOnTurnStart",
+      "Value": "Automatisch Einheiten KI bei Spielerstart abschalten"
+    },
+    {
+      "Key": "Menu_Opt_AutoTurnOnAIOnCombatEnd",
+      "Value": "Automatisch Gruppen KI anschalten bei Kampfende"
+    },
+    {
+      "Key": "Menu_Opt_AutoSelectUnitOnTurnStart",
+      "Value": "Automatisch aktuelle Einheit bei Spielerrundenstart auswählen"
+    },
+    {
+      "Key": "Menu_Opt_AutoSelectEntirePartyOnCombatEnd",
+      "Value": "Automatisch gesamte Gruppe auswählen bei Kampfende"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnTurnStart",
+      "Value": "Automatisch Aktionen bei Rundenstart des Spielers abbrechen"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnCombatEnd",
+      "Value": "Automatisch Aktionen bei Kampfende abbrechen"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnFiveFootStepFinish",
+      "Value": "Automatisch Aktionen bei Spieler Einheit abbrechen, wenn 1,50 m-Schritt beendet ist"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnFirstMoveFinish",
+      "Value": "Automatisch Aktionen bei Spieler Einheit abbrechen, wenn erste Bewegungsaktion beendet ist"
+    },
+    {
+      "Key": "Menu_Opt_AutoEnableFiveFootStepOnTurnStart",
+      "Value": "Automatisch 1,50 m-Schritt bei Spieler Rundenstart aktivieren"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnWhenActionsAreUsedUp",
+      "Value": "Automatisch Runde beenden wenn alle Aktion aufgebraucht sind"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnExceptSwiftAction",
+      "Value": "... Ausgenommen Augenblickliche Aktionen"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnWhenPlayerIdle",
+      "Value": "Automatisch Runde beenden wenn Spielereinheit untätig ist"
+    },
+    {
+      "Key": "Menu_Cmt_AutoEndTurnWhenPlayerIdle",
+      "Value": " (Kann für Autokampf genutzt werden)"
+    },
+    {
+      "Key": "Menu_Tab_Interface",
+      "Value": "Oberfläche"
+    },
+    {
+      "Key": "Menu_Opt_DoNotMarkInvisibleUnit",
+      "Value": "Unsichtbare einheiten NICHT markieren"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotMarkInvisibleUnit",
+      "Value": " (Deaktivierung Hervorheben, Kamera, Indikatoren usw.)"
+    },
+    {
+      "Key": "Menu_Opt_DoNotShowInvisibleUnitOnCombatTracker",
+      "Value": "Unsichtbare Einheiten NICHT im Kampfprotokoll anzeigen"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotShowInvisibleUnitOnCombatTracker",
+      "Value": " (Als \"Unbekannt\" zeigen wenn diese agieren)"
+    },
+    {
+      "Key": "Menu_Sub_CombatTracker",
+      "Value": "Kampfprotokoll"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerScale",
+      "Value": "Größenmaßstab: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerWidth",
+      "Value": "Breite: {0:d3}"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerMaxUnits",
+      "Value": "Maximale Einheiten: {0:d2}"
+    },
+    {
+      "Key": "Menu_Opt_CameraScrollToUnitOnClickUI",
+      "Value": "Kamera rollt zu Einheit bei Klick"
+    },
+    {
+      "Key": "Menu_Opt_SelectUnitOnClickUI",
+      "Value": "Einheit bei Klick auswählen"
+    },
+    {
+      "Key": "Menu_Opt_InspectOnRightClickUI",
+      "Value": "Einheit bei Rechtsklick untersuchen"
+    },
+    {
+      "Key": "Menu_Opt_ShowIsFlatFootedIconOnUI",
+      "Value": "Ausrufezeichen bei Einheit anzeigen, falls Geschicklichkeitsbonus für RK verloren wurde"
+    },
+    {
+      "Key": "Menu_Sub_View",
+      "Value": "Übersicht"
+    },
+    {
+      "Key": "Menu_Opt_HighlightCurrentUnit",
+      "Value": "Aktuelle Einheit hervorheben"
+    },
+    {
+      "Key": "Menu_Opt_CameraScrollToCurrentUnit",
+      "Value": "Kamera rollt zu aktueller Einheit bei Rundenstart"
+    },
+    {
+      "Key": "Menu_Opt_CameraLockOnCurrentPlayerUnit",
+      "Value": "Kamera auf aktuelle Einheit setzen"
+    },
+    {
+      "Key": "Menu_Cmt_CameraLockOnCurrentPlayerUnit",
+      "Value": " (Automatisch entsperren bei Spielpause)"
+    },
+    {
+      "Key": "Menu_Opt_CameraLockOnCurrentNonPlayerUnit",
+      "Value": "Kamera auf aktuelle Nichtspielereinheit setzen"
+    },
+    {
+      "Key": "Menu_Sub_AttackIndicator",
+      "Value": "Angriffskennzeichen"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorOfCurrentUnit",
+      "Value": "Angriffskennzeichen bei aktueller Einheit anzeigen"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorForPlayer",
+      "Value": "... Für Spieler"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorForNonPlayer",
+      "Value": "... Für Nichtspieler"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorOnHoverUI",
+      "Value": "Angriffskennzeichnung bei Mausdrüberhalten anzeigen"
+    },
+    {
+      "Key": "Menu_Opt_ShowAutoCastAbilityRange",
+      "Value": "Zeige Fertigkeitenentfernung anstelle von Agriffsreichweite wenn Auto-Zauberwirken genutzt wird"
+    },
+    {
+      "Key": "Menu_Opt_CheckForObstaclesOnTargeting",
+      "Value": "Prüfe of irgendwelche Hindernisse vorhanden sind wenn festgelegt wird, ob das Ziel in Reichweite ist"
+    },
+    {
+      "Key": "Menu_Sub_MovementIndicator",
+      "Value": "Bewegungskennzeichnung"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorOfCurrentUnit",
+      "Value": "Zeige Bewegungskennzeichnung von aktueller Einheit"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorForPlayer",
+      "Value": "... Für Spieler"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorForNonPlayer",
+      "Value": "... Für Nichtspieler"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorOnHoverUI",
+      "Value": "Zeige Bewegungskennzeichnung bei Mausdrüberhalten"
+    },
+    {
+      "Key": "Menu_Tab_HotkeyAndTime",
+      "Value": "Schnelltaste & Zeit"
+    },
+    {
+      "Key": "Menu_Sub_Hotkey",
+      "Value": "Schnelltaste"
+    },
+    {
+      "Key": "Menu_Btn_Set",
+      "Value": "Setze"
+    },
+    {
+      "Key": "Menu_Btn_Clear",
+      "Value": "Leeren"
+    },
+    {
+      "Key": "Menu_Txt_Duplicated",
+      "Value": "Doppelt vorhanden!!"
+    },
+    {
+      "Key": "Menu_Opt_ToggleFiveFootStepOnRightClickGround",
+      "Value": "Wechsel 1,50 m-Schritt wenn auf den Boden geklickt wird"
+    },
+    {
+      "Key": "Menu_Sub_Time",
+      "Value": "Zeit"
+    },
+    {
+      "Key": "Menu_Opt_MinimumFPS",
+      "Value": "Minimale FPS: {0:f0}"
+    },
+    {
+      "Key": "Menu_Cmt_MinimumFPS",
+      "Value": " (Automatisch Zeitmaßstab verringern, um zu verhindern, dass FPS unter diesen Wert sinken)"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleBetweenTurns",
+      "Value": "Zeitmaßstab Multiplikator zwischen Runden: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInPlayerTurn",
+      "Value": "Zeitmaßstab Multiplikator für Spielereinheiten: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInNonPlayerTurn",
+      "Value": "Zeitmaßstab Multiplikator für Nichtspielereinheiten: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInUnknownTurn",
+      "Value": "Zeitmaßstab Multiplikator für unbekannte Einheiten: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_MaxDelayBetweenIterativeAttacks",
+      "Value": "Maximale Verzögerung zwischen iterativen Attacken: {0:f2}s"
+    },
+    {
+      "Key": "Menu_Cmt_MaxDelayBetweenIterativeAttacks",
+      "Value": "(Es sind 6 Sekunden / Attacken Zähler im Standard)"
+    },
+    {
+      "Key": "Menu_Opt_CastingTimeOfFullRoundSpell",
+      "Value": "Zauberwirken Zeitmultiplikator für Volle Aktion Zauber: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Cmt_CastingTimeOfFullRoundSpell",
+      "Value": "(Die Animation für das Wirken eines Volle Aktion Zaubers beträgt als Standard 6 Sekunden)"
+    },
+    {
+      "Key": "Menu_Opt_TimeToWaitForIdleAI",
+      "Value": "Wartezeit für untätige KI: {0:f2}s"
+    },
+    {
+      "Key": "Menu_Opt_TimeToWaitForEndingTurn",
+      "Value": "Wartezeit um den Zug zu beenden: {0:f2}s"
+    },
+    {
+      "Key": "Menu_Sub_Pause",
+      "Value": "Pause"
+    },
+    {
+      "Key": "Menu_Opt_DoNotPauseOnCombatStart",
+      "Value": "Nicht automatisch Pausieren beim rundenbasierenden Kampfstart"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotPauseOnCombatStart",
+      "Value": " (Ignoriert die Spieleinstellungen)"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerTurnStart",
+      "Value": "Pausiere beim Spielerrundenstart"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerTurnEnd",
+      "Value": "Pausiere beim Spielerrundenende"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnNonPlayerTurnStart",
+      "Value": "Pausiere beim Nichtspielerrundenstart"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnNonPlayerTurnEnd",
+      "Value": "Pausiere beim Nichtspielerrundenende"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerFinishFiveFoot",
+      "Value": "Pausieren wenn Spieler 1,50 m-Schritt beendet hat"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerFinishFirstMove",
+      "Value": "Pausieren wenn Spielereinheit erste Bewegungsaktion beendet hat"
+    },
+    {
+      "Key": "Menu_Tab_Bugfix",
+      "Value": "Fehlerbehebung"
+    },
+    {
+      "Key": "Menu_Btn_TB",
+      "Value": "RB"
+    },
+    {
+      "Key": "Menu_Btn_RT",
+      "Value": "EZ"
+    },
+    {
+      "Key": "Menu_Opt_FixNeverInCombatWithoutMC",
+      "Value": "Behebe wenn Hauptcharakter nicht in der Gruppe ist. Das Spiel wird niemals erfassen, dass der Spieler im Kampf ist"
+    },
+    {
+      "Key": "Menu_Opt_FixCombatNotEndProperly",
+      "Value": "Behebe Kampf wird nicht korrekt beendet, wenn er durch eine Zwischensequenz beendet wird"
+    },
+    {
+      "Key": "Menu_Opt_FixUnitNotLeaveCombatWhenNotInGame",
+      "Value": "Behebe Einheiten verlassen nie den Kampf wenn diese inaktiv werden (verursacht eine Panne beim Rufen von Kanerah / Kalikke)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfBardicPerformance",
+      "Value": "Behebe den Aktionstyp eines Bardenauftrittes und den Effekt von Singendem Stahl"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfCharge",
+      "Value": "Behebe den Aktionstyp Sturmangriff (Standard Aktion => Vollen Aktion)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfOverrun",
+      "Value": "Behebe den Aktionstyp Überrennen (Standard Aktion => Vollen Aktion)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfVitalStrike",
+      "Value": "Behebe den Aktionstyp Konzentrierter Schlag (Standard Aktion => Vollen Aktion)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfAngelicForm",
+      "Value": "Behebe den Aktionstyp Engelsgestalt (Standard Aktion => Vollen Aktion)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfKineticBlade",
+      "Value": "Behebe aktivieren kinetische Klinge wird als gezogene Waffe gezählt und kostet eine weitere Standard Aktion"
+    },
+    {
+      "Key": "Menu_Opt_FixKineticistWontStopPriorCommand",
+      "Value": "Behebe Kinetiker stoppt nicht die vorherige Aktion, wenn vor dem Kampf der Befehl zum Angriff mit kinetische Klinge gegeben wurde"
+    },
+    {
+      "Key": "Menu_Opt_FixSpellstrikeOnNeutralUnit",
+      "Value": "Behebe Zauberschlag wirkt nicht wenn ein neutrale Ziel attakiert wird"
+    },
+    {
+      "Key": "Menu_Opt_FixSpellstrikeWithMetamagicReach",
+      "Value": "Behebe Zauberschlag wirkt nicht wenn Metamagie (Reichweite) auf einen Berührungszauber genutzt wird"
+    },
+    {
+      "Key": "Menu_Opt_FixDamageBonusOfBlastRune",
+      "Value": "Behebe Schadensbonus von Explosive Rune wird nicht durch die Klassenstufe erhöht (Es ist die erste Fertigkeit der Domäne der Runen)"
+    },
+    {
+      "Key": "Menu_Opt_FixFxOfShadowEvocationSirocco",
+      "Value": "Behebe der grafische Effekt der Schattenbeschwörung (Sirocco) fehlt (Benutze den normalen Sirocco als Ersatz)"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityNotAutoDeactivateIfCombatEnded",
+      "Value": "Behebe Einige Fertigkeiten werden nach dem Kampf nicht wieder deaktiviert (Lied der Größe, Lied des Heldenmuts)"
+    },
+    {
+      "Key": "Menu_Opt_FixBlindFightDistance",
+      "Value": "Behebe Blinder Kampf benötigt extrem kurze Distanz um zu verhindern, dass RK anstelle von Nahkampfdistanz verloren wird"
+    },
+    {
+      "Key": "Menu_Opt_FixConfusedUnitCanAttackDeadUnit",
+      "Value": "Behebe Ab und zu kann eine verwirrte Einheit normal agieren, weil diese versucht eine unangreifbare, tote Einheit anzugreifen"
+    },
+    {
+      "Key": "Menu_Opt_FixHasMotionThisTick",
+      "Value": "Behebe Ab und zu berücksichtigt das Spiel nicht, dass eine Einheit gezwungen wird sich zu bewegen wie eine Einheit die sich berwegt (Verursacht Gelegenheitsangriff inkonsistenz)"
+    },
+    {
+      "Key": "Menu_Opt_FixCanMakeAttackOfOpportunityToUnmovedTarget",
+      "Value": "Behebe Du kannst einen Gelegenheitsangriff gegen eine nicht bewegenden Einehit ausführen welche die Bedrohungsreichweite verlässt (Wenn von einer Reichweiten Waffen gewechselt wurde)"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCircleRadius",
+      "Value": "Behebe der visuelle Kreis von verschiedenen Fertigkeiten ist inkonsistent mit der tatsächlichen Entfernung"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCircleNotAppear",
+      "Value": "Behebe Der Fertigkeitskreis erscheint nicht, wenn per Schnelltaste die Fertigkeite das erste Mal ausgewählt wurde"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCanTargetUntargetableUnit",
+      "Value": "Behebe Du kannst unanvisierbare Ziele mit Fertigkeiten anvisieren"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCanTargetDeadUnit",
+      "Value": "Behebe Du kannst tote Einheitung mit Fertigkeiten anvisieren, obwohl diese nicht auf tote Ziele benutzt werden können"
+    },
+    {
+      "Key": "Menu_Tab_Language",
+      "Value": "Sprache"
+    },
+    {
+      "Key": "Menu_Sub_Current",
+      "Value": "Aktuell"
+    },
+    {
+      "Key": "Menu_Txt_Language",
+      "Value": "Sprache: {0}"
+    },
+    {
+      "Key": "Menu_Txt_Version",
+      "Value": "Version: {0}"
+    },
+    {
+      "Key": "Menu_Txt_Contributors",
+      "Value": "Mitwirkender: {0}"
+    },
+    {
+      "Key": "Menu_Txt_HomePage",
+      "Value": "Startseite:"
+    },
+    {
+      "Key": "Menu_Btn_Export",
+      "Value": "Exportieren: {0}"
+    },
+    {
+      "Key": "Menu_Btn_SortAndExport",
+      "Value": "Sortieren und exportieren: {0}"
+    },
+    {
+      "Key": "Menu_Cmt_SortAndExport",
+      "Value": " (Warnung: Auch alle unbenutzen Einträge werden gelöscht)"
+    },
+    {
+      "Key": "Menu_Txt_FaildToExport",
+      "Value": "Export fehlgeschlagen: {0}"
+    },
+    {
+      "Key": "Menu_Sub_Import",
+      "Value": "Importieren"
+    },
+    {
+      "Key": "Menu_Btn_RefreshFileList",
+      "Value": "Aktualisiere Dateiliste"
+    },
+    {
+      "Key": "Menu_Btn_DefaultLanguage",
+      "Value": "Standard Sprache"
+    },
+    {
+      "Key": "Menu_Txt_FaildToImport",
+      "Value": "Import fehlgschlagen: {0}"
+    },
+    {
+      "Key": "Hotkey_Toggle_TurnBasedMode",
+      "Value": "Umschalten Rundenbasierender Modus"
+    },
+    {
+      "Key": "Hotkey_Toggle_AttackIndicator",
+      "Value": "Umschalten Angriffskennzeichung"
+    },
+    {
+      "Key": "Hotkey_Toggle_MovementIndicator",
+      "Value": "Umschalten Bewegungskennzeichnung "
+    },
+    {
+      "Key": "Hotkey_Button_EndTurn",
+      "Value": "Knopf: Beende Runde"
+    },
+    {
+      "Key": "Hotkey_Button_Delay",
+      "Value": "Knopf: Verzögern"
+    },
+    {
+      "Key": "Hotkey_Button_FiveFootStep",
+      "Value": "Knopf: 1,50 m-Schritt"
+    },
+    {
+      "Key": "Hotkey_Button_FullAttack",
+      "Value": "Knopf: Volle Attacke"
+    },
+    {
+      "Key": "UI_Btn_EndTurn",
+      "Value": "<size=-2>Rundenende</size>"
+    },
+    {
+      "Key": "UI_Btn_Delay",
+      "Value": "Verzögern"
+    },
+    {
+      "Key": "UI_Btn_FiveFootStep",
+      "Value": "<size=-4>1,50 m-Schritt</size>"
+    },
+    {
+      "Key": "UI_Btn_FullAttack",
+      "Value": "Voller Ang."
+    },
+    {
+      "Key": "UI_Txt_Unknown",
+      "Value": "Unbekannt"
+    },
+    {
+      "Key": "UI_Txt_Error",
+      "Value": "Fehler: Rundenbasierender Kampf Mod"
+    },
+    {
+      "Key": "UI_Txt_TurnBasedMode",
+      "Value": "Modus: Rundenbasiert"
+    },
+    {
+      "Key": "UI_Txt_RealTimeMode",
+      "Value": "Modus: Echtzeit"
+    },
+    {
+      "Key": "UI_Log_RoundStarted",
+      "Value": "Runde {0} gestartet."
+    },
+    {
+      "Key": "UI_Log_SurpriseRoundStarted",
+      "Value": "Überraschungsrunde gestartet."
+    }
+  ]
+}
