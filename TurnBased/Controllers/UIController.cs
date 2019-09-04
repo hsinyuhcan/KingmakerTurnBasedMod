@@ -77,6 +77,12 @@ namespace TurnBased.Controllers
         }
 #endif
 
+        public void Update()
+        {
+            Detach();
+            Attach();
+        }
+
         #region Event Handlers
 
         public void HandleModEnable()
