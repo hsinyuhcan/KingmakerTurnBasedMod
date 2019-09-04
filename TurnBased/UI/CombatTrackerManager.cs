@@ -2,7 +2,6 @@
 using Kingmaker;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UI;
-using Kingmaker.UI.Common;
 using Kingmaker.UI.Constructor;
 using ModMaker.Utility;
 using System;
