@@ -107,8 +107,6 @@ namespace TurnBased
             { "Menu_Txt_Duplicated", "Duplicated!!" },
             { "Menu_Opt_ToggleFiveFootStepOnRightClickGround", "Toggle 5-foot Step When Right Click On The Ground" },
             { "Menu_Sub_Time", "Time" },
-            { "Menu_Opt_MinimumFPS", "Minimum FPS: {0:f0}" },
-            { "Menu_Cmt_MinimumFPS", " (Auto decrease Time Scale to prevent FPS from dropping below this value)" },
             { "Menu_Opt_TimeScaleBetweenTurns", "Time Scale Multiplier Between Turns: {0:f2}x" },
             { "Menu_Opt_TimeScaleInPlayerTurn", "Time Scale Multiplier For Player Units: {0:f2}x" },
             { "Menu_Opt_TimeScaleInNonPlayerTurn", "Time Scale Multiplier For Non-Player Units: {0:f2}x" },

@@ -141,17 +141,8 @@ namespace TurnBased.Menus
         {
             using (new GUILayout.HorizontalScope())
             {
-                GUIHelper.ToggleButton(true,
-                   string.Format(Local["Menu_Opt_MinimumFPS"], MinimumFPS), _labelStyle, GUILayout.ExpandWidth(false));
-                MinimumFPS =
-                    GUIHelper.RoundedHorizontalSlider(MinimumFPS, 0, 12f, 20f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
-                GUILayout.Label(Local["Menu_Cmt_MinimumFPS"].Color(RGBA.silver), GUILayout.ExpandWidth(false));
-            }
-
-            using (new GUILayout.HorizontalScope())
-            {
                 GUIHelper.ToggleButton(TimeScaleBetweenTurns != 1f,
-                   string.Format(Local["Menu_Opt_TimeScaleBetweenTurns"], TimeScaleBetweenTurns), _labelStyle, GUILayout.ExpandWidth(false));
+                    string.Format(Local["Menu_Opt_TimeScaleBetweenTurns"], TimeScaleBetweenTurns), _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleBetweenTurns =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleBetweenTurns, 1, 1f, 10f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }
@@ -159,7 +150,7 @@ namespace TurnBased.Menus
             using (new GUILayout.HorizontalScope())
             {
                 GUIHelper.ToggleButton(TimeScaleInPlayerTurn != 1f,
-                  string.Format(Local["Menu_Opt_TimeScaleInPlayerTurn"], TimeScaleInPlayerTurn), _labelStyle, GUILayout.ExpandWidth(false));
+                    string.Format(Local["Menu_Opt_TimeScaleInPlayerTurn"], TimeScaleInPlayerTurn), _labelStyle, GUILayout.ExpandWidth(false));
                 TimeScaleInPlayerTurn =
                     GUIHelper.RoundedHorizontalSlider(TimeScaleInPlayerTurn, 1, 1f, 5f, GUILayout.Width(100f), GUILayout.ExpandWidth(false));
             }

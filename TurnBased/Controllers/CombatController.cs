@@ -38,7 +38,6 @@ namespace TurnBased.Controllers
         private bool _hasSurpriseRound;
         private bool _isUnitsChanged;
         private TimeSpan _startTime;
-        private readonly TimeScaleRegulator _timeScale = new TimeScaleRegulator();
         private List<UnitEntityData> _units = new List<UnitEntityData>();
         HashSet<UnitEntityData> _unitsToSurprise = new HashSet<UnitEntityData>();
         private readonly UnitsOrderComaprer _unitsOrderComaprer = new UnitsOrderComaprer();
@@ -112,9 +111,6 @@ namespace TurnBased.Controllers
         {
             if (CurrentTurn == null)
             {
-                // modify time scale
-                _timeScale.Modify(TimeScaleBetweenTurns);
-
                 // trim the delta time, when a turn will start at the end of this tick
                 TimeController timeController = Game.Instance.TimeController;
                 float timeToNextTurn = SortedUnits.FirstOrDefault()?.GetTimeToNextTurn() ?? 0f;
@@ -132,14 +128,6 @@ namespace TurnBased.Controllers
                     TimeToNextRound += 6f;
                     LogRound();
                 }
-            }
-            else
-            {
-                // modify time scale
-                _timeScale.Modify(
-                    (!DoNotShowInvisibleUnitOnCombatTracker || CurrentTurn.Unit.IsVisibleForPlayer) ?
-                    CurrentTurn.Unit.IsDirectlyControllable ? 
-                    TimeScaleInPlayerTurn : TimeScaleInNonPlayerTurn : TimeScaleInUnknownTurn);
             }
 
             // set game time
@@ -185,7 +173,6 @@ namespace TurnBased.Controllers
             _hasSurpriseRound = false;
             _isUnitsChanged = false;
             _startTime = Game.Instance.Player.GameTime;
-            _timeScale.Reset();
             _units.Clear();
             _unitsToSurprise.Clear();
             CurrentTurn = null;
@@ -498,45 +485,6 @@ namespace TurnBased.Controllers
         }
 
         #endregion
-
-        public class TimeScaleRegulator
-        {
-            private float _appliedModifier;
-            private float _previousModifier; 
-
-            public void Modify(float modifier)
-            {
-                if (modifier <= 1f)
-                {
-                    Reset();
-                    return;
-                }
-
-                if (Time.deltaTime > 0f)
-                {
-                    float fps = 1f / Time.unscaledDeltaTime;
-                    if (modifier == _previousModifier && (fps < MinimumFPS || _appliedModifier < _previousModifier))
-                    {
-                        // if fps < MinimumFPS, make fps closer to MinimumFPS
-                        // if fps >= MinimumFPS, make _appliedModifier closer to modifier
-                        _appliedModifier = Math.Min(modifier, _appliedModifier * fps / MinimumFPS);
-                    }
-                    else
-                    {
-                        _appliedModifier = modifier;
-                    }
-                    _previousModifier = modifier;
-                }
-
-                Time.timeScale *= _appliedModifier = Math.Max(1f, _appliedModifier);
-            }
-
-            public void Reset()
-            {
-                _appliedModifier = 1f;
-                _previousModifier = 1f;
-            }
-        }
 
         public class UnitsOrderComaprer : IComparer<UnitEntityData>
         {

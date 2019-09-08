@@ -1,7 +1,7 @@
 {
   "$id": "1",
   "Language": "繁體中文",
-  "Version": "1.0.3",
+  "Version": "1.0.4",
   "Contributors": "Hsinyu",
   "HomePage": "https://github.com/hsinyuhcan/KingmakerTurnBasedMod/blob/master/TurnBased/Localization/Chinese (zh-tw).json",
   "Strings": [
@@ -332,14 +332,6 @@
     {
       "Key": "Menu_Sub_Time",
       "Value": "時間"
-    },
-    {
-      "Key": "Menu_Opt_MinimumFPS",
-      "Value": "最小 FPS: {0:f0}"
-    },
-    {
-      "Key": "Menu_Cmt_MinimumFPS",
-      "Value": " (自動降低時間流速以防止 FPS 降至此值以下)"
     },
     {
       "Key": "Menu_Opt_TimeScaleBetweenTurns",
