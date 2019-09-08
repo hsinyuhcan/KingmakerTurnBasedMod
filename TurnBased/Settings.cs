@@ -74,7 +74,6 @@ namespace TurnBased
         public bool hotkeyToggleFiveFootStepOnRightClickGround;
 
         // time scale
-        public float minimumFPS = 12f;
         public float timeScaleBetweenTurns = 5f;
         public float timeScaleInPlayerTurn = 1f;
         public float timeScaleInNonPlayerTurn = 2f;

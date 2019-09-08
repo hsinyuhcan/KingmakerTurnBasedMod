@@ -23,6 +23,7 @@ using System.Reflection.Emit;
 using TurnBased.Utility;
 using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Main;
+using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
 namespace TurnBased.HarmonyPatches
@@ -36,7 +37,7 @@ namespace TurnBased.HarmonyPatches
             [HarmonyPostfix]
             static void Postfix()
             {
-                if (!Game.Instance.IsPaused && IsInCombat())
+                if (IsInCombat() && !Game.Instance.IsPaused)
                 {
                     try
                     {
@@ -56,10 +57,29 @@ namespace TurnBased.HarmonyPatches
         [HarmonyPatch(typeof(TimeController), "Tick")]
         static class TimeController_Tick_Patch
         {
-            [HarmonyPostfix]
-            static void Postfix()
+            [HarmonyPrefix]
+            static void Prefix(ref float? __state)
             {
-                if (!Game.Instance.IsPaused && IsInCombat())
+                if (IsInCombat() && !Game.Instance.IsPaused && !Game.Instance.InvertPauseButtonPressed)
+                {
+                    __state = Game.Instance.TimeController.PlayerTimeScale;
+                    UnitEntityData unit = CurrentUnit();
+                    Game.Instance.TimeController.PlayerTimeScale = __state.Value *
+                        (unit == null ? TimeScaleBetweenTurns :
+                        (!DoNotShowInvisibleUnitOnCombatTracker || unit.IsVisibleForPlayer) ?
+                        (unit.IsDirectlyControllable ? TimeScaleInPlayerTurn : TimeScaleInNonPlayerTurn) : TimeScaleInUnknownTurn);
+                }
+            }
+
+            [HarmonyPostfix]
+            static void Postfix(ref float? __state)
+            {
+                if (__state.HasValue)
+                {
+                    Game.Instance.TimeController.PlayerTimeScale = __state.Value;
+                }
+
+                if (IsInCombat() && !Game.Instance.IsPaused)
                 {
                     try
                     {

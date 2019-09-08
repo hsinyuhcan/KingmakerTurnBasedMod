@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using static TurnBased.Main;
+﻿using static TurnBased.Main;
 
 namespace TurnBased.Utility
 {
@@ -311,11 +310,6 @@ namespace TurnBased.Utility
         #endregion
 
         #region Time Scale
-
-        public static float MinimumFPS {
-            get => Mod.Settings.minimumFPS;
-            set => Mod.Settings.minimumFPS = value;
-        }
 
         public static float TimeScaleBetweenTurns {
             get => Mod.Settings.timeScaleBetweenTurns;
