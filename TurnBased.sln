@@ -10,6 +10,7 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\KingmakerModMaker\ModMaker\ModMaker.projitems*{30ef7fe3-e17b-463d-921f-e610ba654f9b}*SharedItemsImports = 4
+		..\KingmakerModMaker\ModMaker\ModMaker.projitems*{7d3f9428-c134-47fe-9d04-305b4d330401}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -98,8 +98,9 @@ namespace TurnBased.UI
 
             GameObject isSurprising = buttonUnit.transform.Find("NeedToAttention").gameObject;
             isSurprising.name = "IsSurprising";
-            isSurprising.transform.localPosition = isUnableToAct.transform.localPosition;
+            isSurprising.SetActive(false);
             RectTransform rectIsSurprising = (RectTransform)isSurprising.transform;
+            rectIsSurprising.localPosition = isUnableToAct.transform.localPosition;
             rectIsSurprising.anchoredPosition = new Vector2(-3f - UNIT_BUTTON_HEIGHT, 0.4f);
             rectIsSurprising.sizeDelta = new Vector2(UNIT_BUTTON_HEIGHT, 0f);
 
