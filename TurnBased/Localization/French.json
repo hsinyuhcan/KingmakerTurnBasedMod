@@ -1,0 +1,653 @@
+{
+  "$id": "1",
+  "Language": "Français",
+  "Version": "1.0.3",
+  "Contributors": "slipenbois",
+  "HomePage": null,
+  "Strings": [
+    {
+      "Key": "Menu_Tab_Gameplay",
+      "Value": "Gameplay"
+    },
+    {
+      "Key": "Menu_Opt_TrunBasedMode",
+      "Value": "Mode tour par tour"
+    },
+    {
+      "Key": "Menu_Btn_ResetSettings",
+      "Value": "Réinitialiser les options"
+    },
+    {
+      "Key": "Menu_Sub_Rule",
+      "Value": "Règle"
+    },
+    {
+      "Key": "Menu_Opt_DistanceOfFiveFootStep",
+      "Value": "Modificateur de distance du pas de placement: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Cmt_DistanceOfFiveFootStep",
+      "Value": " (Une valeur plus élevée empêchera les unités les plus lentes de faire un pas de placement)"
+    },
+    {
+      "Key": "Menu_Opt_SurpriseRound",
+      "Value": "Round de surprise"
+    },
+    {
+      "Key": "Menu_Cmt_SurpriseRound",
+      "Value": " (Si une partie des unités sont conscientes de la présence de l’adversaire (mais pas toutes), un round de surprise a lieu avant le début du combat, à leur bénéfice)"
+    },
+    {
+      "Key": "Menu_Opt_PreventUnconsciousUnitLeavingCombat",
+      "Value": "Empêche les unités inconscientes de quitter le combat"
+    },
+    {
+      "Key": "Menu_Cmt_PreventUnconsciousUnitLeavingCombat",
+      "Value": " (Seules les unités mortes quitteront le combat)"
+    },
+    {
+      "Key": "Menu_Opt_FlankingCountAllNearbyOpponents",
+      "Value": "La Prise en tenaille prend en compte toute les unités dans l'espace contrôlé"
+    },
+    {
+      "Key": "Menu_Cmt_FlankingCountAllNearbyOpponents",
+      "Value": " (Quels que soient les ordres de l'unité actuelle)"
+    },
+    {
+      "Key": "Menu_Opt_RerollPerceptionDiceAgainstStealthOncePerRound",
+      "Value": "Refaire un test de perception contre les unités dissimulées une fois par round"
+    },
+    {
+      "Key": "Menu_Cmt_RerollPerceptionDiceAgainstStealthOncePerRound",
+      "Value": " (Au lieu d'une fois par combat)"
+    },
+    {
+      "Key": "Menu_Sub_Pathfinding",
+      "Value": "Pathfinding"
+    },
+    {
+      "Key": "Menu_Opt_RadiusOfCollision",
+      "Value": "Modificateur de rayon de détection de collision: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Cmt_RadiusOfCollision",
+      "Value": " (Option contrôlant le pathfinding pour toutes les unités, N'AFFECTE PAS LA PORTÉE )"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughFriendlyUnit",
+      "Value": "Passer à travers une unité allié"
+    },
+    {
+      "Key": "Menu_Cmt_MovingThroughFriendlyUnit",
+      "Value": " (Les unités peuvent passer à travers les alliés)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughNonHostileUnit",
+      "Value": "Passer à travers les unités non hostiles"
+    },
+    {
+      "Key": "Menu_Cmt_MovingThroughNonHostileUnit",
+      "Value": " (Les unités peuvent passer à travers les unités alliées et neutres)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToPlayer",
+      "Value": "... S'applique au joueur"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToNeutralUnit",
+      "Value": "... S'applique aux unités neutres"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToEnemy",
+      "Value": "... S'applique à l'ennemi"
+    },
+    {
+      "Key": "Menu_Opt_AvoidOverlapping",
+      "Value": "Essayer d'éviter un chevauchement lors d'une traversée"
+    },
+    {
+      "Key": "Menu_Cmt_AvoidOverlapping",
+      "Value": " (Empêche la traversée d'une unité si elles sont amenées à se chevaucher)"
+    },
+    {
+      "Key": "Menu_Opt_AvoidOverlappingOnCharge",
+      "Value": "Essayer d'éviter un chevauchement lors d'une charge"
+    },
+    {
+      "Key": "Menu_Cmt_AvoidOverlappingOnCharge",
+      "Value": " (Appliquer les règles standards de pathfinding au lieu d'ignorer tout les obstacles)"
+    },
+    {
+      "Key": "Menu_Opt_DoNotMovingThroughNonAlly",
+      "Value": "NE PAS TRAVERSER les unités non alliées"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotMovingThroughNonAlly",
+      "Value": " (Désactive l'effet par défaut \"Obstacle léger\"sur les unités non alliées)"
+    },
+    {
+      "Key": "Menu_Sub_Automation",
+      "Value": "Automatisation"
+    },
+    {
+      "Key": "Menu_Opt_AutoTurnOffAIOnTurnStart",
+      "Value": "Désactiver l'IA des unités au début du tour du joueur"
+    },
+    {
+      "Key": "Menu_Opt_AutoTurnOnAIOnCombatEnd",
+      "Value": "Activer l'IA de groupe quand un combat se finit"
+    },
+    {
+      "Key": "Menu_Opt_AutoSelectUnitOnTurnStart",
+      "Value": "Sélectionner l'unité active au début du tour du joueur"
+    },
+    {
+      "Key": "Menu_Opt_AutoSelectEntirePartyOnCombatEnd",
+      "Value": "Sélectionner tout le groupe quand un combat se termine"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnTurnStart",
+      "Value": "Annuler les actions au début du tour du joueur"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnCombatEnd",
+      "Value": "Annuler les actions à la fin du combat"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnFiveFootStepFinish",
+      "Value": "Annuler les actions de l'unité quand celle ci termine un Pas de placement"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnFirstMoveFinish",
+      "Value": "Annuler les actions de l'unité quand celle ci termine son premier mouvement"
+    },
+    {
+      "Key": "Menu_Opt_AutoEnableFiveFootStepOnTurnStart",
+      "Value": "Activer le Pas de placement au début du tour du joueur"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnWhenActionsAreUsedUp",
+      "Value": "Terminer le tour de l'unité si toutes ses actions ont été utilisées"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnExceptSwiftAction",
+      "Value": "... Mis à part les actions libres"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnWhenPlayerIdle",
+      "Value": "Terminer le tour si l'unité est inactive"
+    },
+    {
+      "Key": "Menu_Cmt_AutoEndTurnWhenPlayerIdle",
+      "Value": " (Peut être utillisé en combat automatique)"
+    },
+    {
+      "Key": "Menu_Tab_Interface",
+      "Value": "Interface"
+    },
+    {
+      "Key": "Menu_Opt_DoNotMarkInvisibleUnit",
+      "Value": "NE PAS Marquer les unités invisibles"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotMarkInvisibleUnit",
+      "Value": " (Désactiver les contours, la caméra, les indicateurs...)"
+    },
+    {
+      "Key": "Menu_Opt_DoNotShowInvisibleUnitOnCombatTracker",
+      "Value": "NE PAS Montrer les unités invisibles sur la piste de combat"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotShowInvisibleUnitOnCombatTracker",
+      "Value": " (Afficher comme \"Inconnu\" quand elles agissent)"
+    },
+    {
+      "Key": "Menu_Sub_CombatTracker",
+      "Value": "Piste de combat"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerScale",
+      "Value": "Échelle de taille: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerWidth",
+      "Value": "Largeur: {0:d3}"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerMaxUnits",
+      "Value": "Maximum d'unités: {0:d2}"
+    },
+    {
+      "Key": "Menu_Opt_CameraScrollToUnitOnClickUI",
+      "Value": "La caméra défile jusqu'à l'unité sur un clic"
+    },
+    {
+      "Key": "Menu_Opt_SelectUnitOnClickUI",
+      "Value": "Sélectionne l'unité sur un clic"
+    },
+    {
+      "Key": "Menu_Opt_InspectOnRightClickUI",
+      "Value": "Inspecte l'unité avec un clic droit"
+    },
+    {
+      "Key": "Menu_Opt_ShowIsFlatFootedIconOnUI",
+      "Value": "Affiche un point d'exclamation si l'unité à perdu son bonus de dextérité à la CA"
+    },
+    {
+      "Key": "Menu_Sub_View",
+      "Value": "Vue"
+    },
+    {
+      "Key": "Menu_Opt_HighlightCurrentUnit",
+      "Value": "Afficher les contours de l'unité actuelle"
+    },
+    {
+      "Key": "Menu_Opt_CameraScrollToCurrentUnit",
+      "Value": "La caméra défile jusqu'à l'unité actuelle au début du tour"
+    },
+    {
+      "Key": "Menu_Opt_CameraLockOnCurrentPlayerUnit",
+      "Value": "La caméra se verrouille sur l'unité actuelle au début du tour"
+    },
+    {
+      "Key": "Menu_Cmt_CameraLockOnCurrentPlayerUnit",
+      "Value": " (Se déverrouille quand le jeux est mis en pause)"
+    },
+    {
+      "Key": "Menu_Opt_CameraLockOnCurrentNonPlayerUnit",
+      "Value": "La caméra se verrouille sur les unités non-joueur dont c'est le tour"
+    },
+    {
+      "Key": "Menu_Sub_AttackIndicator",
+      "Value": "Indicateur d'attaque"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorOfCurrentUnit",
+      "Value": "Afficher l'indicateur d'attaque de l'unité actuelle"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorForPlayer",
+      "Value": "... Pour le joueur"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorForNonPlayer",
+      "Value": "... Pour les unités non-joueur"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorOnHoverUI",
+      "Value": "Afficher l'indicateur d'attaque au survol de la souris"
+    },
+    {
+      "Key": "Menu_Opt_ShowAutoCastAbilityRange",
+      "Value": "Afficher la portée de la capacité au lieu de la porté d'attaque quand le mode automatique est activé"
+    },
+    {
+      "Key": "Menu_Opt_CheckForObstaclesOnTargeting",
+      "Value": "Vérifier la présence d'obstacle quand il s'agit de déterminer si la cible est à portée"
+    },
+    {
+      "Key": "Menu_Sub_MovementIndicator",
+      "Value": "Indicateur de mouvement"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorOfCurrentUnit",
+      "Value": "Afficher l'indicateur de mouvement de l'unité actuelle"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorForPlayer",
+      "Value": "... Pour le joueur"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorForNonPlayer",
+      "Value": "... Pour les unités non-joueur"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorOnHoverUI",
+      "Value": "Afficher l'indicateur de mouvement au survol de la souris"
+    },
+    {
+      "Key": "Menu_Tab_HotkeyAndTime",
+      "Value": "Raccourcis et temps"
+    },
+    {
+      "Key": "Menu_Sub_Hotkey",
+      "Value": "Raccourci"
+    },
+    {
+      "Key": "Menu_Btn_Set",
+      "Value": "Fixer"
+    },
+    {
+      "Key": "Menu_Btn_Clear",
+      "Value": "Effacer"
+    },
+    {
+      "Key": "Menu_Txt_Duplicated",
+      "Value": "Doublon!!"
+    },
+    {
+      "Key": "Menu_Opt_ToggleFiveFootStepOnRightClickGround",
+      "Value": "Activer le Pas de placement avec un clic droit au sol"
+    },
+    {
+      "Key": "Menu_Sub_Time",
+      "Value": "Temps"
+    },
+    {
+      "Key": "Menu_Opt_MinimumFPS",
+      "Value": "Minimum FPS: {0:f0}"
+    },
+    {
+      "Key": "Menu_Cmt_MinimumFPS",
+      "Value": " (Diminue l'échelle de temps pour empêcher les FPS de tomber en dessous de cette valeur)"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleBetweenTurns",
+      "Value": "Multiplicateur d'échelle de temps entre les tours: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInPlayerTurn",
+      "Value": "Multiplicateur d'échelle de temps pour les unités du joueur: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInNonPlayerTurn",
+      "Value": "Multiplicateur d'échelle de temps pour les unités non joueur: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInUnknownTurn",
+      "Value": "Multiplicateur d'échelle de temps pour les unités inconnues: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_MaxDelayBetweenIterativeAttacks",
+      "Value": "Délais maximum entre des attaques successives: {0:f2}s"
+    },
+    {
+      "Key": "Menu_Cmt_MaxDelayBetweenIterativeAttacks",
+      "Value": " (6 secondes par attaques par défaut)"
+    },
+    {
+      "Key": "Menu_Opt_CastingTimeOfFullRoundSpell",
+      "Value": "Multiplicateur de temps d'incantation pour un sort exigeant une action complexe : {0:f2}x"
+    },
+    {
+      "Key": "Menu_Cmt_CastingTimeOfFullRoundSpell",
+      "Value": " (L'animation d'incantation d'un sort exigeant une action complexe est de 6 secondes par défaut)"
+    },
+    {
+      "Key": "Menu_Opt_TimeToWaitForIdleAI",
+      "Value": "Temps d'attente pour une IA inactive: {0:f2}s"
+    },
+    {
+      "Key": "Menu_Opt_TimeToWaitForEndingTurn",
+      "Value": "Temps d'attente pour la fin du tour: {0:f2}s"
+    },
+    {
+      "Key": "Menu_Sub_Pause",
+      "Value": "Pause"
+    },
+    {
+      "Key": "Menu_Opt_DoNotPauseOnCombatStart",
+      "Value": "NE PAS mettre en pause au début d'un combat tour par tour"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotPauseOnCombatStart",
+      "Value": " (Ignore les options du jeux)"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerTurnStart",
+      "Value": "Pause au début du tour du joueur"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerTurnEnd",
+      "Value": "Pause à la fin du tour du joueur"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnNonPlayerTurnStart",
+      "Value": "Pause au début du tour d'une unité non-joueur"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnNonPlayerTurnEnd",
+      "Value": "Pause à la fin du tour d'une unité non-joueur"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerFinishFiveFoot",
+      "Value": "Pause quand une unité du joueur termine son pas de placement"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerFinishFirstMove",
+      "Value": "Pause quand une unité du joueur termine son premier déplacement"
+    },
+    {
+      "Key": "Menu_Tab_Bugfix",
+      "Value": "Bugfix"
+    },
+    {
+      "Key": "Menu_Btn_TB",
+      "Value": "TB"
+    },
+    {
+      "Key": "Menu_Btn_RT",
+      "Value": "RT"
+    },
+    {
+      "Key": "Menu_Opt_FixNeverInCombatWithoutMC",
+      "Value": "Correction: si le personnage principal n'est pas dans votre groupe, le jeux ne va jamais considérer que le joueur est en combat"
+    },
+    {
+      "Key": "Menu_Opt_FixCombatNotEndProperly",
+      "Value": "Correction: le combat ne se terminera pas correctement si il est interrompu par une cinématique"
+    },
+    {
+      "Key": "Menu_Opt_FixUnitNotLeaveCombatWhenNotInGame",
+      "Value": "Correction: les unités ne quitteront jamais le combat si elles deviennent inactives (Cause un problème avec la capacité Faire appel à Kanerah/Kalikke)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfBardicPerformance",
+      "Value": "Correction du type d'action pour commencer une représentation bardique ou les effets de l'acier chantant"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfCharge",
+      "Value": "Correction du type d'action charge (Action standard => Action complexe)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfOverrun",
+      "Value": "Correction du type d'action renversement (Action standard => Action complexe)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfVitalStrike",
+      "Value": "Correction du type d'action frappe vitale (Action complexe => Action standard)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfAngelicForm",
+      "Value": "Correction du type d'action Forme angélique (Action standard => Action de mouvement)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfKineticBlade",
+      "Value": "Correction: Activer une lame cinétique est considéré comme dégainer une arme et consomme une action standard supplémentaire"
+    },
+    {
+      "Key": "Menu_Opt_FixKineticistWontStopPriorCommand",
+      "Value": "Correction: Un cinétiste ne stoppera pas son action précédente si il lui est demandé d'attaquer avec une lame cinétique avant le combat"
+    },
+    {
+      "Key": "Menu_Opt_FixSpellstrikeOnNeutralUnit",
+      "Value": "Correction: Frappe magique reste sans effet quand une unité neutre est attaquée"
+    },
+    {
+      "Key": "Menu_Opt_FixSpellstrikeWithMetamagicReach",
+      "Value": "Correction: Frappe magique n'a aucun effet quand on utilise Métamagie (Portée) sur un sort de contact"
+    },
+    {
+      "Key": "Menu_Opt_FixDamageBonusOfBlastRune",
+      "Value": "Correction: Bonus aux dégâts de la rune explosive n'est pas augmenté avec le niveau (C'est la première capacité du Domaine des Runes)"
+    },
+    {
+      "Key": "Menu_Opt_FixOnePlusDiv2ToDiv2",
+      "Value": "Correction du bonus aux dégâts de certaines capacités (niveau / 2 + 1 => niveau / 2) (Rune explosive, Eclat lunaire)"
+    },
+    {
+      "Key": "Menu_Opt_FixFxOfShadowEvocationSirocco",
+      "Value": "Correction d'un effet manquant pour la magie de l'ombre (Sirocco) (Utilise l'effet du Sirocco à la place)"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityNotAutoDeactivateIfCombatEnded",
+      "Value": "Correction: Certaines capacités ne se désactivent pas automatiquement après le combat (Inspiration glorieuse, Inspiration héroïque)"
+    },
+    {
+      "Key": "Menu_Opt_FixBlindFightDistance",
+      "Value": "Correction: Combat en aveugle nécessite une distance extremement faible pour prévenir la perte de CA au lieu d'une distance de mêlée"
+    },
+    {
+      "Key": "Menu_Opt_FixConfusedUnitCanAttackDeadUnit",
+      "Value": "Correction: Parfois une unité sous l'effet de confusion peut agir normalement après avoir tenté d'attaquer une unité morte"
+    },
+    {
+      "Key": "Menu_Opt_FixHasMotionThisTick",
+      "Value": "Correction: Parfois le jeux ne prend pas en compte qu'une unité forcée à bouger est en mouvement (Provoque des incohérences avec les attaques d'opportunité)"
+    },
+    {
+      "Key": "Menu_Opt_FixCanMakeAttackOfOpportunityToUnmovedTarget",
+      "Value": "Correction: Une attaque d'opportunité est possible sur une unité immobile parcequ'elle a quitté la zone de menace (Après avoir changé d'arme depuis une arme avec allonge)"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCircleRadius",
+      "Value": "Correction: Le cercle visuel de certaines capacité ne correspond à sa portée réelle"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCircleNotAppear",
+      "Value": "Correction: Le cercle d'une capacité n’apparaît pas correctement la première fois qu'une capacité d'une unité est sélectionné (Via un raccourci)"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCanTargetUntargetableUnit",
+      "Value": "Correction: Il est possible de cibler des unités qui ne peuvent l'être avec des capacités"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCanTargetDeadUnit",
+      "Value": "Correction: Il est possible de cibler des unités mortes en utilisant des capacités qui ne peuvent les cibler"
+    },
+    {
+      "Key": "Menu_Tab_Language",
+      "Value": "Langage"
+    },
+    {
+      "Key": "Menu_Sub_Current",
+      "Value": "Actuel"
+    },
+    {
+      "Key": "Menu_Txt_Language",
+      "Value": "Langage: {0}"
+    },
+    {
+      "Key": "Menu_Txt_Version",
+      "Value": "Version: {0}"
+    },
+    {
+      "Key": "Menu_Txt_Contributors",
+      "Value": "Contributeurs: {0}"
+    },
+    {
+      "Key": "Menu_Txt_HomePage",
+      "Value": "Home Page:"
+    },
+    {
+      "Key": "Menu_Btn_Export",
+      "Value": "Exporter: {0}"
+    },
+    {
+      "Key": "Menu_Btn_SortAndExport",
+      "Value": "Trier et exporter: {0}"
+    },
+    {
+      "Key": "Menu_Cmt_SortAndExport",
+      "Value": " (Attention: ceci supprimera toutes les entrées inutilisées également)"
+    },
+    {
+      "Key": "Menu_Txt_FaildToExport",
+      "Value": "Échec de l'exportation: {0}"
+    },
+    {
+      "Key": "Menu_Sub_Import",
+      "Value": "Importer"
+    },
+    {
+      "Key": "Menu_Btn_RefreshFileList",
+      "Value": "Raffraichir la liste des fichiers"
+    },
+    {
+      "Key": "Menu_Btn_DefaultLanguage",
+      "Value": "Langage par défaut"
+    },
+    {
+      "Key": "Menu_Txt_FaildToImport",
+      "Value": "Échec de l'importation: {0}"
+    },
+    {
+      "Key": "Hotkey_Toggle_TurnBasedMode",
+      "Value": "Baculer mode tour par tour"
+    },
+    {
+      "Key": "Hotkey_Toggle_AttackIndicator",
+      "Value": "Basculer indicateur d'attaque"
+    },
+    {
+      "Key": "Hotkey_Toggle_MovementIndicator",
+      "Value": "Baculer indicateur de mouvement"
+    },
+    {
+      "Key": "Hotkey_Button_EndTurn",
+      "Value": "Bouton: Fin de tour"
+    },
+    {
+      "Key": "Hotkey_Button_Delay",
+      "Value": "Bouton: Retarder"
+    },
+    {
+      "Key": "Hotkey_Button_FiveFootStep",
+      "Value": "Bouton: Pas de placement"
+    },
+    {
+      "Key": "Hotkey_Button_FullAttack",
+      "Value": "Bouton: Attaque à outrance"
+    },
+    {
+      "Key": "UI_Btn_EndTurn",
+      "Value": "Fin du tour"
+    },
+    {
+      "Key": "UI_Btn_Delay",
+      "Value": "Retarder"
+    },
+    {
+      "Key": "UI_Btn_FiveFootStep",
+      "Value": "<size=-8>Pas de placement</size>"
+    },
+    {
+      "Key": "UI_Btn_FullAttack",
+      "Value": "<size=-7>Attaque à outrance</size>"
+    },
+    {
+      "Key": "UI_Txt_Unknown",
+      "Value": "Inconnu"
+    },
+    {
+      "Key": "UI_Txt_Error",
+      "Value": "Erreur: Mode de combat en tour par tour"
+    },
+    {
+      "Key": "UI_Txt_TurnBasedMode",
+      "Value": "Mode: Tour par tour"
+    },
+    {
+      "Key": "UI_Txt_RealTimeMode",
+      "Value": "Mode: Temps réel"
+    },
+    {
+      "Key": "UI_Log_RoundStarted",
+      "Value": "Début du Round {0}."
+    },
+    {
+      "Key": "UI_Log_SurpriseRoundStarted",
+      "Value": "Début du round de surprise."
+    }
+  ]
+}

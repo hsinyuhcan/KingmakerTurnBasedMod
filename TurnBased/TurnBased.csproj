@@ -144,6 +144,7 @@
     <None Include="Info.json" />
     <None Include="Localization\Chinese %28zh-tw%29.json" />
     <None Include="Localization\Deutsch.json" />
+    <None Include="Localization\French.json" />
     <None Include="Repository.json" />
   </ItemGroup>
   <ItemGroup>
