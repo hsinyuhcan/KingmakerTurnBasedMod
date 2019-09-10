@@ -1,9 +1,11 @@
 ﻿using Harmony12;
 using Kingmaker.Controllers;
+using Kingmaker.Controllers.Brain;
 using Kingmaker.Controllers.Clicks.Handlers;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UI.SettingsUI;
+using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Commands;
 using ModMaker.Utility;
 using System;
@@ -109,6 +111,24 @@ namespace TurnBased.HarmonyPatches
                     return false;
                 }
                 return true;
+            }
+        }
+
+        // forbid AI from trying to use full-round abilities when they don't have enough actions
+        [HarmonyPatch(typeof(AiAction), nameof(AiAction.ScoreActor), typeof(DecisionContext))]
+        static class AiAction_ScoreActor_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix(DecisionContext context)
+            {
+                if (IsInCombat() && context.CurrentScore > 0f && (context.Ability?.RequireFullRoundAction ?? false))
+                {
+                    UnitEntityData unit = context.Target.Unit ?? context.Unit;
+                    if (!unit.IsSurprising() && !unit.HasFullRoundAction())
+                    {
+                        context.CurrentScore = 0f;
+                    }
+                }
             }
         }
 

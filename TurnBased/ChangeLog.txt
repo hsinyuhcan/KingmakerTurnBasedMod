@@ -1,4 +1,7 @@
-﻿Version 1.0.4
+﻿Version 1.0.5
+	Fixed when AI do not have enough actions they still try to use full-round abilities
+
+Version 1.0.4
 	Added French translation (much thanks to slipenbois)
 	Fixed time scale doesn't work properly
 	Fixed when a unit appears on the end of the combat tracker, the red icon of surprise round will be displayed in a short time
