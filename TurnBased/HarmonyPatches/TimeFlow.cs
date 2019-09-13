@@ -223,6 +223,21 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // fix the exact range of movement is slightly shorter than the indicator range
+        [HarmonyPatch(typeof(UnitMovementAgent), "SlowDown")]
+        static class UnitMovementAgent_SlowDown_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitMovementAgent __instance)
+            {
+                if (IsInCombat() && (__instance.Unit?.EntityData?.IsInCombat ?? false))
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
         // fix toggleable abilities
         [HarmonyPatch(typeof(UnitActivatableAbilitiesController), "TickOnUnit", typeof(UnitEntityData))]
         static class UnitActivatableAbilitiesController_TickOnUnit_Patch

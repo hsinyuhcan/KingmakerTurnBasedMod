@@ -3,6 +3,7 @@
 	Adjusted the font size of buttons on combat tracker for Deutsch & French
 	Changed the minimum distance of charge is now euqal to the distance of 5-foot step plus 2 feet
 	Changed units can no longer move and charge in the same turn even using the five-foot step
+	Fixed the exact range of movement is slightly shorter than the indicator range
 
 Version 1.0.5
 	Fixed when AI do not have enough actions they still try to use full-round abilities
