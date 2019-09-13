@@ -280,7 +280,7 @@ namespace TurnBased.Utility
         public static float GetAttackRadius(this UnitEntityData unit)
         {
             ItemEntityWeapon weapon = unit.GetFirstWeapon();
-            return weapon != null ? unit.View.Corpulence + weapon.AttackRange.Meters : 0f;
+            return unit.View.Corpulence + (weapon != null ? weapon.AttackRange.Meters : 0f);
         }
 
         public static float GetAttackApproachRadius(this UnitEntityData unit, UnitEntityData target)

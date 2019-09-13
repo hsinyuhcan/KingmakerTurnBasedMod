@@ -65,6 +65,7 @@ namespace TurnBased.Menus
             GUILayout.Label($"Time Waited For AI: {currentTurn?.TimeWaitedForIdleAI:f4}");
             GUILayout.Label($"Time Waited To End Turn: {currentTurn?.TimeWaitedToEndTurn:f4}");
             GUILayout.Label($"Time Moved: {currentTurn?.TimeMoved:f4}");
+            GUILayout.Label($"Time Moved (Special): {currentTurn?.TimeMovedInForceMode:f4}");
             GUILayout.Label($"Time Moved (5-Foot Step): {currentTurn?.TimeMovedByFiveFootStep:f4}");
             GUILayout.Label($"Feet Moved (5-Foot Step): {currentTurn?.MetersMovedByFiveFootStep / Feet.FeetToMetersRatio:f4}");
             GUILayout.Label($"Has Normal Movement: {currentTurn?.HasNormalMovement()}");

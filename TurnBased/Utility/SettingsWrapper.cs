@@ -1,4 +1,5 @@
-﻿using static TurnBased.Main;
+﻿using Kingmaker.Utility;
+using static TurnBased.Main;
 
 namespace TurnBased.Utility
 {
@@ -26,6 +27,8 @@ namespace TurnBased.Utility
         public const float UNIT_BUTTON_SPACE = 2.5f;
         public const float PADDING_X_PERCENT = 0.18f;
         public const float PADDING_Y_PERCENT = 0.08f;
+
+        public static float MetersOfFiveFootStep => 5f * Feet.FeetToMetersRatio * DistanceOfFiveFootStep;
 
         #endregion
 

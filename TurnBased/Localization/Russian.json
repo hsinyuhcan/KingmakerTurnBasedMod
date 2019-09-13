@@ -1,0 +1,645 @@
+{
+  "$id": "1",
+  "Language": "Русский",
+  "Version": "1.0.5",
+  "Contributors": "Msarc",
+  "HomePage": "https://www.reddit.com/user/Msarc",
+  "Strings": [
+    {
+      "Key": "Menu_Tab_Gameplay",
+      "Value": "Механики"
+    },
+    {
+      "Key": "Menu_Opt_TrunBasedMode",
+      "Value": "Походовый Режим"
+    },
+    {
+      "Key": "Menu_Btn_ResetSettings",
+      "Value": "Сбросить Настройки"
+    },
+    {
+      "Key": "Menu_Sub_Rule",
+      "Value": "Правила"
+    },
+    {
+      "Key": "Menu_Opt_DistanceOfFiveFootStep",
+      "Value": "Дальность 5-футового шага: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Cmt_DistanceOfFiveFootStep",
+      "Value": " (при большем числе медленные существа не смогут сделать 5-футовый шаг)"
+    },
+    {
+      "Key": "Menu_Opt_SurpriseRound",
+      "Value": "Внезапный Раунд"
+    },
+    {
+      "Key": "Menu_Cmt_SurpriseRound",
+      "Value": " (незамеченные существа получают внезапный раунд перед началом обычных)"
+    },
+    {
+      "Key": "Menu_Opt_PreventUnconsciousUnitLeavingCombat",
+      "Value": "Не позволять потерявшим сознание сразу покидать бой"
+    },
+    {
+      "Key": "Menu_Cmt_PreventUnconsciousUnitLeavingCombat",
+      "Value": " (только умершие сразу покидают бой)"
+    },
+    {
+      "Key": "Menu_Opt_FlankingCountAllNearbyOpponents",
+      "Value": "Фланг учитывает всех противников в зоне угрозы"
+    },
+    {
+      "Key": "Menu_Cmt_FlankingCountAllNearbyOpponents",
+      "Value": " (независимо от их текущих действий)"
+    },
+    {
+      "Key": "Menu_Opt_RerollPerceptionDiceAgainstStealthOncePerRound",
+      "Value": "Делать бросок на Восприятие против Скрытности каждый раунд"
+    },
+    {
+      "Key": "Menu_Cmt_RerollPerceptionDiceAgainstStealthOncePerRound",
+      "Value": " (а не один раз за бой)"
+    },
+    {
+      "Key": "Menu_Sub_Pathfinding",
+      "Value": "Поиск Пути"
+    },
+    {
+      "Key": "Menu_Opt_RadiusOfCollision",
+      "Value": "Радиус обнаружения препятствия: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Cmt_RadiusOfCollision",
+      "Value": " (для всех; не вляет на радиус досягаемости)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughFriendlyUnit",
+      "Value": "Передвижение сквозь союзников"
+    },
+    {
+      "Key": "Menu_Cmt_MovingThroughFriendlyUnit",
+      "Value": " (можно передвигаться сквозь союзников)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughNonHostileUnit",
+      "Value": "Передвижение сквозь невраждебных существ"
+    },
+    {
+      "Key": "Menu_Cmt_MovingThroughNonHostileUnit",
+      "Value": " (можно передвигаться сквозь союзников и нейтральных существ)"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToPlayer",
+      "Value": "... применять к сопартийцам"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToNeutralUnit",
+      "Value": "... применять к нейтральным существам"
+    },
+    {
+      "Key": "Menu_Opt_MovingThroughApplyToEnemy",
+      "Value": "... применять к врагам"
+    },
+    {
+      "Key": "Menu_Opt_AvoidOverlapping",
+      "Value": "Стараться избегать нахлёста при сквозном передвижении"
+    },
+    {
+      "Key": "Menu_Cmt_AvoidOverlapping",
+      "Value": " (избегать передвижения сквозь существо, если оба займут одну точку)"
+    },
+    {
+      "Key": "Menu_Opt_AvoidOverlappingOnCharge",
+      "Value": "Стараться избегать нахлёста при Атаке с разбега"
+    },
+    {
+      "Key": "Menu_Cmt_AvoidOverlappingOnCharge",
+      "Value": " (применять обычные правила поиска пути вместо игнорирования препятствий)"
+    },
+    {
+      "Key": "Menu_Opt_DoNotMovingThroughNonAlly",
+      "Value": "НЕ передвигаться сквозь не-союзников"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotMovingThroughNonAlly",
+      "Value": " (отключить эффект \"мягкого препятствия\" для не-союзников)"
+    },
+    {
+      "Key": "Menu_Sub_Automation",
+      "Value": "Автоматизация"
+    },
+    {
+      "Key": "Menu_Opt_AutoTurnOffAIOnTurnStart",
+      "Value": "Автоматически отключать ИИ действующего сопартийца при начале хода игрока"
+    },
+    {
+      "Key": "Menu_Opt_AutoTurnOnAIOnCombatEnd",
+      "Value": "Автоматически включать ИИ отряда при окончании походового боя"
+    },
+    {
+      "Key": "Menu_Opt_AutoSelectUnitOnTurnStart",
+      "Value": "Автоматически выбирать действующего сопартийца при начале хода игрока"
+    },
+    {
+      "Key": "Menu_Opt_AutoSelectEntirePartyOnCombatEnd",
+      "Value": "Автоматически выбирать всю команду при окончании походового боя"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnTurnStart",
+      "Value": "Автоматически отменять предыдущие действия при начале хода игрока"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnCombatEnd",
+      "Value": "Автоматически отменять предыдущие действия при окончании походового боя"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnFiveFootStepFinish",
+      "Value": "Автоматически отменять действия, когда сопартиец закончил 5-футовый шаг"
+    },
+    {
+      "Key": "Menu_Opt_AutoCancelActionsOnFirstMoveFinish",
+      "Value": "Автоматически отменять действия, когда сопартиец израсходовал Сопутствующее действие перемещением"
+    },
+    {
+      "Key": "Menu_Opt_AutoEnableFiveFootStepOnTurnStart",
+      "Value": "Автоматически включать 5-футовый шаг при начале хода игрока"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnWhenActionsAreUsedUp",
+      "Value": "Автоматически завершать ход, когда все действия израсходованы"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnExceptSwiftAction",
+      "Value": "... за исключением быстрого действия"
+    },
+    {
+      "Key": "Menu_Opt_AutoEndTurnWhenPlayerIdle",
+      "Value": "Автоматически завершать ход при бездействии сопартийца"
+    },
+    {
+      "Key": "Menu_Cmt_AutoEndTurnWhenPlayerIdle",
+      "Value": " (может быть использовано для автоматического боя)"
+    },
+    {
+      "Key": "Menu_Tab_Interface",
+      "Value": "Интерфейс"
+    },
+    {
+      "Key": "Menu_Opt_DoNotMarkInvisibleUnit",
+      "Value": "НЕ помечать невидимых существ"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotMarkInvisibleUnit",
+      "Value": " (отключить подсветку, движение камеры, индикаторы... и т.д.)"
+    },
+    {
+      "Key": "Menu_Opt_DoNotShowInvisibleUnitOnCombatTracker",
+      "Value": "НЕ показывать невидимых существ на боевом трекере"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotShowInvisibleUnitOnCombatTracker",
+      "Value": " (отображать их как \"Невидимый\" во время их хода)"
+    },
+    {
+      "Key": "Menu_Sub_CombatTracker",
+      "Value": "Боевой Трекер"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerScale",
+      "Value": "Масштаб: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerWidth",
+      "Value": "Ширина: {0:d3}"
+    },
+    {
+      "Key": "Menu_Opt_CombatTrackerMaxUnits",
+      "Value": "Максимум единиц: {0:d2}"
+    },
+    {
+      "Key": "Menu_Opt_CameraScrollToUnitOnClickUI",
+      "Value": "Перемещать камеру к существу по левому щелчку"
+    },
+    {
+      "Key": "Menu_Opt_SelectUnitOnClickUI",
+      "Value": "Выбирать по левому щелчку"
+    },
+    {
+      "Key": "Menu_Opt_InspectOnRightClickUI",
+      "Value": "Инспектировать по правому щелчку"
+    },
+    {
+      "Key": "Menu_Opt_ShowIsFlatFootedIconOnUI",
+      "Value": "Отображать восклицательный знак напротив существа, потерявшего бонус от Ловкости к Защите"
+    },
+    {
+      "Key": "Menu_Sub_View",
+      "Value": "Вид"
+    },
+    {
+      "Key": "Menu_Opt_HighlightCurrentUnit",
+      "Value": "Подсвечивать действующее существо"
+    },
+    {
+      "Key": "Menu_Opt_CameraScrollToCurrentUnit",
+      "Value": "Перемещать камеру к действующему существу"
+    },
+    {
+      "Key": "Menu_Opt_CameraLockOnCurrentPlayerUnit",
+      "Value": "Закреплять камеру на действующем сопартийце"
+    },
+    {
+      "Key": "Menu_Cmt_CameraLockOnCurrentPlayerUnit",
+      "Value": " (атвоматически откреплять при паузе)"
+    },
+    {
+      "Key": "Menu_Opt_CameraLockOnCurrentNonPlayerUnit",
+      "Value": "Закреплять камеру на остальных действующих существах"
+    },
+    {
+      "Key": "Menu_Sub_AttackIndicator",
+      "Value": "Индикатор Атаки"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorOfCurrentUnit",
+      "Value": "Отображать индикатор атаки действующего существа"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorForPlayer",
+      "Value": "... для сопартийцев"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorForNonPlayer",
+      "Value": "... для остальных существ"
+    },
+    {
+      "Key": "Menu_Opt_ShowAttackIndicatorOnHoverUI",
+      "Value": "Отображать индикатор атаки по наведению"
+    },
+    {
+      "Key": "Menu_Opt_ShowAutoCastAbilityRange",
+      "Value": "Отображать дальность умения вместо индикатора атаки при использовании умения в автоматическом режиме"
+    },
+    {
+      "Key": "Menu_Opt_CheckForObstaclesOnTargeting",
+      "Value": "Проверять наличие препятствий, когда определяем, что цель в радиусе действия"
+    },
+    {
+      "Key": "Menu_Sub_MovementIndicator",
+      "Value": "Индикатор Перемещения"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorOfCurrentUnit",
+      "Value": "Отображать индикатор перемещения действующего существа"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorForPlayer",
+      "Value": "... для сопартийцев"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorForNonPlayer",
+      "Value": "... для остальных существ"
+    },
+    {
+      "Key": "Menu_Opt_ShowMovementIndicatorOnHoverUI",
+      "Value": "Отображать индикатор перемещения по наведению"
+    },
+    {
+      "Key": "Menu_Tab_HotkeyAndTime",
+      "Value": "Горячие кнопки и Время"
+    },
+    {
+      "Key": "Menu_Sub_Hotkey",
+      "Value": "Горячие Кнопки"
+    },
+    {
+      "Key": "Menu_Btn_Set",
+      "Value": "Установить"
+    },
+    {
+      "Key": "Menu_Btn_Clear",
+      "Value": "Очистить"
+    },
+    {
+      "Key": "Menu_Txt_Duplicated",
+      "Value": "Повтор!!"
+    },
+    {
+      "Key": "Menu_Opt_ToggleFiveFootStepOnRightClickGround",
+      "Value": "Переключать 5-футовый шаг по правому щелчку на земле"
+    },
+    {
+      "Key": "Menu_Sub_Time",
+      "Value": "Время"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleBetweenTurns",
+      "Value": "Множитель шкалы времени между ходами: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInPlayerTurn",
+      "Value": "Множитель шкалы времени для сопартийцев: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInNonPlayerTurn",
+      "Value": "Множитель шкалы времени для остальных существ: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_TimeScaleInUnknownTurn",
+      "Value": "Множитель шкалы времени для невидимых существ: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Opt_MaxDelayBetweenIterativeAttacks",
+      "Value": "Максимальная задержка между атаками в серии: {0:f2}s"
+    },
+    {
+      "Key": "Menu_Cmt_MaxDelayBetweenIterativeAttacks",
+      "Value": " (обычно 6 секунд на серию атак)"
+    },
+    {
+      "Key": "Menu_Opt_CastingTimeOfFullRoundSpell",
+      "Value": "Множитель времени сотворения заклинания, на который тратится весь раунд: {0:f2}x"
+    },
+    {
+      "Key": "Menu_Cmt_CastingTimeOfFullRoundSpell",
+      "Value": " (обычно 6 секунд)"
+    },
+    {
+      "Key": "Menu_Opt_TimeToWaitForIdleAI",
+      "Value": "Сколько ждать бездействующего ИИ: {0:f2}s"
+    },
+    {
+      "Key": "Menu_Opt_TimeToWaitForEndingTurn",
+      "Value": "Сколько ждать окончания хода: {0:f2}s"
+    },
+    {
+      "Key": "Menu_Sub_Pause",
+      "Value": "Пауза"
+    },
+    {
+      "Key": "Menu_Opt_DoNotPauseOnCombatStart",
+      "Value": "НЕ включать паузу при начале походового боя"
+    },
+    {
+      "Key": "Menu_Cmt_DoNotPauseOnCombatStart",
+      "Value": " (игнорировать соответствующую настройку игры)"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerTurnStart",
+      "Value": "Включать паузу при начале хода игрока"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerTurnEnd",
+      "Value": "Включать паузу при окончании хода игрока"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnNonPlayerTurnStart",
+      "Value": "Включать паузу при начале хода остальных существ"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnNonPlayerTurnEnd",
+      "Value": "Включать паузу при окончании хода остальных существ"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerFinishFiveFoot",
+      "Value": "Включать паузу при окончании 5-футового шага игрока"
+    },
+    {
+      "Key": "Menu_Opt_PauseOnPlayerFinishFirstMove",
+      "Value": "Включать паузу, когда игрок израсходовал Сопутствующее действие перемещением"
+    },
+    {
+      "Key": "Menu_Tab_Bugfix",
+      "Value": "Исправления"
+    },
+    {
+      "Key": "Menu_Btn_TB",
+      "Value": "ПХ"
+    },
+    {
+      "Key": "Menu_Btn_RT",
+      "Value": "РВ"
+    },
+    {
+      "Key": "Menu_Opt_FixNeverInCombatWithoutMC",
+      "Value": "Исправить: игра не воспринимает игрока как находящегося в бою, если главный персонаж не в команде"
+    },
+    {
+      "Key": "Menu_Opt_FixCombatNotEndProperly",
+      "Value": "Исправить: бой не завершается полностью, если он был завершён кат-сценой"
+    },
+    {
+      "Key": "Menu_Opt_FixUnitNotLeaveCombatWhenNotInGame",
+      "Value": "Исправить: существа не покидают бой, если были деактивированы (баг со сменой Канеры / Каликке)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfBardicPerformance",
+      "Value": "Исправить: тип действий для активации Бардовского Воодушевления и эффекта Поющей Стали"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfCharge",
+      "Value": "Исправить: тип действия Атаки с разбега (Стандартное => Весь Раунд)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfOverrun",
+      "Value": "Исправить: тип действия Затаптывания (Стандартное => Весь Раунд)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfVitalStrike",
+      "Value": "Исправить: тип действия Жестокого Удара (Весь Раунд => Стандартное)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfAngelicForm",
+      "Value": "Исправить: тип действия Ангельского Облика (Стандартное => Сопутствующее)"
+    },
+    {
+      "Key": "Menu_Opt_FixActionTypeOfKineticBlade",
+      "Value": "Исправить: активация Кинетического Клинка считается доставанием оружия и расходует Стандартное действие"
+    },
+    {
+      "Key": "Menu_Opt_FixKineticistWontStopPriorCommand",
+      "Value": "Исправить: Кинетик не прекращает действие, если приказать атаковать Кинетическим Клинком до начала боя"
+    },
+    {
+      "Key": "Menu_Opt_FixSpellstrikeOnNeutralUnit",
+      "Value": "Исправить: Удар Заклинателя не действует при атаке нейтральной цели"
+    },
+    {
+      "Key": "Menu_Opt_FixSpellstrikeWithMetamagicReach",
+      "Value": "Исправить: Удар Заклинателя не действует с Метамагией (Дальнобойное) с заклинаниями касания"
+    },
+    {
+      "Key": "Menu_Opt_FixDamageBonusOfBlastRune",
+      "Value": "Исправить: бонус к урону для Руны Взрыва не увеличивается с уровнем класса"
+    },
+    {
+      "Key": "Menu_Opt_FixOnePlusDiv2ToDiv2",
+      "Value": "Исправить: бонус к урону для некоторых умений (уровень / 2 + 1 => уровень / 2) (Руна Взрыва, Лунное Пламя)"
+    },
+    {
+      "Key": "Menu_Opt_FixFxOfShadowEvocationSirocco",
+      "Value": "Исправить: отсутствует в.эффект для Теневого Разрушения (Сирокко) (использовать эффект обычного Сирокко)"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityNotAutoDeactivateIfCombatEnded",
+      "Value": "Исправить: некоторые умения не отключаются автоматическти после боя (Песнь Величия, Песнь Героизма)"
+    },
+    {
+      "Key": "Menu_Opt_FixBlindFightDistance",
+      "Value": "Исправить: Бой Вслепую требует чрезмерно близкого расстояния, вместо обычного расстояния ближнего боя"
+    },
+    {
+      "Key": "Menu_Opt_FixConfusedUnitCanAttackDeadUnit",
+      "Value": "Исправить: существо в Замешательстве иногда может действовать нормально, если попыталось атаковать умершего"
+    },
+    {
+      "Key": "Menu_Opt_FixHasMotionThisTick",
+      "Value": "Исправить: игра иногда не воспринимает существо, которое было принудительно перемещено, как движущееся"
+    },
+    {
+      "Key": "Menu_Opt_FixCanMakeAttackOfOpportunityToUnmovedTarget",
+      "Value": "Исправить: внеочередная атака по недвижущейся цели при смене оружия на другое, с меньшим радиусом действия"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCircleRadius",
+      "Value": "Исправить: отображение радиуса действия некоторых умений не совпадает с действительным"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCircleNotAppear",
+      "Value": "Исправить: отображение радиуса действия умения не отображается, когда было выбрано впервые"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCanTargetUntargetableUnit",
+      "Value": "Исправить: возможно нацелить умения на невидимых существ"
+    },
+    {
+      "Key": "Menu_Opt_FixAbilityCanTargetDeadUnit",
+      "Value": "Исправить: возможно нацелить умения, которые для этого не предназначены, на мёртвые цели"
+    },
+    {
+      "Key": "Menu_Tab_Language",
+      "Value": "Язык"
+    },
+    {
+      "Key": "Menu_Sub_Current",
+      "Value": "Текущий"
+    },
+    {
+      "Key": "Menu_Txt_Language",
+      "Value": "Язык: {0}"
+    },
+    {
+      "Key": "Menu_Txt_Version",
+      "Value": "Версия: {0}"
+    },
+    {
+      "Key": "Menu_Txt_Contributors",
+      "Value": "Авторы: {0}"
+    },
+    {
+      "Key": "Menu_Txt_HomePage",
+      "Value": "Домашняя страница:"
+    },
+    {
+      "Key": "Menu_Btn_Export",
+      "Value": "Выгрузить: {0}"
+    },
+    {
+      "Key": "Menu_Btn_SortAndExport",
+      "Value": "Сортировать и Выгрузить: {0}"
+    },
+    {
+      "Key": "Menu_Cmt_SortAndExport",
+      "Value": " (Внимание: это также удалит пустые записи)"
+    },
+    {
+      "Key": "Menu_Txt_FaildToExport",
+      "Value": "Ошибка выгрузки: {0}"
+    },
+    {
+      "Key": "Menu_Sub_Import",
+      "Value": "Загрузить"
+    },
+    {
+      "Key": "Menu_Btn_RefreshFileList",
+      "Value": "Обновить список файлов"
+    },
+    {
+      "Key": "Menu_Btn_DefaultLanguage",
+      "Value": "Язык по умолчанию"
+    },
+    {
+      "Key": "Menu_Txt_FaildToImport",
+      "Value": "Ошибка загрузки: {0}"
+    },
+    {
+      "Key": "Hotkey_Toggle_TurnBasedMode",
+      "Value": "Переключить Походовый Режим"
+    },
+    {
+      "Key": "Hotkey_Toggle_AttackIndicator",
+      "Value": "Переключить Индикатор Атаки"
+    },
+    {
+      "Key": "Hotkey_Toggle_MovementIndicator",
+      "Value": "Переключить Индикатор Перемещения"
+    },
+    {
+      "Key": "Hotkey_Button_EndTurn",
+      "Value": "Кнопка: Завершить Ход"
+    },
+    {
+      "Key": "Hotkey_Button_Delay",
+      "Value": "Кнопка: Отсрочить"
+    },
+    {
+      "Key": "Hotkey_Button_FiveFootStep",
+      "Value": "Кнопка: 5-Футовый Шаг"
+    },
+    {
+      "Key": "Hotkey_Button_FullAttack",
+      "Value": "Кнопка: Полная Атака"
+    },
+    {
+      "Key": "UI_Btn_EndTurn",
+      "Value": "Зав. Ход"
+    },
+    {
+      "Key": "UI_Btn_Delay",
+      "Value": "<size=-2>Отсрочить</size>"
+    },
+    {
+      "Key": "UI_Btn_FiveFootStep",
+      "Value": "<size=-1>5-Фут. Шаг</size>"
+    },
+    {
+      "Key": "UI_Btn_FullAttack",
+      "Value": "<size=-6>Полная Атака</size>"
+    },
+    {
+      "Key": "UI_Txt_Unknown",
+      "Value": "Невидимый"
+    },
+    {
+      "Key": "UI_Txt_Error",
+      "Value": "Ошибка: мод Turn-Based Combat"
+    },
+    {
+      "Key": "UI_Txt_TurnBasedMode",
+      "Value": "Режим: Походовый"
+    },
+    {
+      "Key": "UI_Txt_RealTimeMode",
+      "Value": "Режим: В Реальном Времени"
+    },
+    {
+      "Key": "UI_Log_RoundStarted",
+      "Value": "Раунд {0} начался."
+    },
+    {
+      "Key": "UI_Log_SurpriseRoundStarted",
+      "Value": "Внезапный раунд начался."
+    }
+  ]
+}
