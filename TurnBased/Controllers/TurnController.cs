@@ -47,6 +47,8 @@ namespace TurnBased.Controllers
 
         public float TimeMoved { get; private set; }
 
+        public float TimeMovedInForceMode { get; private set; }
+
         public float TimeMovedByFiveFootStep { get; private set; }
 
         public float MetersMovedByFiveFootStep { get; private set; }
@@ -122,6 +124,7 @@ namespace TurnBased.Controllers
             {
                 // Charge, Overrun... etc
                 TimeMoved += deltaTime;
+                TimeMovedInForceMode += deltaTime;
                 EnabledFiveFootStep = false;
             }
             else
@@ -144,9 +147,9 @@ namespace TurnBased.Controllers
                 }
 
                 // consume movement
+                TimeMoved += deltaTime;
                 if (EnabledFiveFootStep)
                 {
-                    TimeMoved += deltaTime;
                     TimeMovedByFiveFootStep += deltaTime;
                     MetersMovedByFiveFootStep += deltaTime * Unit.CurrentSpeedMps;
                     EnabledFiveFootStep = HasFiveFootStep();
@@ -154,7 +157,6 @@ namespace TurnBased.Controllers
                 }
                 else
                 {
-                    TimeMoved += deltaTime;
                     Cooldown.MoveAction += deltaTime;
                 }
             }
@@ -467,7 +469,7 @@ namespace TurnBased.Controllers
 
         private bool ShouldRestrictNormalMovement()
         {
-            return !_aiUsedFiveFootStep && MetersMovedByFiveFootStep > 0f;
+            return (!_aiUsedFiveFootStep && MetersMovedByFiveFootStep > 0f) || TimeMovedInForceMode > 0f;
         }
 
         public bool HasFiveFootStep()

@@ -13,6 +13,7 @@ using Kingmaker.View;
 using Pathfinding;
 using System;
 using System.Collections.Generic;
+using TurnBased.Controllers;
 using TurnBased.Utility;
 using UnityEngine;
 using static TurnBased.Utility.SettingsWrapper;
@@ -136,6 +137,20 @@ namespace TurnBased.HarmonyPatches
                     return false;
                 }
                 return true;
+            }
+        }
+
+        // forbid units from charging after taking the five-foot step in the same turn
+        [HarmonyPatch(typeof(AbilityCustomCharge), nameof(AbilityCustomCharge.CanTarget), typeof(UnitEntityData), typeof(TargetWrapper))]
+        static class AbilityCustomCharge_CanTarget_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix(UnitEntityData caster, ref bool __result)
+            {
+                if (IsInCombat() && __result && caster == CurrentUnit(out TurnController currentTurn))
+                {
+                    __result = currentTurn.TimeMoved == 0f;
+                }
             }
         }
 
