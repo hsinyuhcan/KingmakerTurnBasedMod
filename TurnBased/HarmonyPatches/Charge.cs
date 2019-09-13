@@ -122,6 +122,23 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // set the minimum distance of charge to the distance of 5-foot step plus 2 feet
+        [HarmonyPatch(typeof(AbilityCustomCharge), nameof(AbilityCustomCharge.GetMinRangeMeters), typeof(UnitEntityData), typeof(UnitEntityData))]
+        static class AbilityCustomCharge_GetMinRangeMeters_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityData caster, UnitEntityData target, ref float __result)
+            {
+                if (IsEnabled())
+                {
+                    __result = MetersOfFiveFootStep + GameConsts.MinWeaponRange.Meters + 
+                        caster.View.Corpulence + target?.View.Corpulence ?? 0.5f;
+                    return false;
+                }
+                return true;
+            }
+        }
+
         // don't ignore obstacles when charging
         [HarmonyPatch(typeof(UnitMovementAgent), "ChargingAvoidance", MethodType.Getter)]
         static class UnitMovementAgent_ChargingAvoidance_Patch

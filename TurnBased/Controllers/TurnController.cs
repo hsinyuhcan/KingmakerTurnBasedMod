@@ -7,7 +7,6 @@ using Kingmaker.PubSubSystem;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
-using Kingmaker.Utility;
 using System;
 using System.Linq;
 using TurnBased.Utility;
@@ -39,8 +38,6 @@ namespace TurnBased.Controllers
         #endregion
         
         #region Properties
-
-        public float MetersOfFiveFootStep => 5f * Feet.FeetToMetersRatio * DistanceOfFiveFootStep;
 
         public TurnStatus Status { get; private set; }
 
