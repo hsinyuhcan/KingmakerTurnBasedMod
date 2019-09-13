@@ -1,4 +1,8 @@
-﻿Version 1.0.5
+﻿Version 1.0.6
+	Added Russian translation (much thanks to Msarc)
+	Adjusted the font size of buttons on combat tracker for Deutsch & French
+
+Version 1.0.5
 	Fixed when AI do not have enough actions they still try to use full-round abilities
 
 Version 1.0.4

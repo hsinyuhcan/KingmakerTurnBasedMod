@@ -607,19 +607,19 @@
     },
     {
       "Key": "UI_Btn_EndTurn",
-      "Value": "<size=-2>Rundenende</size>"
+      "Value": "<size=-4>Rundenende</size>"
     },
     {
       "Key": "UI_Btn_Delay",
-      "Value": "Verzögern"
+      "Value": "<size=-2>Verzögern</size>"
     },
     {
       "Key": "UI_Btn_FiveFootStep",
-      "Value": "<size=-4>1,50 m-Schritt</size>"
+      "Value": "<size=-5>1,50 m-Schritt</size>"
     },
     {
       "Key": "UI_Btn_FullAttack",
-      "Value": "Voller Ang."
+      "Value": "<size=-3>Voller Ang.</size>"
     },
     {
       "Key": "UI_Txt_Unknown",
