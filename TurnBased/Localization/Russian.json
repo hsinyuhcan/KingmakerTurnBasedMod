@@ -51,7 +51,7 @@
     },
     {
       "Key": "Menu_Cmt_FlankingCountAllNearbyOpponents",
-      "Value": " (независимо от их декущих действий)"
+      "Value": " (независимо от их текущих действий)"
     },
     {
       "Key": "Menu_Opt_RerollPerceptionDiceAgainstStealthOncePerRound",
