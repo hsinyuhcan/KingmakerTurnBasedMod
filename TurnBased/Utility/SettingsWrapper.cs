@@ -427,6 +427,8 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixBlindFightDistance => Mod.Settings.toggleFixBlindFightDistance;
 
+        public static BugfixOption FixDweomerLeap => Mod.Settings.toggleFixDweomerLeap;
+
         public static BugfixOption FixConfusedUnitCanAttackDeadUnit => Mod.Settings.toggleFixConfusedUnitCanAttackDeadUnit;
 
         public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;

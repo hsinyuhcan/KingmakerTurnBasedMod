@@ -96,6 +96,9 @@ namespace TurnBased.Menus
             BugfixToggle(FixBlindFightDistance,
                 Local["Menu_Opt_FixBlindFightDistance"], true, true);
 
+            BugfixToggle(FixDweomerLeap,
+                Local["Menu_Opt_FixDweomerLeap"], true, true);
+
             BugfixToggle(FixConfusedUnitCanAttackDeadUnit,
                 Local["Menu_Opt_FixConfusedUnitCanAttackDeadUnit"], true, true);
 

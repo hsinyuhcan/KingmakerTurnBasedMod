@@ -17,6 +17,7 @@ using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
+using Kingmaker.UnitLogic.FactLogic;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.Utility;
 using Kingmaker.View.Equipment;
@@ -249,6 +250,61 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // fix Dweomer Leap can be triggered by ally and always consumes no action (it should consume a swift action)
+        [HarmonyPatch(typeof(DweomerLeapLogic), nameof(DweomerLeapLogic.OnTryToApplyAbilityEffect), typeof(AbilityExecutionContext), typeof(TargetWrapper))]
+        static class DweomerLeapLogic_OnTryToApplyAbilityEffect_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(AbilityExecutionContext context, TargetWrapper target)
+            {
+                if (Mod.Enabled && FixDweomerLeap)
+                {
+                    UnitEntityData caster;
+                    return target.Unit != null && (caster = context.MaybeCaster) != null && target.Unit.CanAttack(caster);
+                }
+                return true;
+            }
+
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // unitUseAbility.IgnoreCooldown();
+                // ---------------- after  ----------------
+                // if (!DontIgnoreCooldown())
+                //     unitUseAbility.IgnoreCooldown();
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldloc_2),
+                    new CodeInstruction(OpCodes.Ldloca_S),
+                    new CodeInstruction(OpCodes.Initobj, typeof(TimeSpan?)),
+                    new CodeInstruction(OpCodes.Ldloc_3),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<UnitCommand, Action<UnitCommand, TimeSpan?>>(nameof(UnitCommand.IgnoreCooldown)))
+                };
+                int startIndex = codes.FindCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<bool>(DontIgnoreCooldown).Method),
+                        new CodeInstruction(OpCodes.Brtrue, codes.NewLabel(startIndex + findingCodes.Count, il)),
+                    };
+                    return codes.InsertRange(startIndex, patchingCodes, true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static bool DontIgnoreCooldown()
+            {
+                return Mod.Enabled && FixDweomerLeap;
+            }
+        }
+
         // fix sometimes a confused unit can act normally because it tried but failed to attack a dead unit
         [HarmonyPatch(typeof(UnitConfusionController), "AttackNearest", typeof(UnitPartConfusion))]
         static class UnitConfusionController_AttackNearest_Patch
@@ -454,7 +510,7 @@ namespace TurnBased.HarmonyPatches
                         new CodeInstruction(OpCodes.Brfalse, codes.NewLabel(startIndex + findingCodes.Count, il)),
                         new CodeInstruction(OpCodes.Ldc_R4, 0f),
                         new CodeInstruction(OpCodes.Ret)
-                  };
+                    };
                     return codes.InsertRange(startIndex + findingCodes.Count, patchingCodes, true).Complete();
                 }
                 else

@@ -108,6 +108,7 @@ namespace TurnBased
         public BugfixOption toggleFixFxOfShadowEvocationSirocco = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityNotAutoDeactivateIfCombatEnded = new BugfixOption(true, false);
         public BugfixOption toggleFixBlindFightDistance = new BugfixOption(true, false);
+        public BugfixOption toggleFixDweomerLeap = new BugfixOption(true, false);
         public BugfixOption toggleFixConfusedUnitCanAttackDeadUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
         public BugfixOption toggleFixCanMakeAttackOfOpportunityToUnmovedTarget = new BugfixOption(true, false);

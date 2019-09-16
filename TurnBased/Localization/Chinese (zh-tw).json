@@ -1,7 +1,7 @@
 {
   "$id": "1",
   "Language": "繁體中文",
-  "Version": "1.0.4",
+  "Version": "1.0.7",
   "Contributors": "Hsinyu",
   "HomePage": "https://github.com/hsinyuhcan/KingmakerTurnBasedMod/blob/master/TurnBased/Localization/Chinese (zh-tw).json",
   "Strings": [
@@ -488,6 +488,10 @@
     {
       "Key": "Menu_Opt_FixBlindFightDistance",
       "Value": "修正盲鬥只能在極短的距離下避免失去防禦加值而非近戰距離"
+    },
+    {
+      "Key": "Menu_Opt_FixDweomerLeap",
+      "Value": "修正魔貓飛撲可以被盟友觸發，並且總是不消耗任何動作 (它應該消耗一個迅捷動作)"
     },
     {
       "Key": "Menu_Opt_FixConfusedUnitCanAttackDeadUnit",

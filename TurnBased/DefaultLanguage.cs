@@ -146,6 +146,7 @@ namespace TurnBased
             { "Menu_Opt_FixFxOfShadowEvocationSirocco", "Fix the Fx effect of Shadow Evocation (Sirocco) is missing (use normal Sirocco to replace it)" },
             { "Menu_Opt_FixAbilityNotAutoDeactivateIfCombatEnded", "Fix some abilities will not be auto deactivated after combat (Inspire Greatness, Inspire Heroics)" },
             { "Menu_Opt_FixBlindFightDistance", "Fix Blind-Fight needs a extreme close distance to prevent from losing AC instead of melee distance" },
+            { "Menu_Opt_FixDweomerLeap", "Fix Dweomer Leap can be triggered by ally and always consumes no action (it should consume a swift action)" },
             { "Menu_Opt_FixConfusedUnitCanAttackDeadUnit", "Fix sometimes a confused unit can act normally because it tried to attack an unattackable dead unit" },
             { "Menu_Opt_FixHasMotionThisTick", "Fix sometimes the game does not regard a unit that is forced to move as a unit that is moving (cause AoO behavior inconsistent)" },
             { "Menu_Opt_FixCanMakeAttackOfOpportunityToUnmovedTarget", "Fix that you can make an AoO to an unmoved unit just as it's leaving the threatened range (when switching from reach weapon)" },
