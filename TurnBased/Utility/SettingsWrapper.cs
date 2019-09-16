@@ -431,10 +431,12 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixConfusedUnitCanAttackDeadUnit => Mod.Settings.toggleFixConfusedUnitCanAttackDeadUnit;
 
-        public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
+        public static BugfixOption FixAcrobaticsMobility => Mod.Settings.toggleFixAcrobaticsMobility;
 
         public static BugfixOption FixCanMakeAttackOfOpportunityToUnmovedTarget => Mod.Settings.toggleFixCanMakeAttackOfOpportunityToUnmovedTarget;
-        
+
+        public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
+
         public static BugfixOption FixAbilityCircleRadius => Mod.Settings.toggleFixAbilityCircleRadius;
 
         public static BugfixOption FixAbilityCircleNotAppear => Mod.Settings.toggleFixAbilityCircleNotAppear;

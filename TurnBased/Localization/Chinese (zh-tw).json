@@ -498,12 +498,16 @@
       "Value": "修正有時候一個困惑的單位可以正常行動，因為他試圖攻擊一個不可被攻擊的死亡單位"
     },
     {
-      "Key": "Menu_Opt_FixHasMotionThisTick",
-      "Value": "修正有時候遊戲不會將被迫移動的單位視為移動中 (造成機會攻擊的行為不一致)"
+      "Key": "Menu_Opt_FixAcrobaticsMobility",
+      "Value": "修正你可以使用特技 (靈巧) 來避免機會攻擊，即使該機會攻擊是由移動以外的原因引發"
     },
     {
       "Key": "Menu_Opt_FixCanMakeAttackOfOpportunityToUnmovedTarget",
       "Value": "修正你可以對沒有移動的單位進行機會攻擊就像他們正在離開威脅範圍一樣 (當換掉長觸及武器時)"
+    },
+    {
+      "Key": "Menu_Opt_FixHasMotionThisTick",
+      "Value": "修正有時候遊戲不會將被迫移動的單位視為移動中 (造成機會攻擊的行為不一致)"
     },
     {
       "Key": "Menu_Opt_FixAbilityCircleRadius",

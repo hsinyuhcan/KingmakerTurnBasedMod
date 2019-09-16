@@ -7,8 +7,10 @@ using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.EntitySystem.Stats;
 using Kingmaker.Items;
 using Kingmaker.Items.Slots;
+using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
@@ -282,7 +284,7 @@ namespace TurnBased.HarmonyPatches
                     new CodeInstruction(OpCodes.Callvirt,
                         GetMethodInfo<UnitCommand, Action<UnitCommand, TimeSpan?>>(nameof(UnitCommand.IgnoreCooldown)))
                 };
-                int startIndex = codes.FindCodes(findingCodes);
+                int startIndex = codes.FindLastCodes(findingCodes);
                 if (startIndex >= 0)
                 {
                     List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
@@ -362,6 +364,86 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // fix you can make an AoO to an unmoved unit just as it's leaving the threatened range (when switching from reach weapon)
+        // fix Acrobatics (Mobility) can be triggered even if the AoO is provoked due to reasons other than movement
+        [HarmonyPatch(typeof(UnitCombatState), "ShouldAttackOnDisengage", typeof(UnitEntityData))]
+        static class UnitCombatState_ShouldAttackOnDisengage_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityData target, ref bool __result)
+            {
+                if (Mod.Enabled && FixCanMakeAttackOfOpportunityToUnmovedTarget && !target.HasMotionThisTick)
+                {
+                    __result = false;
+                    return false;
+                }
+                return true;
+            }
+
+            [HarmonyPostfix]
+            static void Postfix(UnitCombatState __instance, UnitEntityData target, ref bool __result)
+            {
+                if (Mod.Enabled && FixAcrobaticsMobility && __result)
+                {
+                    if (target.Descriptor.State.HasCondition(UnitCondition.UseMobilityToNegateAttackOfOpportunity))
+                    {
+                        if (Rulebook.Trigger(new RuleSkillCheck(target, StatType.SkillMobility,
+                            Rulebook.Trigger(new RuleCalculateCMD(target, __instance.Unit, CombatManeuver.None)).Result)).IsPassed)
+                        {
+                            __result = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        // fix Acrobatics (Mobility) can be triggered even if the AoO is provoked due to reasons other than movement
+        [HarmonyPatch(typeof(UnitCombatState), nameof(UnitCombatState.AttackOfOpportunity), typeof(UnitEntityData))]
+        static class UnitCombatState_AttackOfOpportunity_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // target.Descriptor.State.HasCondition(UnitCondition.UseMobilityToNegateAttackOfOpportunity)
+                // ---------------- after  ----------------
+                // !ToFixAcrobaticsMobility() && target.Descriptor.State.HasCondition(UnitCondition.UseMobilityToNegateAttackOfOpportunity)
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldloc_0),
+                    new CodeInstruction(OpCodes.Ldfld),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<UnitEntityData, UnitDescriptor>(nameof(UnitEntityData.Descriptor)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Ldfld,
+                        GetFieldInfo<UnitDescriptor, UnitState>(nameof(UnitDescriptor.State))),
+                    new CodeInstruction(OpCodes.Ldc_I4_S, (sbyte) 36),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<UnitState, Func<UnitState, UnitCondition, bool>>(nameof(UnitState.HasCondition))),
+                    new CodeInstruction(OpCodes.Brfalse),
+                };
+                int startIndex = codes.FindLastCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<bool>(ToFixAcrobaticsMobility).Method),
+                        new CodeInstruction(OpCodes.Brtrue, codes.Item(startIndex + findingCodes.Count - 1).operand),
+                    };
+                    return codes.InsertRange(startIndex, patchingCodes, true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static bool ToFixAcrobaticsMobility()
+            {
+                return Mod.Enabled && FixAcrobaticsMobility;
+            }
+        }
+
         // fix sometimes the game does not regard a unit that is forced to move as a unit that is moved (cause AoO inconsistent)
         [HarmonyPatch(typeof(UnitMoveController), nameof(UnitMoveController.Tick))]
         static class UnitMoveController_Tick_Patch
@@ -396,24 +478,8 @@ namespace TurnBased.HarmonyPatches
 
             static Vector3 GetPreviousPosition(UnitEntityData awakeUnit)
             {
-                return (Mod.Enabled && FixHasMotionThisTick) ? 
+                return (Mod.Enabled && FixHasMotionThisTick) ?
                     awakeUnit.View?.transform.position ?? awakeUnit.Position : awakeUnit.Position;
-            }
-        }
-
-        // fix that you can make an AoO to an unmoved unit just as it's leaving the threatened range (when switching from reach weapon)
-        [HarmonyPatch(typeof(UnitCombatState), "ShouldAttackOnDisengage", typeof(UnitEntityData))]
-        static class UnitCombatState_ShouldAttackOnDisengage_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitEntityData target, ref bool __result)
-            {
-                if (Mod.Enabled && FixCanMakeAttackOfOpportunityToUnmovedTarget && !target.HasMotionThisTick)
-                {
-                    __result = false;
-                    return false;
-                }
-                return true;
             }
         }
 

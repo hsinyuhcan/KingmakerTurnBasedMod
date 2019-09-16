@@ -102,12 +102,15 @@ namespace TurnBased.Menus
             BugfixToggle(FixConfusedUnitCanAttackDeadUnit,
                 Local["Menu_Opt_FixConfusedUnitCanAttackDeadUnit"], true, true);
 
-            BugfixToggle(FixHasMotionThisTick,
-                Local["Menu_Opt_FixHasMotionThisTick"], true, true);
+            BugfixToggle(FixAcrobaticsMobility,
+                Local["Menu_Opt_FixAcrobaticsMobility"], true, true);
 
             BugfixToggle(FixCanMakeAttackOfOpportunityToUnmovedTarget,
                 Local["Menu_Opt_FixCanMakeAttackOfOpportunityToUnmovedTarget"], true, true);
-            
+
+            BugfixToggle(FixHasMotionThisTick,
+                Local["Menu_Opt_FixHasMotionThisTick"], true, true);
+
             BugfixToggle(FixAbilityCircleRadius,
                 Local["Menu_Opt_FixAbilityCircleRadius"], false, true);
 

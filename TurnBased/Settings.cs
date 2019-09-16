@@ -110,8 +110,9 @@ namespace TurnBased
         public BugfixOption toggleFixBlindFightDistance = new BugfixOption(true, false);
         public BugfixOption toggleFixDweomerLeap = new BugfixOption(true, false);
         public BugfixOption toggleFixConfusedUnitCanAttackDeadUnit = new BugfixOption(true, false);
-        public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
+        public BugfixOption toggleFixAcrobaticsMobility = new BugfixOption(true, false);
         public BugfixOption toggleFixCanMakeAttackOfOpportunityToUnmovedTarget = new BugfixOption(true, false);
+        public BugfixOption toggleFixHasMotionThisTick = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleRadius = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCircleNotAppear = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCanTargetUntargetableUnit = new BugfixOption(true, false);

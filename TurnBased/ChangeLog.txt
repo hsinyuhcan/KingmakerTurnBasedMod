@@ -1,5 +1,6 @@
 ﻿Version 1.0.7
 	Added an option to fix Dweomer Leap
+	Added an option to fix Acrobatics (Mobility)
 	Fixed the exact range of movement is still slightly shorter than the indicator range
 	Fixed when the "Auto cancel ..." options are turned on, actions will be cancelled if you just reach the target but run out of the movement
 
