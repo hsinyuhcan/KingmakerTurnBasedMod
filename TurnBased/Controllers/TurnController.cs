@@ -25,6 +25,7 @@ namespace TurnBased.Controllers
 
         private bool _aiUsedFiveFootStep;
         private bool _enabledFiveFootStep;
+        private bool _tryCancelCommandsOnNextTick;
         private UnitEntityData _delayTarget;
 
         public readonly UnitEntityData Unit;
@@ -97,6 +98,12 @@ namespace TurnBased.Controllers
         internal void Tick()
         {
             ImmuneAttackOfOpportunityOnDisengage = false;
+
+            if (_tryCancelCommandsOnNextTick)
+            {
+                Unit.TryCancelCommands();
+                _tryCancelCommandsOnNextTick = false;
+            }
 
             if (Status == TurnStatus.Preparing && (IsActed() || !Commands.Empty || !Unit.IsAbleToAct()))
             {
@@ -172,7 +179,7 @@ namespace TurnBased.Controllers
                         Game.Instance.IsPaused = true;
 
                     if (AutoCancelActionsOnFiveFootStepFinish)
-                        Unit.TryCancelCommands();
+                        _tryCancelCommandsOnNextTick = true;
                 }
                 else
                 {
@@ -180,7 +187,7 @@ namespace TurnBased.Controllers
                         Game.Instance.IsPaused = true;
 
                     if (AutoCancelActionsOnFirstMoveFinish)
-                        Unit.TryCancelCommands();
+                        _tryCancelCommandsOnNextTick = true;
                 }
             }
         }

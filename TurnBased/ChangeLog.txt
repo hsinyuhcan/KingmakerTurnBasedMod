@@ -1,4 +1,8 @@
-﻿Version 1.0.6
+﻿Version 1.0.7
+	Fixed the exact range of movement is still slightly shorter than the indicator range
+	Fixed when the "Auto cancel ..." options are turned on, actions will be cancelled if you just reach the target but run out of the movement
+
+Version 1.0.6
 	Added Russian translation (much thanks to Msarc)
 	Adjusted the font size of buttons on combat tracker for Deutsch & French
 	Changed the minimum distance of charge is now euqal to the distance of 5-foot step plus 2 feet
