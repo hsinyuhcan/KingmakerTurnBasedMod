@@ -21,8 +21,10 @@ using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.FactLogic;
+using Kingmaker.UnitLogic.Mechanics.Actions;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.Utility;
+using Kingmaker.View;
 using Kingmaker.View.Equipment;
 using Kingmaker.Visual.Decals;
 using ModMaker.Utility;
@@ -669,6 +671,47 @@ namespace TurnBased.HarmonyPatches
             static MethodBase GetTargetMethod(Type type, string name)
             {
                 return type.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            }
+        }
+
+        // fix a native bug due to null View
+        [HarmonyPatch]
+        static class UnitEntityView_Corpulence_Patch
+        {
+            [HarmonyTargetMethods]
+            static IEnumerable<MethodBase> TargetMethods(HarmonyInstance instance)
+            {
+                yield return GetTargetMethod(typeof(DweomerLeapLogic), nameof(DweomerLeapLogic.OnTryToApplyAbilityEffect));
+                yield return GetTargetMethod(typeof(ContextActionMeleeAttack), nameof(ContextActionMeleeAttack.SelectTarget));
+            }
+
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // .View.Corpulence
+                // ---------------- after  ----------------
+                // .Corpulence
+                return codes
+                    .ReplaceAll(
+                    new List<CodeInstruction>() {
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetPropertyInfo<UnitEntityData, UnitEntityView>(nameof(UnitEntityData.View)).GetGetMethod()),
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetPropertyInfo<UnitEntityView, float>(nameof(UnitEntityView.Corpulence)).GetGetMethod())
+                    },
+                    new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetPropertyInfo<UnitEntityData, float>(nameof(UnitEntityData.Corpulence)).GetGetMethod())
+                    },
+                    true)
+                    .Complete();
+            }
+
+            static MethodBase GetTargetMethod(Type type, string name)
+            {
+                return type.GetMethod(name, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             }
         }
     }
