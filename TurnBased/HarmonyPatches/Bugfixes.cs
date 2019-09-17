@@ -2,23 +2,30 @@
 using Harmony12;
 using Kingmaker;
 using Kingmaker.Blueprints;
+using Kingmaker.Controllers;
 using Kingmaker.Controllers.Clicks.Handlers;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.EntitySystem.Stats;
 using Kingmaker.Items;
 using Kingmaker.Items.Slots;
+using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.UnitLogic.ActivatableAbilities;
+using Kingmaker.UnitLogic.Buffs.Components;
 using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
+using Kingmaker.UnitLogic.FactLogic;
+using Kingmaker.UnitLogic.Mechanics.Actions;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.Utility;
+using Kingmaker.View;
 using Kingmaker.View.Equipment;
 using Kingmaker.Visual.Decals;
 using ModMaker.Utility;
@@ -249,6 +256,61 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // fix Dweomer Leap can be triggered by ally and always consumes no action (it should consume a swift action)
+        [HarmonyPatch(typeof(DweomerLeapLogic), nameof(DweomerLeapLogic.OnTryToApplyAbilityEffect), typeof(AbilityExecutionContext), typeof(TargetWrapper))]
+        static class DweomerLeapLogic_OnTryToApplyAbilityEffect_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(AbilityExecutionContext context, TargetWrapper target)
+            {
+                if (Mod.Enabled && FixDweomerLeap)
+                {
+                    UnitEntityData caster;
+                    return target.Unit != null && (caster = context.MaybeCaster) != null && target.Unit.CanAttack(caster);
+                }
+                return true;
+            }
+
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // unitUseAbility.IgnoreCooldown();
+                // ---------------- after  ----------------
+                // if (!DontIgnoreCooldown())
+                //     unitUseAbility.IgnoreCooldown();
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldloc_2),
+                    new CodeInstruction(OpCodes.Ldloca_S),
+                    new CodeInstruction(OpCodes.Initobj, typeof(TimeSpan?)),
+                    new CodeInstruction(OpCodes.Ldloc_3),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<UnitCommand, Action<UnitCommand, TimeSpan?>>(nameof(UnitCommand.IgnoreCooldown)))
+                };
+                int startIndex = codes.FindLastCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<bool>(DontIgnoreCooldown).Method),
+                        new CodeInstruction(OpCodes.Brtrue, codes.NewLabel(startIndex + findingCodes.Count, il)),
+                    };
+                    return codes.InsertRange(startIndex, patchingCodes, true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static bool DontIgnoreCooldown()
+            {
+                return Mod.Enabled && FixDweomerLeap;
+            }
+        }
+
         // fix sometimes a confused unit can act normally because it tried but failed to attack a dead unit
         [HarmonyPatch(typeof(UnitConfusionController), "AttackNearest", typeof(UnitPartConfusion))]
         static class UnitConfusionController_AttackNearest_Patch
@@ -306,6 +368,86 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // fix you can make an AoO to an unmoved unit just as it's leaving the threatened range (when switching from reach weapon)
+        // fix Acrobatics (Mobility) can be triggered even if the AoO is provoked due to reasons other than movement
+        [HarmonyPatch(typeof(UnitCombatState), "ShouldAttackOnDisengage", typeof(UnitEntityData))]
+        static class UnitCombatState_ShouldAttackOnDisengage_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityData target, ref bool __result)
+            {
+                if (Mod.Enabled && FixCanMakeAttackOfOpportunityToUnmovedTarget && !target.HasMotionThisTick)
+                {
+                    __result = false;
+                    return false;
+                }
+                return true;
+            }
+
+            [HarmonyPostfix]
+            static void Postfix(UnitCombatState __instance, UnitEntityData target, ref bool __result)
+            {
+                if (Mod.Enabled && FixAcrobaticsMobility && __result)
+                {
+                    if (target.Descriptor.State.HasCondition(UnitCondition.UseMobilityToNegateAttackOfOpportunity))
+                    {
+                        if (Rulebook.Trigger(new RuleSkillCheck(target, StatType.SkillMobility,
+                            Rulebook.Trigger(new RuleCalculateCMD(target, __instance.Unit, CombatManeuver.None)).Result)).IsPassed)
+                        {
+                            __result = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        // fix Acrobatics (Mobility) can be triggered even if the AoO is provoked due to reasons other than movement
+        [HarmonyPatch(typeof(UnitCombatState), nameof(UnitCombatState.AttackOfOpportunity), typeof(UnitEntityData))]
+        static class UnitCombatState_AttackOfOpportunity_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // target.Descriptor.State.HasCondition(UnitCondition.UseMobilityToNegateAttackOfOpportunity)
+                // ---------------- after  ----------------
+                // !ToFixAcrobaticsMobility() && target.Descriptor.State.HasCondition(UnitCondition.UseMobilityToNegateAttackOfOpportunity)
+                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldloc_0),
+                    new CodeInstruction(OpCodes.Ldfld),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<UnitEntityData, UnitDescriptor>(nameof(UnitEntityData.Descriptor)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Ldfld,
+                        GetFieldInfo<UnitDescriptor, UnitState>(nameof(UnitDescriptor.State))),
+                    new CodeInstruction(OpCodes.Ldc_I4_S, (sbyte) 36),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<UnitState, Func<UnitState, UnitCondition, bool>>(nameof(UnitState.HasCondition))),
+                    new CodeInstruction(OpCodes.Brfalse),
+                };
+                int startIndex = codes.FindLastCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<bool>(ToFixAcrobaticsMobility).Method),
+                        new CodeInstruction(OpCodes.Brtrue, codes.Item(startIndex + findingCodes.Count - 1).operand),
+                    };
+                    return codes.InsertRange(startIndex, patchingCodes, true).Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static bool ToFixAcrobaticsMobility()
+            {
+                return Mod.Enabled && FixAcrobaticsMobility;
+            }
+        }
+
         // fix sometimes the game does not regard a unit that is forced to move as a unit that is moved (cause AoO inconsistent)
         [HarmonyPatch(typeof(UnitMoveController), nameof(UnitMoveController.Tick))]
         static class UnitMoveController_Tick_Patch
@@ -340,24 +482,8 @@ namespace TurnBased.HarmonyPatches
 
             static Vector3 GetPreviousPosition(UnitEntityData awakeUnit)
             {
-                return (Mod.Enabled && FixHasMotionThisTick) ? 
+                return (Mod.Enabled && FixHasMotionThisTick) ?
                     awakeUnit.View?.transform.position ?? awakeUnit.Position : awakeUnit.Position;
-            }
-        }
-
-        // fix that you can make an AoO to an unmoved unit just as it's leaving the threatened range (when switching from reach weapon)
-        [HarmonyPatch(typeof(UnitCombatState), "ShouldAttackOnDisengage", typeof(UnitEntityData))]
-        static class UnitCombatState_ShouldAttackOnDisengage_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(UnitEntityData target, ref bool __result)
-            {
-                if (Mod.Enabled && FixCanMakeAttackOfOpportunityToUnmovedTarget && !target.HasMotionThisTick)
-                {
-                    __result = false;
-                    return false;
-                }
-                return true;
             }
         }
 
@@ -454,7 +580,7 @@ namespace TurnBased.HarmonyPatches
                         new CodeInstruction(OpCodes.Brfalse, codes.NewLabel(startIndex + findingCodes.Count, il)),
                         new CodeInstruction(OpCodes.Ldc_R4, 0f),
                         new CodeInstruction(OpCodes.Ret)
-                  };
+                    };
                     return codes.InsertRange(startIndex + findingCodes.Count, patchingCodes, true).Complete();
                 }
                 else
@@ -468,6 +594,140 @@ namespace TurnBased.HarmonyPatches
                 return Mod.Enabled && target.Unit != null &&
                     ((FixAbilityCanTargetUntargetableUnit && target.Unit.Descriptor.State.IsUntargetable) ||
                     (FixAbilityCanTargetDeadUnit && target.Unit.Descriptor.State.IsDead && !ability.Blueprint.CanCastToDeadTarget));
+            }
+        }
+
+        // fix certain neutral units can attack their ally
+        [HarmonyPatch(typeof(UnitEntityData), nameof(UnitEntityData.CanAttack), typeof(UnitEntityData))]
+        static class UnitEntityData_CanAttack_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityData __instance, UnitEntityData unit, ref bool __result)
+            {
+                if (Mod.Enabled && FixNeutralUnitCanAttackAlly)
+                {
+                    __result = (unit.Descriptor.Faction.Neutral && unit.Descriptor.Faction != __instance.Descriptor.Faction) ||
+                        __instance.Group.IsEnemy(unit);
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        // fix certain neutral units can attack their ally
+        [HarmonyPatch]
+        static class OffensiveActionsController_OnOffensiveActionsDidTrigger_Patch
+        {
+            [HarmonyTargetMethods]
+            static IEnumerable<MethodBase> TargetMethods(HarmonyInstance instance)
+            {
+                yield return GetTargetMethod(typeof(OffensiveActionsController), nameof(OffensiveActionsController.OnEventDidTrigger));
+                yield return GetTargetMethod(typeof(OffensiveActionsController), nameof(OffensiveActionsController.OnTryToApplyAbilityEffect));
+            }
+
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before 1 ----------------
+                // initiator.IsEnemy(target)
+                // ---------------- after  1 ----------------
+                // IsTarget_1(initiator, target)
+                // ---------------- before 2 ----------------
+                // target.Faction.Neutral
+                // ---------------- after  2 ----------------
+                // IsTarget_2(target)
+                return codes
+                    .ReplaceAll(
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
+                    new CodeInstruction(OpCodes.Call,
+                        new Func<UnitEntityData, UnitEntityData, bool>(IsTarget_1).Method), 
+                    true)
+                    .ReplaceAll(
+                    new List<CodeInstruction>() {
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetPropertyInfo<UnitEntityData, BlueprintFaction>(nameof(UnitEntityData.Faction)).GetGetMethod()),
+                        new CodeInstruction(OpCodes.Ldfld,
+                            GetFieldInfo<BlueprintFaction, bool>(nameof(BlueprintFaction.Neutral)))
+                    },
+                    new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<UnitEntityData, bool>(IsTarget_2).Method),
+                    }, 
+                    true)
+                    .Complete();
+            }
+
+            static bool IsTarget_1(UnitEntityData initiator, UnitEntityData target)
+            {
+                return (Mod.Enabled && FixNeutralUnitCanAttackAlly) ? initiator.CanAttack(target) : initiator.IsEnemy(target);
+            }
+
+            static bool IsTarget_2(UnitEntityData target)
+            {
+                return (Mod.Enabled && FixNeutralUnitCanAttackAlly) ? false : target.Faction.Neutral;
+            }
+
+            static MethodBase GetTargetMethod(Type type, string name)
+            {
+                return type.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            }
+        }
+
+        // fix certain aura effect will be triggered repeatedly when you inspect its owner
+        [HarmonyPatch(typeof(AddAreaEffect), nameof(AddAreaEffect.OnFactActivate))]
+        static class AddAreaEffect_OnFactActivate_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(AddAreaEffect __instance)
+            {
+                if (Mod.Enabled && FixInspectingTriggerAuraEffect && !__instance.Owner.Unit.IsInGame)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        // fix a native bug due to null View
+        [HarmonyPatch]
+        static class UnitEntityView_Corpulence_Patch
+        {
+            [HarmonyTargetMethods]
+            static IEnumerable<MethodBase> TargetMethods(HarmonyInstance instance)
+            {
+                yield return GetTargetMethod(typeof(DweomerLeapLogic), nameof(DweomerLeapLogic.OnTryToApplyAbilityEffect));
+                yield return GetTargetMethod(typeof(ContextActionMeleeAttack), nameof(ContextActionMeleeAttack.SelectTarget));
+            }
+
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // .View.Corpulence
+                // ---------------- after  ----------------
+                // .Corpulence
+                return codes
+                    .ReplaceAll(
+                    new List<CodeInstruction>() {
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetPropertyInfo<UnitEntityData, UnitEntityView>(nameof(UnitEntityData.View)).GetGetMethod()),
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetPropertyInfo<UnitEntityView, float>(nameof(UnitEntityView.Corpulence)).GetGetMethod())
+                    },
+                    new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetPropertyInfo<UnitEntityData, float>(nameof(UnitEntityData.Corpulence)).GetGetMethod())
+                    },
+                    true)
+                    .Complete();
+            }
+
+            static MethodBase GetTargetMethod(Type type, string name)
+            {
+                return type.GetMethod(name, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             }
         }
     }

@@ -96,15 +96,21 @@ namespace TurnBased.Menus
             BugfixToggle(FixBlindFightDistance,
                 Local["Menu_Opt_FixBlindFightDistance"], true, true);
 
+            BugfixToggle(FixDweomerLeap,
+                Local["Menu_Opt_FixDweomerLeap"], true, true);
+
             BugfixToggle(FixConfusedUnitCanAttackDeadUnit,
                 Local["Menu_Opt_FixConfusedUnitCanAttackDeadUnit"], true, true);
+
+            BugfixToggle(FixAcrobaticsMobility,
+                Local["Menu_Opt_FixAcrobaticsMobility"], true, true);
+
+            BugfixToggle(FixCanMakeAttackOfOpportunityToUnmovedTarget,
+                Local["Menu_Opt_FixCanMakeAttackOfOpportunityToUnmovedTarget"], true, true);
 
             BugfixToggle(FixHasMotionThisTick,
                 Local["Menu_Opt_FixHasMotionThisTick"], true, true);
 
-            BugfixToggle(FixCanMakeAttackOfOpportunityToUnmovedTarget,
-                Local["Menu_Opt_FixCanMakeAttackOfOpportunityToUnmovedTarget"], true, true);
-            
             BugfixToggle(FixAbilityCircleRadius,
                 Local["Menu_Opt_FixAbilityCircleRadius"], false, true);
 
@@ -116,6 +122,12 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixAbilityCanTargetDeadUnit,
                 Local["Menu_Opt_FixAbilityCanTargetDeadUnit"], true, true);
+
+            BugfixToggle(FixNeutralUnitCanAttackAlly,
+                Local["Menu_Opt_FixNeutralUnitCanAttackAlly"], true, true);
+
+            BugfixToggle(FixInspectingTriggerAuraEffect,
+                Local["Menu_Opt_FixInspectingTriggerAuraEffect"], true, true);
         }
 
         private void BugfixToggle(BugfixOption option, string text, bool canToggleTB, bool canToggleRT, Action onToggle = null)

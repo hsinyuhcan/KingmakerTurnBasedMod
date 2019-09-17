@@ -2,7 +2,7 @@
   "Id": "TurnBased",
   "DisplayName": "Turn Based Combat",
   "Author": "Hsinyu",
-  "Version": "1.0.6",
+  "Version": "1.0.7",
   "ManagerVersion": "0.14.1",
   "EntryMethod": "TurnBased.Main.Load",
   "HomePage": "https://www.nexusmods.com/pathfinderkingmaker/mods/109",

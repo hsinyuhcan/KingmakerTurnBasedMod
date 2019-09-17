@@ -427,12 +427,16 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixBlindFightDistance => Mod.Settings.toggleFixBlindFightDistance;
 
+        public static BugfixOption FixDweomerLeap => Mod.Settings.toggleFixDweomerLeap;
+
         public static BugfixOption FixConfusedUnitCanAttackDeadUnit => Mod.Settings.toggleFixConfusedUnitCanAttackDeadUnit;
+
+        public static BugfixOption FixAcrobaticsMobility => Mod.Settings.toggleFixAcrobaticsMobility;
+
+        public static BugfixOption FixCanMakeAttackOfOpportunityToUnmovedTarget => Mod.Settings.toggleFixCanMakeAttackOfOpportunityToUnmovedTarget;
 
         public static BugfixOption FixHasMotionThisTick => Mod.Settings.toggleFixHasMotionThisTick;
 
-        public static BugfixOption FixCanMakeAttackOfOpportunityToUnmovedTarget => Mod.Settings.toggleFixCanMakeAttackOfOpportunityToUnmovedTarget;
-        
         public static BugfixOption FixAbilityCircleRadius => Mod.Settings.toggleFixAbilityCircleRadius;
 
         public static BugfixOption FixAbilityCircleNotAppear => Mod.Settings.toggleFixAbilityCircleNotAppear;
@@ -440,6 +444,10 @@ namespace TurnBased.Utility
         public static BugfixOption FixAbilityCanTargetUntargetableUnit => Mod.Settings.toggleFixAbilityCanTargetUntargetableUnit;
 
         public static BugfixOption FixAbilityCanTargetDeadUnit => Mod.Settings.toggleFixAbilityCanTargetDeadUnit;
+
+        public static BugfixOption FixNeutralUnitCanAttackAlly => Mod.Settings.toggleFixNeutralUnitCanAttackAlly;
+
+        public static BugfixOption FixInspectingTriggerAuraEffect => Mod.Settings.toggleFixInspectingTriggerAuraEffect;
 
         #endregion
 

@@ -1,7 +1,7 @@
 {
   "$id": "1",
   "Language": "繁體中文",
-  "Version": "1.0.4",
+  "Version": "1.0.7",
   "Contributors": "Hsinyu",
   "HomePage": "https://github.com/hsinyuhcan/KingmakerTurnBasedMod/blob/master/TurnBased/Localization/Chinese (zh-tw).json",
   "Strings": [
@@ -490,16 +490,24 @@
       "Value": "修正盲鬥只能在極短的距離下避免失去防禦加值而非近戰距離"
     },
     {
+      "Key": "Menu_Opt_FixDweomerLeap",
+      "Value": "修正魔貓飛撲可以被盟友觸發，並且總是不消耗任何動作 (它應該消耗一個迅捷動作)"
+    },
+    {
       "Key": "Menu_Opt_FixConfusedUnitCanAttackDeadUnit",
       "Value": "修正有時候一個困惑的單位可以正常行動，因為他試圖攻擊一個不可被攻擊的死亡單位"
     },
     {
-      "Key": "Menu_Opt_FixHasMotionThisTick",
-      "Value": "修正有時候遊戲不會將被迫移動的單位視為移動中 (造成機會攻擊的行為不一致)"
+      "Key": "Menu_Opt_FixAcrobaticsMobility",
+      "Value": "修正你可以使用特技 (靈巧) 來避免機會攻擊，即使該機會攻擊是由移動以外的原因引發"
     },
     {
       "Key": "Menu_Opt_FixCanMakeAttackOfOpportunityToUnmovedTarget",
       "Value": "修正你可以對沒有移動的單位進行機會攻擊就像他們正在離開威脅範圍一樣 (當換掉長觸及武器時)"
+    },
+    {
+      "Key": "Menu_Opt_FixHasMotionThisTick",
+      "Value": "修正有時候遊戲不會將被迫移動的單位視為移動中 (造成機會攻擊的行為不一致)"
     },
     {
       "Key": "Menu_Opt_FixAbilityCircleRadius",
@@ -516,6 +524,14 @@
     {
       "Key": "Menu_Opt_FixAbilityCanTargetDeadUnit",
       "Value": "修正你在使用不可施放於死亡單位的能力時可以瞄準死亡單位"
+    },
+    {
+      "Key": "Menu_Opt_FixNeutralUnitCanAttackAlly",
+      "Value": "修正某些中立單位可以攻擊它們的盟友 (例如: 科技聯盟)"
+    },
+    {
+      "Key": "Menu_Opt_FixInspectingTriggerAuraEffect",
+      "Value": "修正某些靈氣效果會在你查看其所有者時被重複觸發 (例如: 觸手魔藤的靈氣)"
     },
     {
       "Key": "Menu_Tab_Language",
