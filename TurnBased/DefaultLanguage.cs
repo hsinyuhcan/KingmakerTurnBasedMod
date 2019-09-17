@@ -156,6 +156,7 @@ namespace TurnBased
             { "Menu_Opt_FixAbilityCanTargetUntargetableUnit", "Fix you can target untargetable units using abilities" },
             { "Menu_Opt_FixAbilityCanTargetDeadUnit", "Fix you can target dead units using abilities that cannot be cast to dead target" },
             { "Menu_Opt_FixNeutralUnitCanAttackAlly", "Fix certain neutral units can attack their ally (e.g. Techno League)" },
+            { "Menu_Opt_FixInspectingTriggerAuraEffect", "Fix certain aura effect will be triggered repeatedly when you inspect its owner (e.g. the aura of Tendriculos)" },
             { "Menu_Tab_Language", "Language" },
             { "Menu_Sub_Current", "Current" },
             { "Menu_Txt_Language", "Language: {0}" },

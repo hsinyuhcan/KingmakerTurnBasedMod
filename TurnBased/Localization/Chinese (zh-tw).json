@@ -530,6 +530,10 @@
       "Value": "修正某些中立單位可以攻擊它們的盟友 (例如: 科技聯盟)"
     },
     {
+      "Key": "Menu_Opt_FixInspectingTriggerAuraEffect",
+      "Value": "修正某些靈氣效果會在你查看其所有者時被重複觸發 (例如: 觸手魔藤的靈氣)"
+    },
+    {
       "Key": "Menu_Tab_Language",
       "Value": "語言"
     },

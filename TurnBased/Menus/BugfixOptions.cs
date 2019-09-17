@@ -125,6 +125,9 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixNeutralUnitCanAttackAlly,
                 Local["Menu_Opt_FixNeutralUnitCanAttackAlly"], true, true);
+
+            BugfixToggle(FixInspectingTriggerAuraEffect,
+                Local["Menu_Opt_FixInspectingTriggerAuraEffect"], true, true);
         }
 
         private void BugfixToggle(BugfixOption option, string text, bool canToggleTB, bool canToggleRT, Action onToggle = null)

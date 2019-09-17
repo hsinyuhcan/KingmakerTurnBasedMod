@@ -446,7 +446,9 @@ namespace TurnBased.Utility
         public static BugfixOption FixAbilityCanTargetDeadUnit => Mod.Settings.toggleFixAbilityCanTargetDeadUnit;
 
         public static BugfixOption FixNeutralUnitCanAttackAlly => Mod.Settings.toggleFixNeutralUnitCanAttackAlly;
-        
+
+        public static BugfixOption FixInspectingTriggerAuraEffect => Mod.Settings.toggleFixInspectingTriggerAuraEffect;
+
         #endregion
 
         #region Localization

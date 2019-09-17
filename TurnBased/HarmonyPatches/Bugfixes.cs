@@ -17,6 +17,7 @@ using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.UnitLogic.ActivatableAbilities;
+using Kingmaker.UnitLogic.Buffs.Components;
 using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
@@ -671,6 +672,21 @@ namespace TurnBased.HarmonyPatches
             static MethodBase GetTargetMethod(Type type, string name)
             {
                 return type.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            }
+        }
+
+        // fix certain aura effect will be triggered repeatedly when you inspect its owner
+        [HarmonyPatch(typeof(AddAreaEffect), nameof(AddAreaEffect.OnFactActivate))]
+        static class AddAreaEffect_OnFactActivate_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(AddAreaEffect __instance)
+            {
+                if (Mod.Enabled && FixInspectingTriggerAuraEffect && !__instance.Owner.Unit.IsInGame)
+                {
+                    return false;
+                }
+                return true;
             }
         }
 

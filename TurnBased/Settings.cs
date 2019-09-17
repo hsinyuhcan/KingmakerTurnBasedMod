@@ -118,6 +118,7 @@ namespace TurnBased
         public BugfixOption toggleFixAbilityCanTargetUntargetableUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixAbilityCanTargetDeadUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixNeutralUnitCanAttackAlly = new BugfixOption(true, false);
+        public BugfixOption toggleFixInspectingTriggerAuraEffect = new BugfixOption(true, false);
 
         // localization
         public string localizationFileName;

@@ -1,7 +1,8 @@
 ﻿Version 1.0.7
 	Added an option to fix Dweomer Leap
 	Added an option to fix Acrobatics (Mobility)
-	Added an option to fix certain neutral units can attack their ally
+	Added an option to fix that certain neutral units can attack their ally
+	Added an option to fix that certain aura effect will be triggered repeatedly when you inspect its owner
 	Fixed the exact range of movement is still slightly shorter than the indicator range
 	Fixed when the "Auto cancel ..." options are turned on, actions will be cancelled if you just reach the target but run out of the movement
 
