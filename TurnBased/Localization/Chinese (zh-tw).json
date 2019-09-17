@@ -526,6 +526,10 @@
       "Value": "修正你在使用不可施放於死亡單位的能力時可以瞄準死亡單位"
     },
     {
+      "Key": "Menu_Opt_FixNeutralUnitCanAttackAlly",
+      "Value": "修正某些中立單位可以攻擊它們的盟友 (例如: 科技聯盟)"
+    },
+    {
       "Key": "Menu_Tab_Language",
       "Value": "語言"
     },

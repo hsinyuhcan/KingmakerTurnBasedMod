@@ -2,6 +2,7 @@
 using Harmony12;
 using Kingmaker;
 using Kingmaker.Blueprints;
+using Kingmaker.Controllers;
 using Kingmaker.Controllers.Clicks.Handlers;
 using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
@@ -590,6 +591,84 @@ namespace TurnBased.HarmonyPatches
                 return Mod.Enabled && target.Unit != null &&
                     ((FixAbilityCanTargetUntargetableUnit && target.Unit.Descriptor.State.IsUntargetable) ||
                     (FixAbilityCanTargetDeadUnit && target.Unit.Descriptor.State.IsDead && !ability.Blueprint.CanCastToDeadTarget));
+            }
+        }
+
+        // fix certain neutral units can attack their ally
+        [HarmonyPatch(typeof(UnitEntityData), nameof(UnitEntityData.CanAttack), typeof(UnitEntityData))]
+        static class UnitEntityData_CanAttack_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityData __instance, UnitEntityData unit, ref bool __result)
+            {
+                if (Mod.Enabled && FixNeutralUnitCanAttackAlly)
+                {
+                    __result = (unit.Descriptor.Faction.Neutral && unit.Descriptor.Faction != __instance.Descriptor.Faction) ||
+                        __instance.Group.IsEnemy(unit);
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        // fix certain neutral units can attack their ally
+        [HarmonyPatch]
+        static class OffensiveActionsController_OnOffensiveActionsDidTrigger_Patch
+        {
+            [HarmonyTargetMethods]
+            static IEnumerable<MethodBase> TargetMethods(HarmonyInstance instance)
+            {
+                yield return GetTargetMethod(typeof(OffensiveActionsController), nameof(OffensiveActionsController.OnEventDidTrigger));
+                yield return GetTargetMethod(typeof(OffensiveActionsController), nameof(OffensiveActionsController.OnTryToApplyAbilityEffect));
+            }
+
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before 1 ----------------
+                // initiator.IsEnemy(target)
+                // ---------------- after  1 ----------------
+                // IsTarget_1(initiator, target)
+                // ---------------- before 2 ----------------
+                // target.Faction.Neutral
+                // ---------------- after  2 ----------------
+                // IsTarget_2(target)
+                return codes
+                    .ReplaceAll(
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
+                    new CodeInstruction(OpCodes.Call,
+                        new Func<UnitEntityData, UnitEntityData, bool>(IsTarget_1).Method), 
+                    true)
+                    .ReplaceAll(
+                    new List<CodeInstruction>() {
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetPropertyInfo<UnitEntityData, BlueprintFaction>(nameof(UnitEntityData.Faction)).GetGetMethod()),
+                        new CodeInstruction(OpCodes.Ldfld,
+                            GetFieldInfo<BlueprintFaction, bool>(nameof(BlueprintFaction.Neutral)))
+                    },
+                    new List<CodeInstruction>()
+                    {
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<UnitEntityData, bool>(IsTarget_2).Method),
+                    }, 
+                    true)
+                    .Complete();
+            }
+
+            static bool IsTarget_1(UnitEntityData initiator, UnitEntityData target)
+            {
+                return (Mod.Enabled && FixNeutralUnitCanAttackAlly) ? initiator.CanAttack(target) : initiator.IsEnemy(target);
+            }
+
+            static bool IsTarget_2(UnitEntityData target)
+            {
+                return (Mod.Enabled && FixNeutralUnitCanAttackAlly) ? false : target.Faction.Neutral;
+            }
+
+            static MethodBase GetTargetMethod(Type type, string name)
+            {
+                return type.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             }
         }
     }

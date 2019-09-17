@@ -122,6 +122,9 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixAbilityCanTargetDeadUnit,
                 Local["Menu_Opt_FixAbilityCanTargetDeadUnit"], true, true);
+
+            BugfixToggle(FixNeutralUnitCanAttackAlly,
+                Local["Menu_Opt_FixNeutralUnitCanAttackAlly"], true, true);
         }
 
         private void BugfixToggle(BugfixOption option, string text, bool canToggleTB, bool canToggleRT, Action onToggle = null)

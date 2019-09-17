@@ -155,6 +155,7 @@ namespace TurnBased
             { "Menu_Opt_FixAbilityCircleNotAppear", "Fix the ability circle does not appear properly when first time selecting an ability of any unit (using a hotkey)" },
             { "Menu_Opt_FixAbilityCanTargetUntargetableUnit", "Fix you can target untargetable units using abilities" },
             { "Menu_Opt_FixAbilityCanTargetDeadUnit", "Fix you can target dead units using abilities that cannot be cast to dead target" },
+            { "Menu_Opt_FixNeutralUnitCanAttackAlly", "Fix certain neutral units can attack their ally (e.g. Techno League)" },
             { "Menu_Tab_Language", "Language" },
             { "Menu_Sub_Current", "Current" },
             { "Menu_Txt_Language", "Language: {0}" },
