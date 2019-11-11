@@ -133,6 +133,7 @@ namespace TurnBased
             { "Menu_Opt_FixCombatNotEndProperly", "Fix combat will not end properly if it's ended by a cutsense" },
             { "Menu_Opt_FixUnitNotLeaveCombatWhenNotInGame", "Fix units will never leave combat if they become inactive (cause a glitch on Call Forth Kanerah / Kalikke)" },
             { "Menu_Opt_FixActionTypeOfBardicPerformance", "Fix the action type of starting a Bardic Performance and the effect of Singing Steel" },
+            { "Menu_Opt_FixActionTypeOfSwappingWeapon", "Fix the action type of swapping weapons (Standard Action => Move Action)" },
             { "Menu_Opt_FixActionTypeOfCharge", "Fix the action type of Charge (Standard Action => Full Round Action)" },
             { "Menu_Opt_FixActionTypeOfOverrun", "Fix the action type of Overrun (Standard Action => Full Round Action)" },
             { "Menu_Opt_FixActionTypeOfVitalStrike", "Fix the action type of Vital Strike (Full Round Action => Standard Action)" },

@@ -1,4 +1,7 @@
-﻿Version 1.0.7
+﻿Version 1.0.8
+	Added an option to fix the action type of swapping weapon
+
+Version 1.0.7
 	Added an option to fix Dweomer Leap
 	Added an option to fix Acrobatics (Mobility)
 	Added an option to fix that certain neutral units can attack their ally

@@ -95,6 +95,7 @@ namespace TurnBased
         // bugfix
         public BugfixOption toggleFixNeverInCombatWithoutMC = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfBardicPerformance = new BugfixOption(true, false);
+        public BugfixOption toggleFixActionTypeOfSwappingWeapon = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfCharge = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfOverrun = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfVitalStrike = new BugfixOption(true, false);

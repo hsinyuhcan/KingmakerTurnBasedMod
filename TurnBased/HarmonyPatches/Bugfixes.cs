@@ -30,6 +30,7 @@ using Kingmaker.View.Equipment;
 using Kingmaker.Visual.Decals;
 using ModMaker.Utility;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -94,6 +95,99 @@ namespace TurnBased.HarmonyPatches
                     return false;
                 }
                 return true;
+            }
+        }
+
+        // fix the action type of swapping weapons
+        [HarmonyPatch]
+        static class UnitViewHandsEquipment_AnimateEquipmentChangeInCombat_Patch
+        {
+            [HarmonyTargetMethod]
+            static MethodBase TargetMethod(HarmonyInstance instance)
+            {
+                return typeof(UnitViewHandsEquipment)
+                    .GetNestedTypes(BindingFlags.Instance | BindingFlags.NonPublic)
+                    .First(type => type.Name.Contains("AnimateEquipmentChangeInCombat"))
+                    .GetMethod(nameof(IEnumerator.MoveNext), BindingFlags.Instance | BindingFlags.Public);
+            }
+
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before 1 ----------------
+                // $this.Owner.CombatState.HasCooldownForCommand(UnitCommand.CommandType.Standard)
+                // ---------------- after  1 ----------------
+                // HasCooldown($this.Owner.CombatState)
+                // ---------------- before 2 ----------------
+                // $this.Owner.CombatState.Cooldown.StandardAction = 6f;
+                // ---------------- after  2 ----------------
+                // UpdateCooldown($this.Owner.CombatState);
+                CodeInstruction[] findingCodes_1 = new CodeInstruction[]
+                {
+                    new CodeInstruction(OpCodes.Ldc_I4_1),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetMethodInfo<UnitCombatState, Func<UnitCombatState, UnitCommand.CommandType, bool>>(nameof(UnitCombatState.HasCooldownForCommand)))
+                };
+                CodeInstruction[] findingCodes_2 = new CodeInstruction[]
+                {
+                    new CodeInstruction(OpCodes.Ldfld,
+                        GetFieldInfo<UnitCombatState, UnitCombatState.Cooldowns>(nameof(UnitCombatState.Cooldown))),
+                    new CodeInstruction(OpCodes.Ldc_R4, 6f),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<UnitCombatState.Cooldowns, float>(nameof(UnitCombatState.Cooldowns.StandardAction)).GetSetMethod(true))
+                };
+                int startIndex_1 = codes.FindCodes(findingCodes_1);
+                int startIndex_2 = codes.FindCodes(findingCodes_2);
+                if (startIndex_1 >= 0 && startIndex_2 >= 0)
+                {
+                    CodeInstruction[] patchingCodes_1 = new CodeInstruction[]
+                    {
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<UnitCombatState, bool>(HasCooldown).Method)
+                    };
+                    CodeInstruction[] patchingCodes_2 = new CodeInstruction[]
+                    {
+                        new CodeInstruction(OpCodes.Call,
+                            new Action<UnitCombatState>(UpdateCooldown).Method)
+                    };
+                    return codes
+                        .ReplaceRange(startIndex_2, findingCodes_2.Length, patchingCodes_2, true)
+                        .ReplaceRange(startIndex_1, findingCodes_1.Length, patchingCodes_1, true)
+                        .Complete();
+                }
+                else
+                {
+                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                }
+            }
+
+            static bool HasCooldown(UnitCombatState combatState)
+            {
+                if (Mod.Enabled && FixActionTypeOfSwappingWeapon)
+                {
+                    return
+                      combatState.HasCooldownForCommand(UnitCommand.CommandType.Standard) &&
+                      combatState.HasCooldownForCommand(UnitCommand.CommandType.Move);
+                }
+                else
+                {
+                    return combatState.HasCooldownForCommand(UnitCommand.CommandType.Standard);
+                }
+            }
+
+            static void UpdateCooldown(UnitCombatState combatState)
+            {
+                if (Mod.Enabled && FixActionTypeOfSwappingWeapon)
+                {
+                    if (combatState.HasCooldownForCommand(UnitCommand.CommandType.Move))
+                        combatState.Cooldown.StandardAction = 6.0f;
+                    else
+                        combatState.Cooldown.MoveAction += 3.0f;
+                }
+                else
+                {
+                    combatState.Cooldown.StandardAction = 6.0f;
+                }
             }
         }
 

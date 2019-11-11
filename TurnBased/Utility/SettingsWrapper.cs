@@ -401,6 +401,8 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixActionTypeOfBardicPerformance => Mod.Settings.toggleFixActionTypeOfBardicPerformance;
 
+        public static BugfixOption FixActionTypeOfSwappingWeapon => Mod.Settings.toggleFixActionTypeOfSwappingWeapon;
+
         public static BugfixOption FixActionTypeOfCharge => Mod.Settings.toggleFixActionTypeOfCharge;
 
         public static BugfixOption FixActionTypeOfOverrun => Mod.Settings.toggleFixActionTypeOfOverrun;

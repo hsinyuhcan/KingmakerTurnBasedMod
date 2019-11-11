@@ -438,6 +438,10 @@
       "Value": "修正開始吟遊演藝的動作類型與歌唱鋼的效果"
     },
     {
+      "Key": "Menu_Opt_FixActionTypeOfSwappingWeapon",
+      "Value": "修正切換武器的動作類型 (標準動作 => 移動動作)"
+    },
+    {
       "Key": "Menu_Opt_FixActionTypeOfCharge",
       "Value": "修正衝鋒的動作類型 (標準動作 => 整輪動作)"
     },

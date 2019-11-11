@@ -49,6 +49,9 @@ namespace TurnBased.Menus
             BugfixToggle(FixActionTypeOfBardicPerformance,
                 Local["Menu_Opt_FixActionTypeOfBardicPerformance"], true, true);
 
+            BugfixToggle(FixActionTypeOfSwappingWeapon,
+                Local["Menu_Opt_FixActionTypeOfSwappingWeapon"], true, true);
+            
             BugfixToggle(FixActionTypeOfCharge,
                 Local["Menu_Opt_FixActionTypeOfCharge"], true, true,
                 () => blueprint.ActionTypeOfCharge.Update());
