@@ -95,6 +95,7 @@ namespace TurnBased
         // bugfix
         public BugfixOption toggleFixNeverInCombatWithoutMC = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfBardicPerformance = new BugfixOption(true, false);
+        public BugfixOption toggleFixActionTypeOfSwappingWeapon = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfCharge = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfOverrun = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfVitalStrike = new BugfixOption(true, false);
@@ -103,6 +104,7 @@ namespace TurnBased
         public BugfixOption toggleFixKineticistWontStopPriorCommand = new BugfixOption(true, false);
         public BugfixOption toggleFixSpellstrikeOnNeutralUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixSpellstrikeWithMetamagicReach = new BugfixOption(true, false);
+        public BugfixOption toggleFixSpellstrikeWithNaturalWeapon = new BugfixOption(true, false);
         public BugfixOption toggleFixDamageBonusOfBlastRune = new BugfixOption(true, false);
         public BugfixOption toggleFixOnePlusDiv2ToDiv2 = new BugfixOption(true, false);
         public BugfixOption toggleFixFxOfShadowEvocationSirocco = new BugfixOption(true, false);

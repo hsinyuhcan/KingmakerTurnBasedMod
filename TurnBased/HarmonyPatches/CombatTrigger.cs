@@ -60,7 +60,7 @@ namespace TurnBased.HarmonyPatches
                 // unit.Group.IsInCombat
                 // ---------------- after  ----------------
                 // unit.Group.IsInCombat || IsAboutToAttackOrBeAttacked(unit)
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Callvirt,
@@ -73,20 +73,21 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Dup),
-                        new CodeInstruction(OpCodes.Brtrue, codes.NewLabel(startIndex + findingCodes.Count - 1, il)),
+                        new CodeInstruction(OpCodes.Brtrue, codes.NewLabel(startIndex + findingCodes.Length - 1, il)),
                         new CodeInstruction(OpCodes.Pop),
                         new CodeInstruction(OpCodes.Ldarg_0),
                         new CodeInstruction(OpCodes.Call,
                             new Func<UnitEntityData, bool>(IsAboutToAttackOrBeAttacked).Method)
                     };
-                    return codes.InsertRange(startIndex + findingCodes.Count - 1, patchingCodes, true).Complete();
+                    return codes.InsertRange(startIndex + findingCodes.Length - 1, patchingCodes, true).Complete();
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
 
@@ -190,7 +191,7 @@ namespace TurnBased.HarmonyPatches
                 // groupMember.HasLOS(enemy);
                 // ---------------- after 2  ----------------
                 // IsInCombat() ? true : groupMember.HasLOS(enemy)
-                List<CodeInstruction> findingCodes_1 = new List<CodeInstruction>
+                CodeInstruction[] findingCodes_1 = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Ldsfld),
@@ -199,7 +200,7 @@ namespace TurnBased.HarmonyPatches
                     new CodeInstruction(OpCodes.Ldftn),
                     new CodeInstruction(OpCodes.Newobj)
                 };
-                List<CodeInstruction> findingCodes_2 = new List<CodeInstruction>
+                CodeInstruction[] findingCodes_2 = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldloc_S),
                     new CodeInstruction(OpCodes.Ldloc_0),
@@ -220,7 +221,8 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
 
@@ -248,7 +250,7 @@ namespace TurnBased.HarmonyPatches
                 // ---------------- after  ----------------
                 // if (!IsInCombat() || unit.Descriptor.State.LifeState == UnitLifeState.Dead)
                 //     unit.LeaveCombat();
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Callvirt,
@@ -262,7 +264,8 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
 

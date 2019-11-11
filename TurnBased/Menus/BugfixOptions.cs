@@ -49,6 +49,9 @@ namespace TurnBased.Menus
             BugfixToggle(FixActionTypeOfBardicPerformance,
                 Local["Menu_Opt_FixActionTypeOfBardicPerformance"], true, true);
 
+            BugfixToggle(FixActionTypeOfSwappingWeapon,
+                Local["Menu_Opt_FixActionTypeOfSwappingWeapon"], true, true);
+            
             BugfixToggle(FixActionTypeOfCharge,
                 Local["Menu_Opt_FixActionTypeOfCharge"], true, true,
                 () => blueprint.ActionTypeOfCharge.Update());
@@ -76,7 +79,10 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixSpellstrikeWithMetamagicReach,
                 Local["Menu_Opt_FixSpellstrikeWithMetamagicReach"], true, true);
-            
+
+            BugfixToggle(FixSpellstrikeWithNaturalWeapon,
+                Local["Menu_Opt_FixSpellstrikeWithNaturalWeapon"], true, true);
+
             BugfixToggle(FixDamageBonusOfBlastRune,
                 Local["Menu_Opt_FixDamageBonusOfBlastRune"], true, true,
                 () => blueprint.DamageBonusOfBlastRune.Update());

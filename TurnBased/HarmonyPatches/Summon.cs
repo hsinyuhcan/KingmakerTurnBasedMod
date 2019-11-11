@@ -33,9 +33,9 @@ namespace TurnBased.HarmonyPatches
                     {
                         return;
                     }
-
+                    
                     // remove the freezing time when it's not summoned by a full round spell or it's summoned by a trap
-                    if ((__instance.Context?.SourceAbility?.IsFullRoundAction ?? false) == false ||
+                    if (!(__instance.Context?.SourceAbilityContext?.Ability.RequireFullRoundAction ?? false) ||
                         __instance.Initiator.Faction?.AssetGuid == "d75c5993785785d468211d9a1a3c87a6")
                     {
                         summonedUnit.Descriptor.RemoveFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff);
@@ -62,7 +62,7 @@ namespace TurnBased.HarmonyPatches
                 // ---------------- after  ----------------
                 // TimeSpan delay = (dismemberUnitFX = null) ? 6f.Seconds() : dismemberUnitFX.Delay.Seconds();
                 // delay = GetDelay(delay);
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldc_R4, 6f),
                     new CodeInstruction(OpCodes.Call,
@@ -72,18 +72,19 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Ldloc_2),
                         new CodeInstruction(OpCodes.Call,
                             new Func<TimeSpan, TimeSpan>(GetDelay).Method),
                         new CodeInstruction(OpCodes.Stloc_2),
                     };
-                    return codes.InsertRange(startIndex + findingCodes.Count, patchingCodes, true).Complete();
+                    return codes.InsertRange(startIndex + findingCodes.Length, patchingCodes, true).Complete();
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
 

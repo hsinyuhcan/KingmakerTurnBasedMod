@@ -25,7 +25,7 @@ namespace TurnBased.HarmonyPatches
                 // unit.Memory.Contains(unit) || unit.HasLOS(unit)
                 // ---------------- after  ----------------
                 // (IsEnabled() || unit.Memory.Contains(unit)) || unit.HasLOS(unit)
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldloc_S),
                     new CodeInstruction(OpCodes.Callvirt,
@@ -43,7 +43,7 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindLastCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Call,
                             new Func<bool>(IsEnabled).Method),
@@ -53,7 +53,8 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
         }
@@ -69,7 +70,7 @@ namespace TurnBased.HarmonyPatches
                 // !anotherUnit.IsEnemy(unit) && !unit.Stealth.InAmbush
                 // ---------------- after  ----------------
                 // (IsEnabled() ? !unit.CanAttack(anotherUnit) : !anotherUnit.IsEnemy(unit)) && !unit.Stealth.InAmbush
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldloc_S),
                     new CodeInstruction(OpCodes.Ldarg_1),
@@ -86,7 +87,7 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Call,
                             new Func<bool>(IsEnabled).Method),
@@ -102,7 +103,8 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
         }

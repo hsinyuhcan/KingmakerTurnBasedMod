@@ -33,11 +33,12 @@ namespace TurnBased.HarmonyPatches
                             __result = false;
                             break;
                         case UnitCommand.CommandType.Move:
-                            __result = !__instance.Unit.HasMoveAction();
+                            __result = !__instance.Unit.IsCurrentUnit() || !__instance.Unit.HasMoveAction();
                             break;
                         case UnitCommand.CommandType.Standard:
-                            UnitCommand moveCommand = __instance.Unit.Commands.GetCommand(UnitCommand.CommandType.Move);
-                            __result = (moveCommand != null && moveCommand.IsRunning) || !__instance.Unit.HasStandardAction();
+                            __result = !__instance.Unit.IsCurrentUnit() ||
+                                (__instance.Unit.Commands.GetCommand(UnitCommand.CommandType.Move)?.IsRunning ?? false) || 
+                                !__instance.Unit.HasStandardAction();
                             break;
                         case UnitCommand.CommandType.Swift:
                             __result = __instance.Cooldown.SwiftAction > 0f;
@@ -100,7 +101,7 @@ namespace TurnBased.HarmonyPatches
                 // !base.Executor.CombatState.IsFullAttackRestrictedBecauseOfMoveAction
                 // ---------------- after  ----------------
                 // IsFullAttackRestricted(!base.Executor.CombatState.IsFullAttackRestrictedBecauseOfMoveAction, this)
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Call,
@@ -114,7 +115,7 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Ldarg_0),
                         new CodeInstruction(OpCodes.Call,
@@ -124,7 +125,8 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
 

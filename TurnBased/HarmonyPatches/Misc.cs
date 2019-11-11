@@ -6,6 +6,7 @@ using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UI.SettingsUI;
 using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Commands;
 using ModMaker.Utility;
 using System;
@@ -49,7 +50,7 @@ namespace TurnBased.HarmonyPatches
                 // m_AnimationsDuration / (float)m_AllAttacks.Count
                 // ---------------- after  ----------------
                 // ModifyDelay(m_AnimationsDuration / (float)m_AllAttacks.Count)
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Ldfld,
@@ -65,12 +66,13 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    return codes.Insert(startIndex + findingCodes.Count, new CodeInstruction(OpCodes.Call,
+                    return codes.Insert(startIndex + findingCodes.Length, new CodeInstruction(OpCodes.Call,
                         new Func<float, float>(ModifyDelay).Method), true).Complete();
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
 
@@ -129,6 +131,22 @@ namespace TurnBased.HarmonyPatches
                         context.CurrentScore = 0f;
                     }
                 }
+            }
+        }
+
+        // prevent activating an item storing a full-round ability from being considered as a full-round action
+        [HarmonyPatch(typeof(AbilityData), nameof(AbilityData.RequireFullRoundAction), MethodType.Getter)]
+        static class AbilityData_RequireFullRoundAction_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(AbilityData __instance, ref bool __result)
+            {
+                if (IsEnabled() && __instance.SourceItem != null)
+                {
+                    __result = false;
+                    return false;
+                }
+                return true;
             }
         }
 

@@ -251,7 +251,7 @@ namespace TurnBased.HarmonyPatches
                 // ---------------- after  ----------------
                 // activatableAbility.TimeToNextRound = GetTimeToNextRound(unit);
                 // if (activatableAbility.TimeToNextRound <= 0f && CanTickNewRound(unit))
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldloc_3),
                     new CodeInstruction(OpCodes.Dup),
@@ -275,26 +275,27 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes_1 = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes_1 = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Ldarg_1),
                         new CodeInstruction(OpCodes.Call,
                             new Func<float, UnitEntityData, float>(GetTimeToNextRound).Method)
                     };
-                    List<CodeInstruction> patchingCodes_2 = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes_2 = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Ldarg_1),
                         new CodeInstruction(OpCodes.Call,
                             new Func<UnitEntityData, bool>(CanTickNewRound).Method),
-                        new CodeInstruction(OpCodes.Brfalse, codes.Item(startIndex + findingCodes.Count - 1).operand)
+                        new CodeInstruction(OpCodes.Brfalse, codes.Item(startIndex + findingCodes.Length - 1).operand)
                     };
                     return codes
-                        .InsertRange(startIndex + findingCodes.Count, patchingCodes_2, true)
+                        .InsertRange(startIndex + findingCodes.Length, patchingCodes_2, true)
                         .ReplaceRange(startIndex + 3, 4, patchingCodes_1, false).Complete();
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
 

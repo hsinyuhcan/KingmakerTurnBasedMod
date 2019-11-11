@@ -401,6 +401,8 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixActionTypeOfBardicPerformance => Mod.Settings.toggleFixActionTypeOfBardicPerformance;
 
+        public static BugfixOption FixActionTypeOfSwappingWeapon => Mod.Settings.toggleFixActionTypeOfSwappingWeapon;
+
         public static BugfixOption FixActionTypeOfCharge => Mod.Settings.toggleFixActionTypeOfCharge;
 
         public static BugfixOption FixActionTypeOfOverrun => Mod.Settings.toggleFixActionTypeOfOverrun;
@@ -416,7 +418,9 @@ namespace TurnBased.Utility
         public static BugfixOption FixSpellstrikeOnNeutralUnit => Mod.Settings.toggleFixSpellstrikeOnNeutralUnit;
 
         public static BugfixOption FixSpellstrikeWithMetamagicReach => Mod.Settings.toggleFixSpellstrikeWithMetamagicReach;
-        
+
+        public static BugfixOption FixSpellstrikeWithNaturalWeapon => Mod.Settings.toggleFixSpellstrikeWithNaturalWeapon;
+
         public static BugfixOption FixDamageBonusOfBlastRune => Mod.Settings.toggleFixDamageBonusOfBlastRune;
 
         public static BugfixOption FixOnePlusDiv2ToDiv2 => Mod.Settings.toggleFixOnePlusDiv2ToDiv2;

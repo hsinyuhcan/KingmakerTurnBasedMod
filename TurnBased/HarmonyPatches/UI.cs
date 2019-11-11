@@ -50,7 +50,7 @@ namespace TurnBased.HarmonyPatches
                 // ---------------- after  ----------------
                 // m_TooltipTrigger.SetObject(entityData);
                 // m_TooltipTrigger.ShowTooltipManual(true);
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Ldfld,
@@ -62,7 +62,7 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Ldfld,
@@ -71,11 +71,12 @@ namespace TurnBased.HarmonyPatches
                     new CodeInstruction(OpCodes.Callvirt,
                         GetMethodInfo<TooltipTrigger, Action<TooltipTrigger, bool>>(nameof(TooltipTrigger.ShowTooltipManual))),
                     };
-                    return codes.InsertRange(startIndex + findingCodes.Count, patchingCodes, true).Complete();
+                    return codes.InsertRange(startIndex + findingCodes.Length, patchingCodes, true).Complete();
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
         }
