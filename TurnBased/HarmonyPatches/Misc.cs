@@ -49,7 +49,7 @@ namespace TurnBased.HarmonyPatches
                 // m_AnimationsDuration / (float)m_AllAttacks.Count
                 // ---------------- after  ----------------
                 // ModifyDelay(m_AnimationsDuration / (float)m_AllAttacks.Count)
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Ldfld,
@@ -65,7 +65,7 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    return codes.Insert(startIndex + findingCodes.Count, new CodeInstruction(OpCodes.Call,
+                    return codes.Insert(startIndex + findingCodes.Length, new CodeInstruction(OpCodes.Call,
                         new Func<float, float>(ModifyDelay).Method), true).Complete();
                 }
                 else

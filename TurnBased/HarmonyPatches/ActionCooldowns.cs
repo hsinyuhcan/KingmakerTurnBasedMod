@@ -101,7 +101,7 @@ namespace TurnBased.HarmonyPatches
                 // !base.Executor.CombatState.IsFullAttackRestrictedBecauseOfMoveAction
                 // ---------------- after  ----------------
                 // IsFullAttackRestricted(!base.Executor.CombatState.IsFullAttackRestrictedBecauseOfMoveAction, this)
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Call,
@@ -115,7 +115,7 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Ldarg_0),
                         new CodeInstruction(OpCodes.Call,

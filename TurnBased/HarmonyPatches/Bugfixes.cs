@@ -202,7 +202,7 @@ namespace TurnBased.HarmonyPatches
                 // ... InCombat ...
                 // ---------------- after  ----------------
                 // !DontCostAction(slot, previousItem) && InCombat
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Call,
@@ -212,7 +212,7 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Ldarg_1),
                         new CodeInstruction(OpCodes.Ldarg_2),
@@ -373,7 +373,7 @@ namespace TurnBased.HarmonyPatches
                 // ---------------- after  ----------------
                 // if (!DontIgnoreCooldown())
                 //     unitUseAbility.IgnoreCooldown();
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldloc_2),
                     new CodeInstruction(OpCodes.Ldloca_S),
@@ -385,11 +385,11 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindLastCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Call,
                             new Func<bool>(DontIgnoreCooldown).Method),
-                        new CodeInstruction(OpCodes.Brtrue, codes.NewLabel(startIndex + findingCodes.Count, il)),
+                        new CodeInstruction(OpCodes.Brtrue, codes.NewLabel(startIndex + findingCodes.Length, il)),
                     };
                     return codes.InsertRange(startIndex, patchingCodes, true).Complete();
                 }
@@ -420,7 +420,7 @@ namespace TurnBased.HarmonyPatches
                 // unitInGroup != part.Owner.Unit
                 // ---------------- after  ----------------
                 // IsValid(unitInGroup) && unitInGroup != part.Owner.Unit
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Callvirt,
@@ -430,7 +430,7 @@ namespace TurnBased.HarmonyPatches
                     new CodeInstruction(OpCodes.Bne_Un)
                 };
                 int startIndex_1 = codes.FindCodes(findingCodes);
-                int startIndex_2 = codes.FindCodes(startIndex_1 + findingCodes.Count, findingCodes);
+                int startIndex_2 = codes.FindCodes(startIndex_1 + findingCodes.Length, findingCodes);
                 if (startIndex_1 >= 0 && startIndex_2 >= 0)
                 {
                     return codes
@@ -443,9 +443,9 @@ namespace TurnBased.HarmonyPatches
                 }
             }
 
-            static List<CodeInstruction> CreatePatch(IEnumerable<CodeInstruction> codes, ILGenerator il, int startIndex)
+            static CodeInstruction[] CreatePatch(IEnumerable<CodeInstruction> codes, ILGenerator il, int startIndex)
             {
-                return new List<CodeInstruction>()
+                return new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Dup),
                     new CodeInstruction(OpCodes.Call,
@@ -506,7 +506,7 @@ namespace TurnBased.HarmonyPatches
                 // target.Descriptor.State.HasCondition(UnitCondition.UseMobilityToNegateAttackOfOpportunity)
                 // ---------------- after  ----------------
                 // !ToFixAcrobaticsMobility() && target.Descriptor.State.HasCondition(UnitCondition.UseMobilityToNegateAttackOfOpportunity)
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldloc_0),
                     new CodeInstruction(OpCodes.Ldfld),
@@ -522,11 +522,11 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindLastCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Call,
                             new Func<bool>(ToFixAcrobaticsMobility).Method),
-                        new CodeInstruction(OpCodes.Brtrue, codes.Item(startIndex + findingCodes.Count - 1).operand),
+                        new CodeInstruction(OpCodes.Brtrue, codes.Item(startIndex + findingCodes.Length - 1).operand),
                     };
                     return codes.InsertRange(startIndex, patchingCodes, true).Complete();
                 }
@@ -553,7 +553,7 @@ namespace TurnBased.HarmonyPatches
                 // awakeUnit.PreviousPosition = awakeUnit.Position;
                 // ---------------- after  ----------------
                 // awakeUnit.PreviousPosition = GetPreviousPosition(awakeUnit);
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldloc_1),
                     new CodeInstruction(OpCodes.Ldloc_1),
@@ -592,7 +592,7 @@ namespace TurnBased.HarmonyPatches
                 // return Blueprint.GetRange(flag).Meters + corpulence + 0.5f;
                 // ---------------- after  ----------------
                 // return Blueprint.GetRange(flag).Meters + corpulence + GetValue();
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldc_R4, 0.5f),
                     new CodeInstruction(OpCodes.Add),
@@ -650,7 +650,7 @@ namespace TurnBased.HarmonyPatches
                 //         return 0f;
                 //     ...
                 // }
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Call,
@@ -663,7 +663,7 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Ldarg_0),
                         new CodeInstruction(OpCodes.Call,
@@ -671,11 +671,11 @@ namespace TurnBased.HarmonyPatches
                         new CodeInstruction(OpCodes.Ldloc_S, codes.Item(startIndex + 2).operand),
                         new CodeInstruction(OpCodes.Call,
                             new Func<AbilityData, TargetWrapper, bool>(CanNotTarget).Method),
-                        new CodeInstruction(OpCodes.Brfalse, codes.NewLabel(startIndex + findingCodes.Count, il)),
+                        new CodeInstruction(OpCodes.Brfalse, codes.NewLabel(startIndex + findingCodes.Length, il)),
                         new CodeInstruction(OpCodes.Ldc_R4, 0f),
                         new CodeInstruction(OpCodes.Ret)
                     };
-                    return codes.InsertRange(startIndex + findingCodes.Count, patchingCodes, true).Complete();
+                    return codes.InsertRange(startIndex + findingCodes.Length, patchingCodes, true).Complete();
                 }
                 else
                 {
@@ -738,13 +738,13 @@ namespace TurnBased.HarmonyPatches
                         new Func<UnitEntityData, UnitEntityData, bool>(IsTarget_1).Method), 
                     true)
                     .ReplaceAll(
-                    new List<CodeInstruction>() {
+                    new CodeInstruction[] {
                         new CodeInstruction(OpCodes.Callvirt,
                             GetPropertyInfo<UnitEntityData, BlueprintFaction>(nameof(UnitEntityData.Faction)).GetGetMethod()),
                         new CodeInstruction(OpCodes.Ldfld,
                             GetFieldInfo<BlueprintFaction, bool>(nameof(BlueprintFaction.Neutral)))
                     },
-                    new List<CodeInstruction>()
+                    new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Call,
                             new Func<UnitEntityData, bool>(IsTarget_2).Method),
@@ -804,13 +804,13 @@ namespace TurnBased.HarmonyPatches
                 // .Corpulence
                 return codes
                     .ReplaceAll(
-                    new List<CodeInstruction>() {
+                    new CodeInstruction[] {
                         new CodeInstruction(OpCodes.Callvirt,
                             GetPropertyInfo<UnitEntityData, UnitEntityView>(nameof(UnitEntityData.View)).GetGetMethod()),
                         new CodeInstruction(OpCodes.Callvirt,
                             GetPropertyInfo<UnitEntityView, float>(nameof(UnitEntityView.Corpulence)).GetGetMethod())
                     },
-                    new List<CodeInstruction>()
+                    new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Callvirt,
                             GetPropertyInfo<UnitEntityData, float>(nameof(UnitEntityData.Corpulence)).GetGetMethod())

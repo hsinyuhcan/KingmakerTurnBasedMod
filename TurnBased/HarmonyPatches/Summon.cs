@@ -62,7 +62,7 @@ namespace TurnBased.HarmonyPatches
                 // ---------------- after  ----------------
                 // TimeSpan delay = (dismemberUnitFX = null) ? 6f.Seconds() : dismemberUnitFX.Delay.Seconds();
                 // delay = GetDelay(delay);
-                List<CodeInstruction> findingCodes = new List<CodeInstruction>
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldc_R4, 6f),
                     new CodeInstruction(OpCodes.Call,
@@ -72,14 +72,14 @@ namespace TurnBased.HarmonyPatches
                 int startIndex = codes.FindCodes(findingCodes);
                 if (startIndex >= 0)
                 {
-                    List<CodeInstruction> patchingCodes = new List<CodeInstruction>()
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
                     {
                         new CodeInstruction(OpCodes.Ldloc_2),
                         new CodeInstruction(OpCodes.Call,
                             new Func<TimeSpan, TimeSpan>(GetDelay).Method),
                         new CodeInstruction(OpCodes.Stloc_2),
                     };
-                    return codes.InsertRange(startIndex + findingCodes.Count, patchingCodes, true).Complete();
+                    return codes.InsertRange(startIndex + findingCodes.Length, patchingCodes, true).Complete();
                 }
                 else
                 {
