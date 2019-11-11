@@ -83,7 +83,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
