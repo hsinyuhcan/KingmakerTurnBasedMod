@@ -33,11 +33,12 @@ namespace TurnBased.HarmonyPatches
                             __result = false;
                             break;
                         case UnitCommand.CommandType.Move:
-                            __result = !__instance.Unit.HasMoveAction();
+                            __result = !__instance.Unit.IsCurrentUnit() || !__instance.Unit.HasMoveAction();
                             break;
                         case UnitCommand.CommandType.Standard:
-                            UnitCommand moveCommand = __instance.Unit.Commands.GetCommand(UnitCommand.CommandType.Move);
-                            __result = (moveCommand != null && moveCommand.IsRunning) || !__instance.Unit.HasStandardAction();
+                            __result = !__instance.Unit.IsCurrentUnit() ||
+                                (__instance.Unit.Commands.GetCommand(UnitCommand.CommandType.Move)?.IsRunning ?? false) || 
+                                !__instance.Unit.HasStandardAction();
                             break;
                         case UnitCommand.CommandType.Swift:
                             __result = __instance.Cooldown.SwiftAction > 0f;
