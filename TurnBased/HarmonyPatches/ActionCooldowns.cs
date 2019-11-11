@@ -20,7 +20,7 @@ namespace TurnBased.HarmonyPatches
     {
         // check the cooldown, you can perform one standard action and one move action, or perform two move action in a turn
         [HarmonyPatch(typeof(UnitCombatState), nameof(UnitCombatState.HasCooldownForCommand), typeof(UnitCommand.CommandType))]
-        static class UnitCombatState_HasCooldownForCommandType_Patch
+        static class UnitCombatState_HasCooldownForCommand_CommandType_Patch
         {
             [HarmonyPrefix]
             static bool Prefix(UnitCombatState __instance, UnitCommand.CommandType commandType, ref bool __result)
@@ -54,7 +54,7 @@ namespace TurnBased.HarmonyPatches
 
         // check the cooldown, fix full round spell restriction
         [HarmonyPatch(typeof(UnitCombatState), nameof(UnitCombatState.HasCooldownForCommand), typeof(UnitCommand))]
-        static class UnitCombatState_HasCooldownForCommand_Patch
+        static class UnitCombatState_HasCooldownForCommand_UnitCommand_Patch
         {
             [HarmonyPrefix]
             static bool Prefix(UnitCombatState __instance, UnitCommand command, ref bool __result)
