@@ -6,6 +6,7 @@ using Kingmaker.Controllers.Combat;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UI.SettingsUI;
 using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Commands;
 using ModMaker.Utility;
 using System;
@@ -130,6 +131,22 @@ namespace TurnBased.HarmonyPatches
                         context.CurrentScore = 0f;
                     }
                 }
+            }
+        }
+
+        // prevent activating an item storing a full-round ability from being considered as a full-round action
+        [HarmonyPatch(typeof(AbilityData), nameof(AbilityData.RequireFullRoundAction), MethodType.Getter)]
+        static class AbilityData_RequireFullRoundAction_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(AbilityData __instance, ref bool __result)
+            {
+                if (IsEnabled() && __instance.SourceItem != null)
+                {
+                    __result = false;
+                    return false;
+                }
+                return true;
             }
         }
 

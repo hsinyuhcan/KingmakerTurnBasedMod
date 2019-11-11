@@ -3,6 +3,7 @@
 	Added an option to fix the action type of swapping weapon
 	Changed standard action and move action will always be regarded as cooling when it's not in units turn (for compatibility reason)
 	Changed logging warnings instead of stopping loading if the mod fails to patch the game (for compatibility reason)
+	Fixed activating an item storing a full-round spell (e.g. a summon monster scroll) is considered as a full-round action instead of a standard action
 
 Version 1.0.7
 	Added an option to fix Dweomer Leap

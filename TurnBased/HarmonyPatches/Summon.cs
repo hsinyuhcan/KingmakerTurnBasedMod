@@ -33,9 +33,9 @@ namespace TurnBased.HarmonyPatches
                     {
                         return;
                     }
-
+                    
                     // remove the freezing time when it's not summoned by a full round spell or it's summoned by a trap
-                    if ((__instance.Context?.SourceAbility?.IsFullRoundAction ?? false) == false ||
+                    if (!(__instance.Context?.SourceAbilityContext?.Ability.RequireFullRoundAction ?? false) ||
                         __instance.Initiator.Faction?.AssetGuid == "d75c5993785785d468211d9a1a3c87a6")
                     {
                         summonedUnit.Descriptor.RemoveFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitAppearBuff);
