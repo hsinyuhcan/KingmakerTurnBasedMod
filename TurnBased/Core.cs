@@ -43,6 +43,11 @@ namespace TurnBased
             }
         }
 
+        public static void FailedToPatch(Type patchType)
+        {
+            Mod.Warning("Failed to patch '" + patchType.FullName + "'");
+        }
+
         public void ResetSettings()
         {
             Mod.Debug(MethodBase.GetCurrentMethod());

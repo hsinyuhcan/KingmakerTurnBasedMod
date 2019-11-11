@@ -53,7 +53,8 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
         }
@@ -102,7 +103,8 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    throw new Exception($"Failed to patch '{MethodBase.GetCurrentMethod().DeclaringType}'");
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
                 }
             }
         }
