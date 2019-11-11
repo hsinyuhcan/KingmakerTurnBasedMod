@@ -2,6 +2,7 @@
 using Harmony12;
 using Kingmaker;
 using Kingmaker.Blueprints;
+using Kingmaker.Blueprints.Items.Weapons;
 using Kingmaker.Controllers;
 using Kingmaker.Controllers.Clicks.Handlers;
 using Kingmaker.Controllers.Combat;
@@ -312,6 +313,48 @@ namespace TurnBased.HarmonyPatches
                         __result = true;
                     }
                 }
+            }
+        }
+
+        // fix Spellstrike will apply touch effect twice when hitting target using natural weapon
+        [HarmonyPatch(typeof(MagusController), nameof(MagusController.OnEventDidTrigger), typeof(RuleAttackWithWeapon))]
+        static class MagusController_OnEventDidTrigger_RuleAttackWithWeapon_Patch
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                // ---------------- before ----------------
+                // evt.AttackRoll.Weapon.Blueprint.IsMelee
+                // ---------------- after  ----------------
+                // IsValidWeapon(evt.AttackRoll.Weapon.Blueprint)
+                CodeInstruction[] findingCodes = new CodeInstruction[]
+                {
+                    new CodeInstruction(OpCodes.Ldarg_1),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<RuleAttackWithWeapon, RuleAttackRoll>(nameof(RuleAttackWithWeapon.AttackRoll)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<RuleAttackRoll, ItemEntityWeapon>(nameof(RuleAttackRoll.Weapon)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<ItemEntityWeapon, BlueprintItemWeapon>(nameof(ItemEntityWeapon.Blueprint)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<BlueprintItemWeapon, bool>(nameof(BlueprintItemWeapon.IsMelee)).GetGetMethod(true))
+                };
+                int startIndex = codes.FindLastCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    return codes.Replace(startIndex + 4, new CodeInstruction(OpCodes.Call,
+                        new Func<BlueprintItemWeapon, bool>(IsValidWeapon).Method), true).Complete();
+                }
+                else
+                {
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    return codes;
+                }
+            }
+
+            static bool IsValidWeapon(BlueprintItemWeapon weapon)
+            {
+                return (Mod.Enabled && FixSpellstrikeWithNaturalWeapon) ? weapon.IsMelee && !weapon.IsNatural : weapon.IsMelee;
             }
         }
 

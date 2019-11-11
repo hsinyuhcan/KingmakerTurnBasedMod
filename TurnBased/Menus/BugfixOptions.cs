@@ -79,7 +79,10 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixSpellstrikeWithMetamagicReach,
                 Local["Menu_Opt_FixSpellstrikeWithMetamagicReach"], true, true);
-            
+
+            BugfixToggle(FixSpellstrikeWithNaturalWeapon,
+                Local["Menu_Opt_FixSpellstrikeWithNaturalWeapon"], true, true);
+
             BugfixToggle(FixDamageBonusOfBlastRune,
                 Local["Menu_Opt_FixDamageBonusOfBlastRune"], true, true,
                 () => blueprint.DamageBonusOfBlastRune.Update());

@@ -474,6 +474,10 @@
       "Value": "修正法術打擊無法生效於應用了超魔 (法術及遠) 的接觸法術"
     },
     {
+      "Key": "Menu_Opt_FixSpellstrikeWithNaturalWeapon",
+      "Value": "修正法術打擊在使用自然武器或徒手攻擊命中目標時會施加兩次接觸效果"
+    },
+    {
       "Key": "Menu_Opt_FixDamageBonusOfBlastRune",
       "Value": "修正衝擊符文的額外傷害不會隨等級提升 (它是符文領域的第一項能力)"
     },

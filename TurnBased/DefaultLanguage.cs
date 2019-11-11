@@ -142,6 +142,7 @@ namespace TurnBased
             { "Menu_Opt_FixKineticistWontStopPriorCommand", "Fix Kineticist will not stop its previous action if you command it to attack with Kinetic Blade before combat" },
             { "Menu_Opt_FixSpellstrikeOnNeutralUnit", "Fix Spellstrike does not take effect when attacking a neutral target" },
             { "Menu_Opt_FixSpellstrikeWithMetamagicReach", "Fix Spellstrike does not take effect when using Metamagic (Reach) on a touch spell" },
+            { "Menu_Opt_FixSpellstrikeWithNaturalWeapon", "Fix Spellstrike will apply a touch effect twice when hitting target with a natural weapon (or a unarmed attack)" },
             { "Menu_Opt_FixDamageBonusOfBlastRune", "Fix the damage bonus of Blast Rune isn't increased with class level (it's the first ability of Rune Domain)" },
             { "Menu_Opt_FixOnePlusDiv2ToDiv2", "Fix the damage bonus of some abilities (level / 2 + 1 => level / 2) (Blast Rune, Moonfire)" },
             { "Menu_Opt_FixFxOfShadowEvocationSirocco", "Fix the Fx effect of Shadow Evocation (Sirocco) is missing (use normal Sirocco to replace it)" },
