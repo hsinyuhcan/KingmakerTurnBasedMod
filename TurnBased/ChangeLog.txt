@@ -1,4 +1,7 @@
-﻿Version 1.0.8
+﻿Version 1.0.9
+	Fixed units could end its turn faster while standing up from prone
+
+Version 1.0.8
 	Added an option to fix Spellstrike will apply a touch effect twice when hitting target with a natural weapon (or a unarmed attack)
 	Added an option to fix the action type of swapping weapon
 	Changed standard action and move action will always be regarded as cooling when it's not in units turn (for compatibility reason)

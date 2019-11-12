@@ -300,7 +300,7 @@ namespace TurnBased.Controllers
         private bool ContinueWaiting()
         {
             // wait for the current action finish
-            if (!Commands.IsRunning() || Unit.View.IsGetUp)
+            if (!Commands.IsRunning() && !Unit.View.IsGetUp)
             {
                 // delay after finish
                 TimeWaitedToEndTurn += Game.Instance.TimeController.GameDeltaTime;
