@@ -18,6 +18,7 @@ using Kingmaker.View;
 using ModMaker.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using TurnBased.Utility;
@@ -112,6 +113,12 @@ namespace TurnBased.HarmonyPatches
                     bool canTick = default;
 
                     if (command is UnitAttackOfOpportunity)
+                    {
+                        canTick = true;
+                    }
+                    else if (command is UnitUseAbility unitUseImmediateAbility &&
+                        unitUseImmediateAbility.Spell.Blueprint.ActionType == UnitCommand.CommandType.Swift &&
+                        unitUseImmediateAbility.Spell.Blueprint.ComponentsArray.Any(c => c.name.StartsWith("$AbilityIsImmediateAction")))
                     {
                         canTick = true;
                     }
