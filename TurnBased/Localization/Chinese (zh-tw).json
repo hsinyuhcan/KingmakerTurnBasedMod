@@ -542,6 +542,10 @@
       "Value": "修正某些靈氣效果會在你查看其所有者時被重複觸發 (例如: 觸手魔藤的靈氣)"
     },
     {
+      "Key": "Menu_Opt_FixInspectingCauseError",
+      "Value": "修正查看敵人可能在特定條件下導致錯誤 (例如: 以盲感對抗會伏擊的敵人時)"
+    },
+    {
       "Key": "Menu_Tab_Language",
       "Value": "語言"
     },

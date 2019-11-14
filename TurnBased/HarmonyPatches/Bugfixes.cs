@@ -835,6 +835,22 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // fix inspecting enemies can cause errors in certain condition
+        [HarmonyPatch(typeof(AddAmbushBehaviour), nameof(AddAmbushBehaviour.OnEntityCreated), typeof(UnitEntityData))]
+        static class AddAmbushBehaviour_OnEntityCreated_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityData entity)
+            {
+                if (Mod.Enabled && FixInspectingCauseError && !entity.IsInGame)
+                {
+                    return false;
+                }
+                Mod.Log(entity);
+                return true;
+            }
+        }
+
         // fix a native bug due to null View
         [HarmonyPatch]
         static class UnitEntityView_Corpulence_Patch

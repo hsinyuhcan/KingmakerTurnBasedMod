@@ -1,5 +1,6 @@
 ﻿Version 1.0.9
 	Added immediate action support for other mods
+	Added an option to fix inspecting enemies can cause errors in certain condition (in fact it's forced on since the bug can break this mod)
 	Improved some patches to prevent this mod from being broken by outer bugs
 	Fixed units could end its turn faster while standing up from prone
 

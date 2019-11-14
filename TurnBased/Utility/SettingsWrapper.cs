@@ -453,6 +453,8 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixInspectingTriggerAuraEffect => Mod.Settings.toggleFixInspectingTriggerAuraEffect;
 
+        public static BugfixOption FixInspectingCauseError => Mod.Settings.toggleFixInspectingCauseError;
+
         #endregion
 
         #region Localization
