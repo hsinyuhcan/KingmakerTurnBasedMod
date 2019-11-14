@@ -154,22 +154,29 @@ namespace TurnBased.HarmonyPatches
         [HarmonyPatch(typeof(AutoPauseController), nameof(AutoPauseController.HandlePartyCombatStateChanged), typeof(bool))]
         static class AutoPauseController_HandlePartyCombatStateChanged_Patch
         {
-            [HarmonyPrefix]
-            static void Prefix(UnitCombatState __instance, bool inCombat, ref bool? __state)
+
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
             {
-                if (IsEnabled() && DoNotPauseOnCombatStart && inCombat)
-                {
-                    __state = SettingsRoot.Instance.PauseOnEngagement.CurrentValue;
-                    SettingsRoot.Instance.PauseOnEngagement.CurrentValue = false;
-                }
+                return codes.Patch(il, PreTranspiler, PostTranspiler);
             }
 
-            [HarmonyPostfix]
-            static void Postfix(UnitCombatState __instance, ref bool? __state)
+            static bool? PreTranspiler()
             {
-                if (__state.HasValue)
+                if (IsEnabled() && DoNotPauseOnCombatStart)
                 {
-                    SettingsRoot.Instance.PauseOnEngagement.CurrentValue = __state.Value;
+                    bool pauseOnEngagement = SettingsRoot.Instance.PauseOnEngagement.CurrentValue;
+                    SettingsRoot.Instance.PauseOnEngagement.CurrentValue = false;
+                    return pauseOnEngagement;
+                }
+                return null;
+            }
+
+            static void PostTranspiler(bool? pauseOnEngagement)
+            {
+                if (pauseOnEngagement.HasValue)
+                {
+                    SettingsRoot.Instance.PauseOnEngagement.CurrentValue = pauseOnEngagement.Value;
                 }
             }
         }

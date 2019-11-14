@@ -7,7 +7,13 @@ using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.Utility;
+using ModMaker.Utility;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using TurnBased.Utility;
+using static ModMaker.Utility.ReflectionCache;
 using static TurnBased.Utility.SettingsWrapper;
 using static TurnBased.Utility.StatusWrapper;
 
@@ -20,27 +26,34 @@ namespace TurnBased.HarmonyPatches
         static class MagusController_HandleUnitCommandDidAct_Patch
         {
             [HarmonyPrefix]
-            static void Prefix(UnitCommand command, ref float? __state)
+            static void Prefix(UnitCommand command)
             {
-                if (IsInCombat() && command.Executor.IsInCombat)
+                if (IsInCombat() && command.Executor.IsInCombat && command.IsSpellCombatAttack())
                 {
-                    if (command.IsSpellCombatAttack())
-                    {
-                        command.Executor.CombatState.Cooldown.MoveAction += TIME_MOVE_ACTION;
-                    }
-
-                    __state = command.TimeSinceStart;
-                    command.SetTimeSinceStart(0f);
+                    command.Executor.CombatState.Cooldown.MoveAction += TIME_MOVE_ACTION;
                 }
             }
 
-            [HarmonyPostfix]
-            static void Postfix(UnitCommand command, ref float? __state)
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
             {
-                if (__state.HasValue)
-                {
-                    command.SetTimeSinceStart(__state.Value);
-                }
+                // ---------------- before ----------------
+                // unitUseAbility.TimeSinceStart
+                // ---------------- after  ----------------
+                // GetTimeSinceStart(unitUseAbility)
+                return codes
+                    .ReplaceAll(
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetPropertyInfo<UnitCommand, float>(nameof(UnitCommand.TimeSinceStart)).GetGetMethod()),
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<UnitCommand, float>(GetTimeSinceStart).Method),
+                        true)
+                    .Complete();
+            }
+
+            static float GetTimeSinceStart(UnitCommand command)
+            {
+                return (IsInCombat() && command.Executor.IsInCombat) ? 0f : command.TimeSinceStart;
             }
         }
 

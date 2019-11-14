@@ -58,26 +58,32 @@ namespace TurnBased.HarmonyPatches
         [HarmonyPatch(typeof(TimeController), "Tick")]
         static class TimeController_Tick_Patch
         {
-            [HarmonyPrefix]
-            static void Prefix(ref float? __state)
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                return codes.Patch(il, PreTranspiler, PostTranspiler);
+            }
+
+            static float? PreTranspiler()
             {
                 if (IsInCombat() && !Game.Instance.IsPaused && !Game.Instance.InvertPauseButtonPressed)
                 {
-                    __state = Game.Instance.TimeController.PlayerTimeScale;
+                    float playerTimeScale = Game.Instance.TimeController.PlayerTimeScale;
                     UnitEntityData unit = CurrentUnit();
-                    Game.Instance.TimeController.PlayerTimeScale = __state.Value *
+                    Game.Instance.TimeController.PlayerTimeScale = playerTimeScale *
                         (unit == null ? TimeScaleBetweenTurns :
                         (!DoNotShowInvisibleUnitOnCombatTracker || unit.IsVisibleForPlayer) ?
                         (unit.IsDirectlyControllable ? TimeScaleInPlayerTurn : TimeScaleInNonPlayerTurn) : TimeScaleInUnknownTurn);
+                    return playerTimeScale;
                 }
+                return null;
             }
 
-            [HarmonyPostfix]
-            static void Postfix(ref float? __state)
+            static void PostTranspiler(float? playerTimeScale)
             {
-                if (__state.HasValue)
+                if (playerTimeScale.HasValue)
                 {
-                    Game.Instance.TimeController.PlayerTimeScale = __state.Value;
+                    Game.Instance.TimeController.PlayerTimeScale = playerTimeScale.Value;
                 }
 
                 if (IsInCombat() && !Game.Instance.IsPaused)
@@ -166,7 +172,7 @@ namespace TurnBased.HarmonyPatches
         static class UnitMovementAgent_TickMovement_Patch
         {
             [HarmonyPrefix]
-            static bool Prefix(UnitMovementAgent __instance, ref float deltaTime, ref float? __state)
+            static bool Prefix(UnitMovementAgent __instance, ref float deltaTime)
             {
                 if (IsInCombat())
                 {
@@ -185,26 +191,16 @@ namespace TurnBased.HarmonyPatches
                     }
                     else
                     {
-                        canMove = (view?.EntityData).IsCurrentUnit() && IsActing() &&
+                        if (canMove = (view?.EntityData).IsCurrentUnit() && IsActing() &&
                             !(view.AnimationManager?.IsPreventingMovement ?? false) &&
-                            !view.IsCommandsPreventMovement && __instance.IsReallyMoving;
-
-                        if (canMove)
+                            !view.IsCommandsPreventMovement && __instance.IsReallyMoving)
                         {
                             CurrentTurn().TickMovement(ref deltaTime, isInForceMode);
-
-                            if (deltaTime <= 0f)
-                            {
-                                canMove = false;
-                            }
-                            else if (!isInForceMode)
-                            {
-                                // disable acceleration effect
-                                __state = __instance.GetMinSpeed();
-                                __instance.SetMinSpeed(1f);
-                                __instance.SetWarmupTime(0f);
-                                __instance.SetSlowDownTime(0f);
-                            }
+                            canMove = deltaTime > 0f;
+                        }
+                        else
+                        {
+                            canMove = false;
                         }
                     }
 
@@ -220,12 +216,31 @@ namespace TurnBased.HarmonyPatches
                 return true;
             }
 
-            [HarmonyPostfix]
-            static void Postfix(UnitMovementAgent __instance, ref float? __state)
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
             {
-                if (__state.HasValue)
+                return codes.Patch<UnitMovementAgent, float?>(il, PreTranspiler, PostTranspiler);
+            }
+
+            static float? PreTranspiler(UnitMovementAgent instance)
+            {
+                if (IsInCombat())
                 {
-                    __instance.SetMinSpeed(__state.Value);
+                    // disable acceleration effect
+                    float minSpeed = instance.GetMinSpeed();
+                    instance.SetMinSpeed(1f);
+                    instance.SetWarmupTime(0f);
+                    instance.SetSlowDownTime(0f);
+                    return minSpeed;
+                }
+                return null;
+            }
+
+            static void PostTranspiler(UnitMovementAgent instance, float? minSpeed)
+            {
+                if (minSpeed.HasValue)
+                {
+                    instance.SetMinSpeed(minSpeed.Value);
                 }
             }
         }
@@ -349,38 +364,40 @@ namespace TurnBased.HarmonyPatches
         [HarmonyPatch(typeof(AbilityExecutionProcess), nameof(AbilityExecutionProcess.Tick))]
         static class AbilityExecutionProcess_Tick_Patch
         {
-            [HarmonyPrefix]
-            static void Prefix(AbilityExecutionProcess __instance, ref TimeSpan? __state)
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
             {
-                if ((IsInCombat() && __instance.Context.AbilityBlueprint.GetComponent<AbilityDeliverEffect>() != null) ||
-                    (Mod.Enabled && Mod.Core.LastTickTimeOfAbilityExecutionProcess.ContainsKey(__instance)))
+                return codes.Patch<AbilityExecutionProcess, TimeSpan?>(il, PreTranspiler, PostTranspiler);
+            }
+
+            static TimeSpan? PreTranspiler(AbilityExecutionProcess instance)
+            {
+                if ((IsInCombat() && instance.Context.AbilityBlueprint.GetComponent<AbilityDeliverEffect>() != null) ||
+                    (Mod.Enabled && Mod.Core.LastTickTimeOfAbilityExecutionProcess.ContainsKey(instance)))
                 {
-                    if (Mod.Core.LastTickTimeOfAbilityExecutionProcess.TryGetValue(__instance, out TimeSpan gameTime))
-                    {
-                        gameTime += Game.Instance.TimeController.GameDeltaTime.Seconds();
-                    }
-                    else
-                    {
-                        gameTime = Game.Instance.Player.GameTime;
-                    }
+                    TimeSpan gameTime = Game.Instance.Player.GameTime;
+                    TimeSpan newGameTime = Mod.Core.LastTickTimeOfAbilityExecutionProcess.TryGetValue(instance, out newGameTime) ?
+                        newGameTime + Game.Instance.TimeController.GameDeltaTime.Seconds() : gameTime;
+                    Mod.Core.LastTickTimeOfAbilityExecutionProcess[instance] = newGameTime;
+                    Game.Instance.Player.GameTime = newGameTime;
+                    return gameTime;
+                }
+                return null;
+            }
 
-                    Mod.Core.LastTickTimeOfAbilityExecutionProcess[__instance] = gameTime;
-
-                    __state = Game.Instance.Player.GameTime;
-                    Game.Instance.Player.GameTime = gameTime;
+            static void PostTranspiler(AbilityExecutionProcess instance, TimeSpan? gameTime)
+            {
+                if (gameTime.HasValue)
+                {
+                    if (instance.IsEnded)
+                        Mod.Core.LastTickTimeOfAbilityExecutionProcess.Remove(instance);
+                    Game.Instance.Player.GameTime = gameTime.Value;
                 }
             }
 
-            [HarmonyPostfix]
-            static void Postfix(AbilityExecutionProcess __instance, ref TimeSpan? __state)
+            static MethodBase GetTargetMethod(Type type, string name)
             {
-                if (__state.HasValue)
-                {
-                    if (__instance.IsEnded)
-                        Mod.Core.LastTickTimeOfAbilityExecutionProcess.Remove(__instance);
-
-                    Game.Instance.Player.GameTime = __state.Value;
-                }
+                return type.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             }
         }
 
@@ -417,7 +434,7 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // stop time advanced during units' turn
+        // stop time advancing during units' turn
         [HarmonyPatch]
         static class BaseUnitController_TickDeltaTime_Patch
         {
@@ -425,27 +442,31 @@ namespace TurnBased.HarmonyPatches
             static IEnumerable<MethodBase> TargetMethods(HarmonyInstance instance)
             {
                 yield return GetTargetMethod(typeof(UnitInPitController), "TickOnUnit");
-                //yield return GetTargetMethod(typeof(UnitProneController));
                 yield return GetTargetMethod(typeof(UnitsProximityController), "TickOnUnit");
             }
 
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                return codes.Patch(il, PreTranspiler, PostTranspiler);
+            }
 
-            [HarmonyPrefix]
-            static void Prefix(ref float? __state)
+            static float? PreTranspiler()
             {
                 if (IsInCombat() && !IsPassing())
                 {
-                    __state = Game.Instance.TimeController.DeltaTime;
+                    float deltaTime = Game.Instance.TimeController.DeltaTime;
                     Game.Instance.TimeController.SetDeltaTime(0f);
+                    return deltaTime;
                 }
+                return null;
             }
 
-            [HarmonyPostfix]
-            static void Postfix(ref float? __state)
+            static void PostTranspiler(float? deltaTime)
             {
-                if (__state.HasValue)
+                if (deltaTime.HasValue)
                 {
-                    Game.Instance.TimeController.SetDeltaTime(__state.Value);
+                    Game.Instance.TimeController.SetDeltaTime(deltaTime.Value);
                 }
             }
 
@@ -455,7 +476,7 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // stop time advanced during units' turn
+        // stop time advancing during units' turn
         [HarmonyPatch]
         static class BaseUnitController_TickGameDeltaTime_Patch
         {
@@ -468,22 +489,28 @@ namespace TurnBased.HarmonyPatches
                 yield return GetTargetMethod(typeof(AreaEffectEntityData), "Tick");
             }
 
-            [HarmonyPrefix]
-            static void Prefix(ref float? __state)
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
+            {
+                return codes.Patch(il, PreTranspiler, PostTranspiler);
+            }
+
+            static float? PreTranspiler()
             {
                 if (IsInCombat() && !IsPassing())
                 {
-                    __state = Game.Instance.TimeController.GameDeltaTime;
+                    float gameDeltaTime = Game.Instance.TimeController.GameDeltaTime;
                     Game.Instance.TimeController.SetGameDeltaTime(0f);
+                    return gameDeltaTime;
                 }
+                return null;
             }
 
-            [HarmonyPostfix]
-            static void Postfix(ref float? __state)
+            static void PostTranspiler(float? gameDeltaTime)
             {
-                if (__state.HasValue)
+                if (gameDeltaTime.HasValue)
                 {
-                    Game.Instance.TimeController.SetGameDeltaTime(__state.Value);
+                    Game.Instance.TimeController.SetGameDeltaTime(gameDeltaTime.Value);
                 }
             }
 
@@ -510,6 +537,7 @@ namespace TurnBased.HarmonyPatches
         // UnitGuardController                  // xx
         // UnitLifeController                   // xx
         // UnitMimicController                  // xx
+        // UnitProneController                  // ss - DeltaTime
         // UnitRoamingController                // ?? - GameTime
         // UnitsProximityController             // ?? - DeltaTime
         // UnitTicksController                  // ss - GameDeltaTime
