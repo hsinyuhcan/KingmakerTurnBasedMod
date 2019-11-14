@@ -399,6 +399,8 @@ namespace TurnBased.Utility
 
         public static BugfixOption FixNeverInCombatWithoutMC => Mod.Settings.toggleFixNeverInCombatWithoutMC;
 
+        public static BugfixOption FixActionTypeOfActivatingItem => Mod.Settings.toggleFixActionTypeOfActivatingItem;
+
         public static BugfixOption FixActionTypeOfBardicPerformance => Mod.Settings.toggleFixActionTypeOfBardicPerformance;
 
         public static BugfixOption FixActionTypeOfSwappingWeapon => Mod.Settings.toggleFixActionTypeOfSwappingWeapon;

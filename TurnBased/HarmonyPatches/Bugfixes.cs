@@ -62,7 +62,21 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // fix the action type for starting a Bardic Performance with/without Singing Steel
+        // fix the action type of activating an item storing a full-round spell (e.g. summon monster scrolls)
+        [HarmonyPatch(typeof(AbilityData), nameof(AbilityData.RequireFullRoundAction), MethodType.Getter)]
+        static class AbilityData_RequireFullRoundAction_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix(AbilityData __instance, ref bool __result)
+            {
+                if (Mod.Enabled && FixActionTypeOfActivatingItem && __result && __instance.SourceItem != null)
+                {
+                    __result = false;
+                }
+            }
+        }
+
+        // fix the action type of starting a Bardic Performance with/without Singing Steel
         [HarmonyPatch(typeof(UnitActivateAbility), "GetCommandType", typeof(ActivatableAbility))]
         static class UnitActivateAbility_GetCommandType_Patch
         {
@@ -509,7 +523,7 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // fix you can make an AoO to an unmoved unit just as it's leaving the threatened range (when switching from reach weapon)
+        // fix you can make an AoO to an unmoved unit as if it's leaving the threatened range (when switching from reach weapon)
         // fix Acrobatics (Mobility) can be triggered even if the AoO is provoked due to reasons other than movement
         [HarmonyPatch(typeof(UnitCombatState), "ShouldAttackOnDisengage", typeof(UnitEntityData))]
         static class UnitCombatState_ShouldAttackOnDisengage_Patch
@@ -681,7 +695,7 @@ namespace TurnBased.HarmonyPatches
         }
 
         // fix untargetable units can be targeted by abilities
-        // fix dead units can be targeted by abilities that cannot be cast to dead target
+        // fix dead units can be targeted by abilities that cannot be cast on dead targets
         [HarmonyPatch(typeof(ClickWithSelectedAbilityHandler), nameof(ClickWithSelectedAbilityHandler.GetPriority), typeof(GameObject), typeof(Vector3))]
         static class ClickWithSelectedAbilityHandler_GetPriority_Patch
         {

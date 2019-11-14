@@ -134,22 +134,6 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // prevent activating an item storing a full-round ability from being considered as a full-round action
-        [HarmonyPatch(typeof(AbilityData), nameof(AbilityData.RequireFullRoundAction), MethodType.Getter)]
-        static class AbilityData_RequireFullRoundAction_Patch
-        {
-            [HarmonyPrefix]
-            static bool Prefix(AbilityData __instance, ref bool __result)
-            {
-                if (IsEnabled() && __instance.SourceItem != null)
-                {
-                    __result = false;
-                    return false;
-                }
-                return true;
-            }
-        }
-
         // suppress auto pause on combat start
         [HarmonyPatch(typeof(AutoPauseController), nameof(AutoPauseController.HandlePartyCombatStateChanged), typeof(bool))]
         static class AutoPauseController_HandlePartyCombatStateChanged_Patch

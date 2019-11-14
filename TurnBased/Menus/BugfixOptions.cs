@@ -46,6 +46,9 @@ namespace TurnBased.Menus
             BugfixToggle(new BugfixOption(true, true),
                 Local["Menu_Opt_FixUnitNotLeaveCombatWhenNotInGame"], false, false);
 
+            BugfixToggle(FixActionTypeOfActivatingItem,
+                Local["Menu_Opt_FixActionTypeOfActivatingItem"], true, true);
+
             BugfixToggle(FixActionTypeOfBardicPerformance,
                 Local["Menu_Opt_FixActionTypeOfBardicPerformance"], true, true);
 
