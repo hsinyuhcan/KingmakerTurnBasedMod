@@ -62,7 +62,21 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // fix the action type for starting a Bardic Performance with/without Singing Steel
+        // fix the action type of activating an item storing a full-round spell (e.g. summon monster scrolls)
+        [HarmonyPatch(typeof(AbilityData), nameof(AbilityData.RequireFullRoundAction), MethodType.Getter)]
+        static class AbilityData_RequireFullRoundAction_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix(AbilityData __instance, ref bool __result)
+            {
+                if (Mod.Enabled && FixActionTypeOfActivatingItem && __result && __instance.SourceItem != null)
+                {
+                    __result = false;
+                }
+            }
+        }
+
+        // fix the action type of starting a Bardic Performance with/without Singing Steel
         [HarmonyPatch(typeof(UnitActivateAbility), "GetCommandType", typeof(ActivatableAbility))]
         static class UnitActivateAbility_GetCommandType_Patch
         {
@@ -158,7 +172,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -226,7 +240,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -284,12 +298,19 @@ namespace TurnBased.HarmonyPatches
                 // unit.IsEnemy(target.Unit)
                 // ---------------- after  ----------------
                 // IsTarget(unit, target.Unit)
-                return codes.ReplaceAll(
-                    new CodeInstruction(OpCodes.Callvirt,
-                        GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
-                    new CodeInstruction(OpCodes.Call,
-                        new Func<UnitEntityData, UnitEntityData, bool>(IsTarget).Method),
-                    true);
+                codes = codes
+                    .ReplaceAll(
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<UnitEntityData, UnitEntityData, bool>(IsTarget).Method),
+                        out int replaced, true)
+                    .Complete();
+                if (replaced <= 0)
+                {
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
+                }
+                return codes;
             }
 
             static bool IsTarget(UnitEntityData unit, UnitEntityData target)
@@ -347,7 +368,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -440,7 +461,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -485,7 +506,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -509,7 +530,7 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
-        // fix you can make an AoO to an unmoved unit just as it's leaving the threatened range (when switching from reach weapon)
+        // fix you can make an AoO to an unmoved unit as if it's leaving the threatened range (when switching from reach weapon)
         // fix Acrobatics (Mobility) can be triggered even if the AoO is provoked due to reasons other than movement
         [HarmonyPatch(typeof(UnitCombatState), "ShouldAttackOnDisengage", typeof(UnitEntityData))]
         static class UnitCombatState_ShouldAttackOnDisengage_Patch
@@ -579,7 +600,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -618,7 +639,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -654,7 +675,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -681,7 +702,7 @@ namespace TurnBased.HarmonyPatches
         }
 
         // fix untargetable units can be targeted by abilities
-        // fix dead units can be targeted by abilities that cannot be cast to dead target
+        // fix dead units can be targeted by abilities that cannot be cast on dead targets
         [HarmonyPatch(typeof(ClickWithSelectedAbilityHandler), nameof(ClickWithSelectedAbilityHandler.GetPriority), typeof(GameObject), typeof(Vector3))]
         static class ClickWithSelectedAbilityHandler_GetPriority_Patch
         {
@@ -729,7 +750,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -781,27 +802,33 @@ namespace TurnBased.HarmonyPatches
                 // target.Faction.Neutral
                 // ---------------- after  2 ----------------
                 // IsTarget_2(target)
-                return codes
+                codes = codes
                     .ReplaceAll(
-                    new CodeInstruction(OpCodes.Callvirt,
-                        GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
-                    new CodeInstruction(OpCodes.Call,
-                        new Func<UnitEntityData, UnitEntityData, bool>(IsTarget_1).Method), 
-                    true)
-                    .ReplaceAll(
-                    new CodeInstruction[] {
                         new CodeInstruction(OpCodes.Callvirt,
-                            GetPropertyInfo<UnitEntityData, BlueprintFaction>(nameof(UnitEntityData.Faction)).GetGetMethod()),
-                        new CodeInstruction(OpCodes.Ldfld,
-                            GetFieldInfo<BlueprintFaction, bool>(nameof(BlueprintFaction.Neutral)))
-                    },
-                    new CodeInstruction[]
-                    {
+                            GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
                         new CodeInstruction(OpCodes.Call,
-                            new Func<UnitEntityData, bool>(IsTarget_2).Method),
-                    }, 
-                    true)
+                            new Func<UnitEntityData, UnitEntityData, bool>(IsTarget_1).Method),
+                        out int replaced_1, true)
+                    .ReplaceAll(
+                        new CodeInstruction[]
+                        {
+                            new CodeInstruction(OpCodes.Callvirt,
+                                GetPropertyInfo<UnitEntityData, BlueprintFaction>(nameof(UnitEntityData.Faction)).GetGetMethod()),
+                            new CodeInstruction(OpCodes.Ldfld,
+                                GetFieldInfo<BlueprintFaction, bool>(nameof(BlueprintFaction.Neutral)))
+                        },
+                        new CodeInstruction[]
+                        {
+                            new CodeInstruction(OpCodes.Call,
+                                new Func<UnitEntityData, bool>(IsTarget_2).Method),
+                        },
+                        out int replaced_2, true)
                     .Complete();
+                if (replaced_1 <= 0 || replaced_2 <= 0)
+                {
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
+                }
+                return codes;
             }
 
             static bool IsTarget_1(UnitEntityData initiator, UnitEntityData target)
@@ -835,6 +862,22 @@ namespace TurnBased.HarmonyPatches
             }
         }
 
+        // fix inspecting enemies can cause errors in certain condition
+        [HarmonyPatch(typeof(AddAmbushBehaviour), nameof(AddAmbushBehaviour.OnEntityCreated), typeof(UnitEntityData))]
+        static class AddAmbushBehaviour_OnEntityCreated_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix(UnitEntityData entity)
+            {
+                if (Mod.Enabled && FixInspectingCauseError && !entity.IsInGame)
+                {
+                    return false;
+                }
+                Mod.Log(entity);
+                return true;
+            }
+        }
+
         // fix a native bug due to null View
         [HarmonyPatch]
         static class UnitEntityView_Corpulence_Patch
@@ -853,21 +896,26 @@ namespace TurnBased.HarmonyPatches
                 // .View.Corpulence
                 // ---------------- after  ----------------
                 // .Corpulence
-                return codes
-                    .ReplaceAll(
-                    new CodeInstruction[] {
-                        new CodeInstruction(OpCodes.Callvirt,
-                            GetPropertyInfo<UnitEntityData, UnitEntityView>(nameof(UnitEntityData.View)).GetGetMethod()),
-                        new CodeInstruction(OpCodes.Callvirt,
-                            GetPropertyInfo<UnitEntityView, float>(nameof(UnitEntityView.Corpulence)).GetGetMethod())
-                    },
-                    new CodeInstruction[]
-                    {
-                        new CodeInstruction(OpCodes.Callvirt,
-                            GetPropertyInfo<UnitEntityData, float>(nameof(UnitEntityData.Corpulence)).GetGetMethod())
-                    },
-                    true)
+                codes = codes
+                    .ReplaceAll(new CodeInstruction[] 
+                        {
+                            new CodeInstruction(OpCodes.Callvirt,
+                                GetPropertyInfo<UnitEntityData, UnitEntityView>(nameof(UnitEntityData.View)).GetGetMethod()),
+                            new CodeInstruction(OpCodes.Callvirt,
+                                GetPropertyInfo<UnitEntityView, float>(nameof(UnitEntityView.Corpulence)).GetGetMethod())
+                        },
+                        new CodeInstruction[]
+                        {
+                            new CodeInstruction(OpCodes.Callvirt,
+                                GetPropertyInfo<UnitEntityData, float>(nameof(UnitEntityData.Corpulence)).GetGetMethod())
+                        },
+                        out int replaced, true)
                     .Complete();
+                if (replaced <= 0)
+                {
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
+                }
+                return codes;
             }
 
             static MethodBase GetTargetMethod(Type type, string name)

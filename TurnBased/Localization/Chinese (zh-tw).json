@@ -1,7 +1,7 @@
 {
   "$id": "1",
   "Language": "繁體中文",
-  "Version": "1.0.7",
+  "Version": "1.0.9",
   "Contributors": "Hsinyu",
   "HomePage": "https://github.com/hsinyuhcan/KingmakerTurnBasedMod/blob/master/TurnBased/Localization/Chinese (zh-tw).json",
   "Strings": [
@@ -434,6 +434,10 @@
       "Value": "修正當單位變成非活動狀態時不會脫離戰鬥 (導致召唤凯娜菈 / 召唤凯莉柯時的錯誤)"
     },
     {
+      "Key": "Menu_Opt_FixActionTypeOfActivatingItem",
+      "Value": "修正啟用儲存了整輪法術的物品的動作類型 (例如: 召喚卷軸) (整輪動作 => 標準動作)"
+    },
+    {
       "Key": "Menu_Opt_FixActionTypeOfBardicPerformance",
       "Value": "修正開始吟遊演藝的動作類型與歌唱鋼的效果"
     },
@@ -540,6 +544,10 @@
     {
       "Key": "Menu_Opt_FixInspectingTriggerAuraEffect",
       "Value": "修正某些靈氣效果會在你查看其所有者時被重複觸發 (例如: 觸手魔藤的靈氣)"
+    },
+    {
+      "Key": "Menu_Opt_FixInspectingCauseError",
+      "Value": "修正查看敵人可能在特定條件下導致錯誤 (例如: 以盲感對抗會伏擊的敵人時)"
     },
     {
       "Key": "Menu_Tab_Language",

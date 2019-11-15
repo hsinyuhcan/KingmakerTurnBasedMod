@@ -1,4 +1,5 @@
-﻿using ModMaker;
+﻿using Harmony12;
+using ModMaker;
 using ModMaker.Utility;
 using System.Reflection;
 using UnityModManagerNet;
@@ -16,6 +17,7 @@ namespace TurnBased
 
         static bool Load(UnityModManager.ModEntry modEntry)
         {
+            //HarmonyInstance.DEBUG = true;
             Local = new LocalizationManager<DefaultLanguage>();
             Mod = new ModManager<Core, Settings>();
             Menu = new MenuManager();

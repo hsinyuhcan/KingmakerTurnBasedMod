@@ -94,6 +94,7 @@ namespace TurnBased
 
         // bugfix
         public BugfixOption toggleFixNeverInCombatWithoutMC = new BugfixOption(true, false);
+        public BugfixOption toggleFixActionTypeOfActivatingItem = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfBardicPerformance = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfSwappingWeapon = new BugfixOption(true, false);
         public BugfixOption toggleFixActionTypeOfCharge = new BugfixOption(true, false);
@@ -121,6 +122,7 @@ namespace TurnBased
         public BugfixOption toggleFixAbilityCanTargetDeadUnit = new BugfixOption(true, false);
         public BugfixOption toggleFixNeutralUnitCanAttackAlly = new BugfixOption(true, false);
         public BugfixOption toggleFixInspectingTriggerAuraEffect = new BugfixOption(true, false);
+        public BugfixOption toggleFixInspectingCauseError = new BugfixOption(true, true);
 
         // localization
         public string localizationFileName;

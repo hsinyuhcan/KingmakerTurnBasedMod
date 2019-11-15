@@ -5,6 +5,7 @@ using Kingmaker.Controllers.Combat;
 using Kingmaker.Controllers.Units;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Groups;
 using Kingmaker.UnitLogic.Parts;
@@ -25,26 +26,41 @@ namespace TurnBased.HarmonyPatches
 {
     static class CombatTrigger
     {
-        // don't avoid joining the combat because of standard actions
+        // don't forbid units from joining the combat even if its standard action is running
         [HarmonyPatch(typeof(UnitEntityData), nameof(UnitEntityData.JoinCombat))]
         static class UnitEntityData_JoinCombat_Patch
         {
-            [HarmonyPrefix]
-            static void Prefix(UnitEntityData __instance, ref UnitCommand __state)
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> codes, ILGenerator il)
             {
-                if (IsEnabled())
+                // ---------------- before ----------------
+                // Commands.Standard == null
+                // ---------------- after  ----------------
+                // IsEnabled() || Commands.Standard == null
+                CodeInstruction[] findingCodes = new CodeInstruction[]
                 {
-                    __state = __instance.Commands.Standard;
-                    __instance.Commands.Raw[(int)UnitCommand.CommandType.Standard] = null;
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Call,
+                        GetPropertyInfo<UnitEntityData, UnitCommands>(nameof(UnitEntityData.Commands)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Callvirt,
+                        GetPropertyInfo<UnitCommands, UnitCommand>(nameof(UnitCommands.Standard)).GetGetMethod(true)),
+                    new CodeInstruction(OpCodes.Brfalse),
+                };
+                int startIndex = codes.FindCodes(findingCodes);
+                if (startIndex >= 0)
+                {
+                    CodeInstruction[] patchingCodes = new CodeInstruction[]
+                    {
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<bool>(IsEnabled).Method),
+                        new CodeInstruction(OpCodes.Brtrue, codes.Item(startIndex + 3).operand),
+                    };
+                    return codes.InsertRange(startIndex, patchingCodes, true).Complete();
                 }
-            }
-
-            [HarmonyPostfix]
-            static void Postfix(UnitEntityData __instance, ref UnitCommand __state)
-            {
-                if (__state != null)
+                else
                 {
-                    __instance.Commands.Raw[(int)UnitCommand.CommandType.Standard] = __state;
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
+                    return codes;
                 }
             }
         }
@@ -86,7 +102,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -221,7 +237,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }
@@ -264,7 +280,7 @@ namespace TurnBased.HarmonyPatches
                 }
                 else
                 {
-                    Core.FailedToPatch(MethodBase.GetCurrentMethod().DeclaringType);
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
                     return codes;
                 }
             }

@@ -46,6 +46,9 @@ namespace TurnBased.Menus
             BugfixToggle(new BugfixOption(true, true),
                 Local["Menu_Opt_FixUnitNotLeaveCombatWhenNotInGame"], false, false);
 
+            BugfixToggle(FixActionTypeOfActivatingItem,
+                Local["Menu_Opt_FixActionTypeOfActivatingItem"], true, true);
+
             BugfixToggle(FixActionTypeOfBardicPerformance,
                 Local["Menu_Opt_FixActionTypeOfBardicPerformance"], true, true);
 
@@ -134,6 +137,9 @@ namespace TurnBased.Menus
 
             BugfixToggle(FixInspectingTriggerAuraEffect,
                 Local["Menu_Opt_FixInspectingTriggerAuraEffect"], true, true);
+
+            BugfixToggle(FixInspectingCauseError,
+                Local["Menu_Opt_FixInspectingCauseError"], false, false);
         }
 
         private void BugfixToggle(BugfixOption option, string text, bool canToggleTB, bool canToggleRT, Action onToggle = null)
