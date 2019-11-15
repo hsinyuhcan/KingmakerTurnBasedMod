@@ -298,12 +298,19 @@ namespace TurnBased.HarmonyPatches
                 // unit.IsEnemy(target.Unit)
                 // ---------------- after  ----------------
                 // IsTarget(unit, target.Unit)
-                return codes.ReplaceAll(
-                    new CodeInstruction(OpCodes.Callvirt,
-                        GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
-                    new CodeInstruction(OpCodes.Call,
-                        new Func<UnitEntityData, UnitEntityData, bool>(IsTarget).Method),
-                    true);
+                codes = codes
+                    .ReplaceAll(
+                        new CodeInstruction(OpCodes.Callvirt,
+                            GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
+                        new CodeInstruction(OpCodes.Call,
+                            new Func<UnitEntityData, UnitEntityData, bool>(IsTarget).Method),
+                        out int replaced, true)
+                    .Complete();
+                if (replaced <= 0)
+                {
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
+                }
+                return codes;
             }
 
             static bool IsTarget(UnitEntityData unit, UnitEntityData target)
@@ -795,27 +802,33 @@ namespace TurnBased.HarmonyPatches
                 // target.Faction.Neutral
                 // ---------------- after  2 ----------------
                 // IsTarget_2(target)
-                return codes
+                codes = codes
                     .ReplaceAll(
-                    new CodeInstruction(OpCodes.Callvirt,
-                        GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
-                    new CodeInstruction(OpCodes.Call,
-                        new Func<UnitEntityData, UnitEntityData, bool>(IsTarget_1).Method), 
-                    true)
-                    .ReplaceAll(
-                    new CodeInstruction[] {
                         new CodeInstruction(OpCodes.Callvirt,
-                            GetPropertyInfo<UnitEntityData, BlueprintFaction>(nameof(UnitEntityData.Faction)).GetGetMethod()),
-                        new CodeInstruction(OpCodes.Ldfld,
-                            GetFieldInfo<BlueprintFaction, bool>(nameof(BlueprintFaction.Neutral)))
-                    },
-                    new CodeInstruction[]
-                    {
+                            GetMethodInfo<UnitEntityData, Func<UnitEntityData, UnitEntityData, bool>>(nameof(UnitEntityData.IsEnemy))),
                         new CodeInstruction(OpCodes.Call,
-                            new Func<UnitEntityData, bool>(IsTarget_2).Method),
-                    }, 
-                    true)
+                            new Func<UnitEntityData, UnitEntityData, bool>(IsTarget_1).Method),
+                        out int replaced_1, true)
+                    .ReplaceAll(
+                        new CodeInstruction[]
+                        {
+                            new CodeInstruction(OpCodes.Callvirt,
+                                GetPropertyInfo<UnitEntityData, BlueprintFaction>(nameof(UnitEntityData.Faction)).GetGetMethod()),
+                            new CodeInstruction(OpCodes.Ldfld,
+                                GetFieldInfo<BlueprintFaction, bool>(nameof(BlueprintFaction.Neutral)))
+                        },
+                        new CodeInstruction[]
+                        {
+                            new CodeInstruction(OpCodes.Call,
+                                new Func<UnitEntityData, bool>(IsTarget_2).Method),
+                        },
+                        out int replaced_2, true)
                     .Complete();
+                if (replaced_1 <= 0 || replaced_2 <= 0)
+                {
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
+                }
+                return codes;
             }
 
             static bool IsTarget_1(UnitEntityData initiator, UnitEntityData target)
@@ -883,21 +896,26 @@ namespace TurnBased.HarmonyPatches
                 // .View.Corpulence
                 // ---------------- after  ----------------
                 // .Corpulence
-                return codes
-                    .ReplaceAll(
-                    new CodeInstruction[] {
-                        new CodeInstruction(OpCodes.Callvirt,
-                            GetPropertyInfo<UnitEntityData, UnitEntityView>(nameof(UnitEntityData.View)).GetGetMethod()),
-                        new CodeInstruction(OpCodes.Callvirt,
-                            GetPropertyInfo<UnitEntityView, float>(nameof(UnitEntityView.Corpulence)).GetGetMethod())
-                    },
-                    new CodeInstruction[]
-                    {
-                        new CodeInstruction(OpCodes.Callvirt,
-                            GetPropertyInfo<UnitEntityData, float>(nameof(UnitEntityData.Corpulence)).GetGetMethod())
-                    },
-                    true)
+                codes = codes
+                    .ReplaceAll(new CodeInstruction[] 
+                        {
+                            new CodeInstruction(OpCodes.Callvirt,
+                                GetPropertyInfo<UnitEntityData, UnitEntityView>(nameof(UnitEntityData.View)).GetGetMethod()),
+                            new CodeInstruction(OpCodes.Callvirt,
+                                GetPropertyInfo<UnitEntityView, float>(nameof(UnitEntityView.Corpulence)).GetGetMethod())
+                        },
+                        new CodeInstruction[]
+                        {
+                            new CodeInstruction(OpCodes.Callvirt,
+                                GetPropertyInfo<UnitEntityData, float>(nameof(UnitEntityData.Corpulence)).GetGetMethod())
+                        },
+                        out int replaced, true)
                     .Complete();
+                if (replaced <= 0)
+                {
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
+                }
+                return codes;
             }
 
             static MethodBase GetTargetMethod(Type type, string name)

@@ -41,14 +41,19 @@ namespace TurnBased.HarmonyPatches
                 // unitUseAbility.TimeSinceStart
                 // ---------------- after  ----------------
                 // GetTimeSinceStart(unitUseAbility)
-                return codes
+                codes = codes
                     .ReplaceAll(
                         new CodeInstruction(OpCodes.Callvirt,
                             GetPropertyInfo<UnitCommand, float>(nameof(UnitCommand.TimeSinceStart)).GetGetMethod()),
                         new CodeInstruction(OpCodes.Call,
                             new Func<UnitCommand, float>(GetTimeSinceStart).Method),
-                        true)
+                        out int replaced, true)
                     .Complete();
+                if (replaced <= 0)
+                {
+                    Core.FailedToPatch(MethodBase.GetCurrentMethod());
+                }
+                return codes;
             }
 
             static float GetTimeSinceStart(UnitCommand command)
